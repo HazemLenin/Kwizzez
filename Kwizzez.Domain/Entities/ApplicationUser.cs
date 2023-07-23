@@ -12,5 +12,12 @@ namespace Kwizzez.Domain.Entities
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public DateTime DateOfBirth { get; set; }
+        public string RefreshToken { get; set; }
+        public DateTime? RefreshTokenExpiration { get; set; }
+        
+        // Navigation Props
+
+        public List<Quiz>? Quizzes { get; set; }
+        public List<StudentScore>? StudentScores { get; set; }
     }
 }

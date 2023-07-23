@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kwizzez.Api", "Kwizzez.Api\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kwizzez.Domain", "Kwizzez.Domain\Kwizzez.Domain.csproj", "{306D80C1-0E38-4900-BF52-164F7C00F773}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kwizzez.DAL", "Kwizzez.DAL\Kwizzez.DAL.csproj", "{375B1A40-FAB8-4559-B0F0-E1A169A9847B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{306D80C1-0E38-4900-BF52-164F7C00F773}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{306D80C1-0E38-4900-BF52-164F7C00F773}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{306D80C1-0E38-4900-BF52-164F7C00F773}.Release|Any CPU.Build.0 = Release|Any CPU
+		{375B1A40-FAB8-4559-B0F0-E1A169A9847B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{375B1A40-FAB8-4559-B0F0-E1A169A9847B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{375B1A40-FAB8-4559-B0F0-E1A169A9847B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{375B1A40-FAB8-4559-B0F0-E1A169A9847B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
