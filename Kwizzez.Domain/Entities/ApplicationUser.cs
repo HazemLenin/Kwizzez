@@ -14,6 +14,8 @@ namespace Kwizzez.Domain.Entities
         public DateTime DateOfBirth { get; set; }
         public string RefreshToken { get; set; }
         public DateTime? RefreshTokenExpiration { get; set; }
+        public bool IsActive { get; set; } = true;
+        public DateTime DeactivatedAt { get; set; }
         
         // Navigation Props
 

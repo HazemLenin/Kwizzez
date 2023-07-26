@@ -8,7 +8,7 @@ namespace Kwizzez.DAL.Common
 {
     public class BaseDto
     {
-        public Guid Id { get; set; }
+        public string Id { get; set; } = new Guid().ToString();
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
     }

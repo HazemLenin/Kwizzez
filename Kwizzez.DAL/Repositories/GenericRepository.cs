@@ -1,49 +1,58 @@
-﻿using Kwizzez.DAL.Data;
-using Kwizzez.Domain.Common;
-using Microsoft.EntityFrameworkCore;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using Kwizzez.DAL.Data;
+using Kwizzez.Domain.Common;
+using Microsoft.EntityFrameworkCore;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Kwizzez.DAL.Repositories
 {
     public class GenericRepository<T> : IGenericRepository<T> where T : Base
     {
-        private readonly DbSet<T> _dbSet;
+        private readonly ApplicationDbContext _context;
         public GenericRepository(ApplicationDbContext context)
         {
-            _dbSet = context.Set<T>();
+            _context = context;
         }
 
-        public void Add(T entity)
+        public virtual void Add(T entity)
         {
-            _dbSet.Add(entity);
+            entity.CreatedAt = DateTime.UtcNow;
+            _context.Set<T>().Add(entity);
         }
 
-        public void AddRange(T[] entities)
+        public virtual void AddRange(IEnumerable<T> entities)
         {
-            _dbSet.AddRange(entities);
+            foreach (var entity in entities)
+                entity.CreatedAt = DateTime.UtcNow;
+
+            _context.Set<T>().AddRange(entities);
         }
 
-        public void Delete(T entity)
+        public virtual void Delete(T entity)
         {
-            _dbSet.Remove(entity);
+            entity.DeletedAt = DateTime.UtcNow;
+            _context.Set<T>().Remove(entity);
         }
 
-        public void DeleteRange(T[] entities)
+        public virtual void DeleteRange(IEnumerable<T> entities)
         {
-            _dbSet.RemoveRange(entities);
+            foreach (var entity in entities)
+                entity.DeletedAt = DateTime.UtcNow;
+
+            _context.Set<T>().RemoveRange(entities);
         }
 
-        public List<T> GetAll(Expression<Func<T, bool>> filter = null,
+        public virtual IQueryable<T> GetAll(Expression<Func<T, bool>> filter = null,
             string includeProperties = "",
             Func<IQueryable<T>, IOrderedQueryable<T>> orderExpression = null,
             int take = 0, int skip = 0)
         {
-            var query = _dbSet.AsNoTracking();
+            var query = _context.Set<T>().AsNoTracking();
 
             foreach (var property in includeProperties.Split(",", StringSplitOptions.RemoveEmptyEntries))
                 query = query.Include(property);
@@ -60,22 +69,42 @@ namespace Kwizzez.DAL.Repositories
             if (take > 0)
                 query = query.Take(take);
 
-            return query.ToList();
+            return query;
         }
 
-        public T? GetById(Guid id)
+        public virtual T? GetById(string id, string includeProperties = "")
         {
-            return _dbSet.Find(id);
+            var query = _context.Set<T>().AsNoTracking();
+
+            foreach (var property in includeProperties.Split(",", StringSplitOptions.RemoveEmptyEntries))
+                query = query.Include(property);
+
+            return query.FirstOrDefault(e => e.Id == id);
         }
 
-        public void Update(T entity)
+        public virtual void Update(T entity)
         {
-            _dbSet.Update(entity);
+            var oldEntity = GetById(entity.Id);
+            entity.CreatedAt = oldEntity.CreatedAt;
+            entity.UpdatedAt = DateTime.UtcNow;
+            _context.Set<T>().Update(entity);
         }
 
-        public void UpdateRange(T[] entities)
+        public virtual void UpdateRange(IEnumerable<T> entities)
         {
-            _dbSet.UpdateRange(entities);
+            foreach (var entity in entities)
+            {
+                var oldEntity = GetById(entity.Id);
+                entity.CreatedAt = oldEntity.CreatedAt;
+                entity.UpdatedAt = DateTime.UtcNow;
+            }
+
+            _context.Set<T>().UpdateRange(entities);
+        }
+
+        public virtual int Save()
+        {
+            return _context.SaveChanges();
         }
     }
 }

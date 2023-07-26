@@ -1,29 +1,42 @@
-﻿using Kwizzez.DAL.Dtos.Quizzes;
-using Kwizzez.DAL.Repositories;
-using Kwizzez.Domain.Entities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
+using Kwizzez.DAL.Dtos.Quizzes;
+using Kwizzez.DAL.Repositories;
+using Kwizzez.DAL.UnitOfWork;
+using Kwizzez.Domain.Entities;
 
 namespace Kwizzez.DAL.Services.Quizzes
 {
     public class QuizzesService : IQuizzesService
     {
-        private readonly GenericRepository<Quiz> _quizzesRepostiory;
-        public QuizzesService(GenericRepository<Quiz> quizzesRepostiory)
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
+        public QuizzesService(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _quizzesRepostiory = quizzesRepostiory;
+            _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
-        public void AddQuiz(QuizFormDto quiz)
+        public void AddQuiz(QuizDto quizDto)
         {
-            throw new NotImplementedException();
+            var quiz = _mapper.Map<Quiz>(quizDto);
+
+            _unitOfWork.quizzesRepository.Add(quiz);
         }
 
-        public void DeleteQuiz(Guid id)
+        public void DeleteQuiz(QuizDto quizDto)
+        {
+            var quiz = _mapper.Map<Quiz>(quizDto);
+
+            _unitOfWork.quizzesRepository.Delete(quiz);
+        }
+
+        public void DeleteQuizs(IEnumerable<QuizDto> quizzesDtos)
         {
             throw new NotImplementedException();
         }
@@ -38,12 +51,7 @@ namespace Kwizzez.DAL.Services.Quizzes
             throw new NotImplementedException();
         }
 
-        public QuizDto? GetQuizById(Guid id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void UpdateQuiz(QuizFormDto quiz)
+        public void UpdateQuiz(QuizDto quizDto)
         {
             throw new NotImplementedException();
         }

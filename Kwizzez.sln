@@ -3,11 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33829.357
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kwizzez.Api", "Kwizzez.Api\Kwizzez.Api.csproj", "{7A652396-F0DF-4885-876F-7051747592E4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kwizzez.Api", "Kwizzez.Api\Kwizzez.Api.csproj", "{7A652396-F0DF-4885-876F-7051747592E4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kwizzez.Domain", "Kwizzez.Domain\Kwizzez.Domain.csproj", "{306D80C1-0E38-4900-BF52-164F7C00F773}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kwizzez.Domain", "Kwizzez.Domain\Kwizzez.Domain.csproj", "{306D80C1-0E38-4900-BF52-164F7C00F773}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kwizzez.DAL", "Kwizzez.DAL\Kwizzez.DAL.csproj", "{375B1A40-FAB8-4559-B0F0-E1A169A9847B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kwizzez.DAL", "Kwizzez.DAL\Kwizzez.DAL.csproj", "{375B1A40-FAB8-4559-B0F0-E1A169A9847B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kwizzez.DAL.Tests", "Kwizzez.DAL.Tests\Kwizzez.DAL.Tests.csproj", "{11ABC667-AFD2-4DB5-BC8D-CE9B50B5C296}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{375B1A40-FAB8-4559-B0F0-E1A169A9847B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{375B1A40-FAB8-4559-B0F0-E1A169A9847B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{375B1A40-FAB8-4559-B0F0-E1A169A9847B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{11ABC667-AFD2-4DB5-BC8D-CE9B50B5C296}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{11ABC667-AFD2-4DB5-BC8D-CE9B50B5C296}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{11ABC667-AFD2-4DB5-BC8D-CE9B50B5C296}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{11ABC667-AFD2-4DB5-BC8D-CE9B50B5C296}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

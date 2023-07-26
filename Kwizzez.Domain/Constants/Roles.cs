@@ -11,5 +11,13 @@ namespace Kwizzez.Domain.Constants
         public const string Admin = nameof(Admin);
         public const string Teacher = nameof(Teacher);
         public const string Student = nameof(Student);
+        public static string[] GetRoles()
+        {
+            string[] roles = {
+                Admin, Teacher, Student
+            };
+
+            return roles;
+        }
     }
 }

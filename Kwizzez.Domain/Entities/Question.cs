@@ -9,9 +9,10 @@ namespace Kwizzez.Domain.Entities
 {
     public class Question : Base
     {
-        public Guid QuizId { get; set; }
+        public string QuizId { get; set; }
         public string Title { get; set; }
-        
+        public byte[]? Image { get; set; }
+
         // Navigation Props
 
         public Quiz? Quiz { get; set; }

@@ -16,7 +16,7 @@ namespace Kwizzez.Domain.Entities
         public DateTime ExpirationDate { get; set; }
         public int Code { get; set; } = new Random().Next(1000000, 9999999);
         public int Score { get; set; }
-        public Guid ApplicationUserId { get; set; }
+        public string ApplicationUserId { get; set; }
 
         // Navigation Props
 
