@@ -17,14 +17,17 @@ namespace Kwizzez.Api.Controllers
         }
 
         [HttpPost("Signup")]
-        public async Task<ActionResult<ApiResponse<AuthDto>>> Signup(RegisterDto registerDto)
+        public async Task<ApiResponse<AuthDto>> Signup(RegisterDto registerDto)
         {
             var registerResult = await _authService.RegisterUserAsync(registerDto);
-            return Ok();
+            return new()
+            {
+                Data = registerResult
+            };
         }
 
         [HttpPost("Login")]
-        public ActionResult<ApiResponse<AuthDto>> Login(LoginDto loginDto)
+        public ApiResponse<AuthDto> Login(LoginDto loginDto)
         {
             return View();
         }

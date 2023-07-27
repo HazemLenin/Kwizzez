@@ -10,10 +10,7 @@ namespace Kwizzez.DAL.Repositories
 {
     public interface IGenericRepository<T> where T : Base
     {
-        IQueryable<T> GetAll(Expression<Func<T, bool>> filter = null,
-            string includeProperties = "",
-            Func<IQueryable<T>, IOrderedQueryable<T>> orderExpression = null,
-            int take = 0, int skip = 0);
+        IQueryable<T> GetAll(QueryFilter<T> queryFilter);
         T? GetById(string id, string includeProperties = "");
         void Add(T entity);
         void AddRange(IEnumerable<T> entities);

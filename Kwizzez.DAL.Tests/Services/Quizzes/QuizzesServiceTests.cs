@@ -37,11 +37,7 @@ namespace Kwizzez.DAL.Tests.Services.Quizzes
             _unitOfWorkMock = new(_contextMock.Object);
 
             _unitOfWorkMock
-                .Setup(m => m.quizzesRepository.GetAll(It.IsAny<Expression<Func<Quiz, bool>>>(),
-                    It.IsAny<string>(),
-                    It.IsAny<Func<IQueryable<Quiz>, IOrderedQueryable<Quiz>>>(),
-                    It.IsAny<int>(),
-                    It.IsAny<int>()))
+                .Setup(m => m.quizzesRepository.GetAll(It.IsAny<QueryFilter<Quiz>>()))
                 .Returns(_quizzes.AsQueryable());
             _unitOfWorkMock
                 .Setup(m => m.quizzesRepository.GetById(It.IsAny<string>(), It.IsAny<string>()))
@@ -80,18 +76,15 @@ namespace Kwizzez.DAL.Tests.Services.Quizzes
         }
 
         [Fact]
-        public void QuizzesService_DeleteQuiz_ShouldCallRepositoryAdd()
+        public void QuizzesService_GetQuizByCode_ShouldFilterByCode()
         {
             // Arrange
             // Act
-            _quizzesService.DeleteQuiz(new()
-            {
-                Title = _quizzes.First().Title
-            });
+            _quizzesService.GetQuizByCode(new Random().Next(4000000));
 
             // Assert
             _unitOfWorkMock
-                .Verify(m => m.quizzesRepository.Delete(It.IsAny<Quiz>()), Times.Once);
+                .Verify(m => m.quizzesRepository.GetAll(It.IsAny<QueryFilter<Quiz>>()), Times.Once);
         }
     }
 }

@@ -47,27 +47,24 @@ namespace Kwizzez.DAL.Repositories
             _context.Set<T>().RemoveRange(entities);
         }
 
-        public virtual IQueryable<T> GetAll(Expression<Func<T, bool>> filter = null,
-            string includeProperties = "",
-            Func<IQueryable<T>, IOrderedQueryable<T>> orderExpression = null,
-            int take = 0, int skip = 0)
+        public virtual IQueryable<T> GetAll(QueryFilter<T> queryFilter)
         {
             var query = _context.Set<T>().AsNoTracking();
 
-            foreach (var property in includeProperties.Split(",", StringSplitOptions.RemoveEmptyEntries))
+            foreach (var property in queryFilter.IncludeProperties.Split(",", StringSplitOptions.RemoveEmptyEntries))
                 query = query.Include(property);
 
-            if (filter != null)
-                query = query.Where(filter);
+            if (queryFilter.Filter != null)
+                query = query.Where(queryFilter.Filter);
 
-            if (orderExpression != null)
-                query = orderExpression(query);
+            if (queryFilter.OrderExpression != null)
+                query = queryFilter.OrderExpression(query);
 
-            if (skip > 0)
-                query = query.Skip(skip);
+            if (queryFilter.Skip > 0)
+                query = query.Skip(queryFilter.Skip);
 
-            if (take > 0)
-                query = query.Take(take);
+            if (queryFilter.Take > 0)
+                query = query.Take(queryFilter.Take);
 
             return query;
         }

@@ -2,6 +2,7 @@ using System.Text;
 using Kwizzez.Api.Middlewares;
 using Kwizzez.DAL.Data;
 using Kwizzez.DAL.Services.Auth;
+using Kwizzez.DAL.Services.Seeds;
 using Kwizzez.DAL.UnitOfWork;
 using Kwizzez.Domain.Entities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -125,5 +126,9 @@ app.UseDefaultFiles();
 //app.MapFallbackToFile("index.html");
 
 app.UseMiddleware<HttpExceptionMiddleware>();
+
+var scope = app.Services.CreateScope();
+var seeder = new SeedData(scope.ServiceProvider);
+await seeder.Seed();
 
 app.Run();

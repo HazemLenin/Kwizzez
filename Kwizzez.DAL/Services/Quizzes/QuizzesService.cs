@@ -27,6 +27,7 @@ namespace Kwizzez.DAL.Services.Quizzes
             var quiz = _mapper.Map<Quiz>(quizDto);
 
             _unitOfWork.quizzesRepository.Add(quiz);
+            _unitOfWork.Save();
         }
 
         public void DeleteQuiz(QuizDto quizDto)
@@ -34,26 +35,40 @@ namespace Kwizzez.DAL.Services.Quizzes
             var quiz = _mapper.Map<Quiz>(quizDto);
 
             _unitOfWork.quizzesRepository.Delete(quiz);
+            _unitOfWork.Save();
         }
 
-        public void DeleteQuizs(IEnumerable<QuizDto> quizzesDtos)
+        public void DeleteQuizzes(IEnumerable<QuizDto> quizzesDtos)
         {
-            throw new NotImplementedException();
+            var quizzes = _mapper.Map<List<Quiz>>(quizzesDtos);
+
+            _unitOfWork.quizzesRepository.DeleteRange(quizzes);
+            _unitOfWork.Save();
         }
 
-        public List<QuizDto> GetAllQuizzes(Expression<Func<Quiz, bool>> filter = null, string includeProperties = "", Func<IQueryable<Quiz>, IOrderedQueryable<Quiz>> orderExpression = null, int take = 0, int skip = 0)
+        public List<QuizDto> GetAllQuizzes(QueryFilter<Quiz> queryFilter)
         {
-            throw new NotImplementedException();
+            var quizzes = _unitOfWork.quizzesRepository.GetAll(queryFilter);
+
+            return _mapper.Map<List<QuizDto>>(quizzes);
         }
 
         public QuizDto? GetQuizByCode(int code)
         {
-            throw new NotImplementedException();
+            var quiz = _unitOfWork.quizzesRepository.GetAll(new()
+            {
+                Filter = q => q.Code == code
+            }).FirstOrDefault();
+
+            return _mapper.Map<QuizDto>(quiz);
         }
 
         public void UpdateQuiz(QuizDto quizDto)
         {
-            throw new NotImplementedException();
+            var quiz = _mapper.Map<Quiz>(quizDto);
+
+            _unitOfWork.quizzesRepository.Update(quiz);
+            _unitOfWork.Save();
         }
     }
 }

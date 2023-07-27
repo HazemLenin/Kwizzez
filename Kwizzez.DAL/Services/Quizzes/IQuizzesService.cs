@@ -11,14 +11,11 @@ namespace Kwizzez.DAL.Services.Quizzes
 {
     public interface IQuizzesService
     {
-        List<QuizDto> GetAllQuizzes(Expression<Func<Quiz, bool>> filter = null,
-            string includeProperties = "",
-            Func<IQueryable<Quiz>, IOrderedQueryable<Quiz>> orderExpression = null,
-            int take = 0, int skip = 0);
+        List<QuizDto> GetAllQuizzes(QueryFilter<Quiz> queryFilter);
         QuizDto? GetQuizByCode(int code);
         void AddQuiz(QuizDto quizDto);
         void UpdateQuiz(QuizDto quizDto);
         void DeleteQuiz(QuizDto quizDto);
-        void DeleteQuizs(IEnumerable<QuizDto> quizzesDtos);
+        void DeleteQuizzes(IEnumerable<QuizDto> quizzesDtos);
     }
 }
