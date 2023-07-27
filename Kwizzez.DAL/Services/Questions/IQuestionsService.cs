@@ -12,9 +12,9 @@ namespace Kwizzez.DAL.Services.Questions
     public interface IQuestionsService
     {
         List<QuestionDto> GetAllQuestions(QueryFilter<Question> queryFilter);
-        void AddQuestion(QuestionDto quizDto);
-        void UpdateQuestion(QuestionDto quizDto);
-        void DeleteQuestion(QuestionDto quizDto);
-        void DeleteQuestions(IEnumerable<QuestionDto> QuestionsDtos);
+        void AddQuestion(QuestionDto questionDto);
+        void UpdateQuestion(QuestionDto questionDto);
+        void DeleteQuestion(QuestionDto questionDto);
+        void DeleteQuestions(IEnumerable<QuestionDto> questionsDtos);
     }
 }
