@@ -1,81 +1,107 @@
-﻿using Kwizzez.DAL.Data;
-using Kwizzez.Domain.Common;
-using Microsoft.EntityFrameworkCore;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using Kwizzez.DAL.Data;
+using Kwizzez.Domain.Common;
+using Microsoft.EntityFrameworkCore;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Kwizzez.DAL.Repositories
 {
     public class GenericRepository<T> : IGenericRepository<T> where T : Base
     {
-        private readonly DbSet<T> _dbSet;
+        private readonly ApplicationDbContext _context;
         public GenericRepository(ApplicationDbContext context)
         {
-            _dbSet = context.Set<T>();
+            _context = context;
         }
 
-        public void Add(T entity)
+        public virtual void Add(T entity)
         {
-            _dbSet.Add(entity);
+            entity.CreatedAt = DateTime.UtcNow;
+            _context.Set<T>().Add(entity);
         }
 
-        public void AddRange(T[] entities)
+        public virtual void AddRange(IEnumerable<T> entities)
         {
-            _dbSet.AddRange(entities);
+            foreach (var entity in entities)
+                entity.CreatedAt = DateTime.UtcNow;
+
+            _context.Set<T>().AddRange(entities);
         }
 
-        public void Delete(T entity)
+        public virtual void Delete(T entity)
         {
-            _dbSet.Remove(entity);
+            entity.DeletedAt = DateTime.UtcNow;
+            _context.Set<T>().Remove(entity);
         }
 
-        public void DeleteRange(T[] entities)
+        public virtual void DeleteRange(IEnumerable<T> entities)
         {
-            _dbSet.RemoveRange(entities);
+            foreach (var entity in entities)
+                entity.DeletedAt = DateTime.UtcNow;
+
+            _context.Set<T>().RemoveRange(entities);
         }
 
-        public List<T> GetAll(Expression<Func<T, bool>> filter = null,
-            string includeProperties = "",
-            Func<IQueryable<T>, IOrderedQueryable<T>> orderExpression = null,
-            int take = 0, int skip = 0)
+        public virtual IQueryable<T> GetAll(QueryFilter<T> queryFilter)
         {
-            var query = _dbSet.AsNoTracking();
+            var query = _context.Set<T>().AsNoTracking();
+
+            foreach (var property in queryFilter.IncludeProperties.Split(",", StringSplitOptions.RemoveEmptyEntries))
+                query = query.Include(property);
+
+            if (queryFilter.Filter != null)
+                query = query.Where(queryFilter.Filter);
+
+            if (queryFilter.OrderExpression != null)
+                query = queryFilter.OrderExpression(query);
+
+            if (queryFilter.Skip > 0)
+                query = query.Skip(queryFilter.Skip);
+
+            if (queryFilter.Take > 0)
+                query = query.Take(queryFilter.Take);
+
+            return query;
+        }
+
+        public virtual T? GetById(string id, string includeProperties = "")
+        {
+            var query = _context.Set<T>().AsNoTracking();
 
             foreach (var property in includeProperties.Split(",", StringSplitOptions.RemoveEmptyEntries))
                 query = query.Include(property);
 
-            if (filter != null)
-                query = query.Where(filter);
-
-            if (orderExpression != null)
-                query = orderExpression(query);
-
-            if (skip > 0)
-                query = query.Skip(skip);
-
-            if (take > 0)
-                query = query.Take(take);
-
-            return query.ToList();
+            return query.FirstOrDefault(e => e.Id == id);
         }
 
-        public T? GetById(Guid id)
+        public virtual void Update(T entity)
         {
-            return _dbSet.Find(id);
+            var oldEntity = GetById(entity.Id);
+            entity.CreatedAt = oldEntity.CreatedAt;
+            entity.UpdatedAt = DateTime.UtcNow;
+            _context.Set<T>().Update(entity);
         }
 
-        public void Update(T entity)
+        public virtual void UpdateRange(IEnumerable<T> entities)
         {
-            _dbSet.Update(entity);
+            foreach (var entity in entities)
+            {
+                var oldEntity = GetById(entity.Id);
+                entity.CreatedAt = oldEntity.CreatedAt;
+                entity.UpdatedAt = DateTime.UtcNow;
+            }
+
+            _context.Set<T>().UpdateRange(entities);
         }
 
-        public void UpdateRange(T[] entities)
+        public virtual int Save()
         {
-            _dbSet.UpdateRange(entities);
+            return _context.SaveChanges();
         }
     }
 }

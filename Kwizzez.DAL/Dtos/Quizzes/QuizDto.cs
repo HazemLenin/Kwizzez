@@ -21,7 +21,7 @@ namespace Kwizzez.DAL.Dtos.Quizzes
         public DateTime ExpirationDate { get; set; }
         public int Code { get; set; }
         public int Score { get; set; }
-        public Guid ApplicationUserId { get; set; }
+        public string ApplicationUserId { get; set; }
 
         // Navigation Props
 

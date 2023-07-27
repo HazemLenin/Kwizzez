@@ -9,8 +9,8 @@ namespace Kwizzez.Domain.Entities
 {
     public class StudentScore : Base
     {
-        public Guid ApplicationUserId { get; set; }
-        public Guid QuizId { get; set; }
+        public string ApplicationUserId { get; set; }
+        public string QuizId { get; set; }
         public int Score { get; set; }
         
         // Navigation Props

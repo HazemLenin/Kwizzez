@@ -9,7 +9,7 @@ namespace Kwizzez.Domain.Entities
 {
     public class Answer : Base
     {
-        public Guid QuestionId { get; set; }
+        public string QuestionId { get; set; }
         public string Title { get; set; }
         public bool IsCorrect { get; set; }
 
