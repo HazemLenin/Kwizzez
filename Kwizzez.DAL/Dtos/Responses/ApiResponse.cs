@@ -8,8 +8,8 @@ namespace Kwizzez.DAL.Dtos.Responses
 {
     public class ApiResponse<T>
     {
-        public bool IsSucceed { get; set; } = true;
+        public bool IsSucceed => Errors == null;
         public T? Data { get; set; }
-        public Dictionary<string, string>? Errors { get; set; }
+        public Dictionary<string, List<string>>? Errors { get; set; }
     }
 }

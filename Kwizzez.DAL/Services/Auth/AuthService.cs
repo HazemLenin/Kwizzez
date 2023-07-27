@@ -5,11 +5,13 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Kwizzez.DAL.Dtos.Auth;
 using Kwizzez.DAL.Dtos.Quizzes;
+using Kwizzez.DAL.Dtos.Users;
 using Kwizzez.Domain.Constants;
 using Kwizzez.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
@@ -22,14 +24,18 @@ namespace Kwizzez.DAL.Services.Auth
     public class AuthService : IAuthService
     {
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IConfiguration _configuration;
 
-        public AuthService(UserManager<ApplicationUser> userManager)
+        public AuthService(UserManager<ApplicationUser> userManager, IConfiguration configuration)
         {
             _userManager = userManager;
+            _configuration = configuration;
         }
 
-        public async Task<AuthDto> ChangePasswordAsync(ApplicationUser user, string currentPassword, string newPassword)
+        public async Task<AuthDto> ChangePasswordAsync(UserDto userDto, string currentPassword, string newPassword)
         {
+            var user = await _userManager.FindByIdAsync(userDto.Id);
+
             var result = await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
             AuthDto authDto = new()
             {
@@ -82,30 +88,29 @@ namespace Kwizzez.DAL.Services.Auth
             }
         }
 
-        public async Task<AuthDto> GetTokenAsync(ApplicationUser user)
+        public async Task<AuthDto> GetTokenAsync(LoginDto loginDto)
         {
-            //// Find user by Email/Username
-            //Regex emailRgx = new(@"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$");
+            // Find user by Email/Username
+            Regex emailRgx = new(@"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$");
 
-            //ApplicationUser user;
+            ApplicationUser user;
 
-            //if (emailRgx.IsMatch(loginDto.Email))
-            //    user = await _userManager.FindByEmailAsync(loginDto.Email);
-            //else
-            //    user = await _userManager.FindByNameAsync(loginDto.Email);
+            if (emailRgx.IsMatch(loginDto.Email))
+                user = await _userManager.FindByEmailAsync(loginDto.Email);
+            else
+                user = await _userManager.FindByNameAsync(loginDto.Email);
 
-            //if (user == null)
-            //{
-            //    Dictionary<string, string> errors = new();
+            if (user == null || !await _userManager.CheckPasswordAsync(user, loginDto.Password))
+            {
+                Dictionary<string, List<string>> errors = new();
 
-            //    errors.Add(String.Empty, "Incorrect email/password.");
+                errors.Add(String.Empty, new() { "Incorrect email/password." });
 
-            //    return new()
-            //    {
-            //        IsSucceed = false,
-            //        Errors = new()
-            //    }
-            //}
+                return new()
+                {
+                    Errors = errors
+                };
+            }
 
             return await GenerateUserTokens(user);
         }
@@ -160,9 +165,9 @@ namespace Kwizzez.DAL.Services.Auth
 
             if (user == null)
             {
-                Dictionary<string, string> errors = new()
+                Dictionary<string, List<string>> errors = new()
                 {
-                    { String.Empty, "The refresh token isn't active" }
+                    { String.Empty, new() { "The refresh token isn't active" } }
                 };
 
                 return new()
@@ -185,7 +190,7 @@ namespace Kwizzez.DAL.Services.Auth
                 {
                     Errors = new()
                     {
-                        { String.Empty, "User not found with the given Id."}
+                        { String.Empty, new() { "User not found with the given Id." }}
                     }
                 };
 
@@ -231,13 +236,13 @@ namespace Kwizzez.DAL.Services.Auth
             }
         }
 
-        private Dictionary<string, string> GetErrorsFromIdentityResult(IdentityResult result)
+        private Dictionary<string, List<string>> GetErrorsFromIdentityResult(IdentityResult result)
         {
-            Dictionary<string, string> errors = new();
+            Dictionary<string, List<string>> errors = new();
 
             foreach (var error in result.Errors)
             {
-                errors.Add(error.Code, error.Description);
+                errors.Add(error.Code, new() { error.Description });
             }
 
             return errors;
@@ -259,15 +264,26 @@ namespace Kwizzez.DAL.Services.Auth
             foreach (var role in roles)
                 claims.Add(new(ClaimTypes.Role, role));
 
+            SymmetricSecurityKey secretKey = new(Encoding.UTF8.GetBytes(_configuration["JsonWebTokenKeys:IssuerSigningKey"]));
+            SigningCredentials signingCredentials = new(secretKey, SecurityAlgorithms.HmacSha256);
+
             JwtSecurityToken tokenOptions = new(
                claims: claims,
-               expires: expiration
+               expires: expiration,
+               signingCredentials: signingCredentials
             );
 
             JwtSecurityTokenHandler tokenHandler = new();
 
             var token = tokenHandler.WriteToken(tokenOptions);
-            var refreshToken = new Guid().ToString();
+
+            var randomNumber = new byte[32];
+
+            using var generator = RandomNumberGenerator.Create();
+            generator.GetBytes(randomNumber);
+
+            var refreshToken = Convert.ToBase64String(randomNumber);
+
             var refreshTokenExpiration = DateTime.UtcNow.AddDays(7);
 
             user.RefreshToken = refreshToken;

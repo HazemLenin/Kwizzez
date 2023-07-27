@@ -21,7 +21,7 @@ namespace Kwizzez.DAL.Tests.Services.Auth
     //     private readonly Mock<JwtSecurityTokenHandler> _jwtSecurityTokenHandlerMock;
     //     private readonly ApplicationUser _student = new()
     //     {
-    //         Id = new Guid().ToString(),
+    //         Id = Guid.NewGuid().ToString(),
     //         UserName = "TestStudent",
     //         Email = "testStudent@example.com",
     //         FirstName = "Joe",
@@ -30,7 +30,7 @@ namespace Kwizzez.DAL.Tests.Services.Auth
     //     };
     //     private readonly ApplicationUser _duplicatedStudent = new()
     //     {
-    //         Id = new Guid().ToString(),
+    //         Id = Guid.NewGuid().ToString(),
     //         UserName = "TestDuplicatedStudent",
     //         Email = "testDuplicatedStudent@example.com",
     //         FirstName = "Joe",
@@ -39,7 +39,7 @@ namespace Kwizzez.DAL.Tests.Services.Auth
     //     };
     //     private readonly ApplicationUser _teacher = new()
     //     {
-    //         Id = new Guid().ToString(),
+    //         Id = Guid.NewGuid().ToString(),
     //         UserName = "TestTeacher",
     //         Email = "testTeacher@example.com",
     //         FirstName = "Joe",
@@ -300,7 +300,7 @@ namespace Kwizzez.DAL.Tests.Services.Auth
     //         // Arrange
     //         RefreshTokenDto refreshTokenDto = new()
     //         {
-    //             RefreshToken = new Guid().ToString()
+    //             RefreshToken = Guid.NewGuid().ToString()
     //         };
     //         _userManagerMock
     //             .Setup(m => m.Users.FirstOrDefault(It.IsAny<Func<ApplicationUser, bool>>()))
@@ -325,7 +325,7 @@ namespace Kwizzez.DAL.Tests.Services.Auth
     //         // Arrange
     //         UpdateUserDto updateDto = new()
     //         {
-    //             Id = new Guid().ToString(),
+    //             Id = Guid.NewGuid().ToString(),
     //             Email = _student.Email,
     //             UserName = _student.UserName,
     //             DateOfBirth = _student.DateOfBirth,
@@ -361,7 +361,7 @@ namespace Kwizzez.DAL.Tests.Services.Auth
     //             .Returns(_student);
 
     //         // Act
-    //         var authModel = await _authService.DeactivateUserAsync(new Guid().ToString());
+    //         var authModel = await _authService.DeactivateUserAsync(Guid.NewGuid().ToString());
 
     //         // Assert
     //         Assert.True(authModel.IsSucceed);

@@ -10,9 +10,9 @@ namespace Kwizzez.DAL.Dtos.Auth
     public class AuthDto
     {
         [JsonIgnore]
-        public bool IsSucceed { get { return Errors == null; } }
+        public bool IsSucceed => Errors == null;
         [JsonIgnore]
-        public Dictionary<string, string>? Errors { get; set; }
+        public Dictionary<string, List<string>>? Errors { get; set; }
         public string? Email { get; set; }
         public string? UserName { get; set; }
         public string? FirstName { get; set; }

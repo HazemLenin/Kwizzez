@@ -1,8 +1,13 @@
 using System.Text;
 using Kwizzez.Api.Middlewares;
 using Kwizzez.DAL.Data;
+using Kwizzez.DAL.Services.Answers;
 using Kwizzez.DAL.Services.Auth;
+using Kwizzez.DAL.Services.Questions;
+using Kwizzez.DAL.Services.Quizzes;
 using Kwizzez.DAL.Services.Seeds;
+using Kwizzez.DAL.Services.StudentScores;
+using Kwizzez.DAL.Services.Users;
 using Kwizzez.DAL.UnitOfWork;
 using Kwizzez.Domain.Entities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -18,18 +23,18 @@ var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-{
-    options.UseSqlServer(connectionString);
-});
+    options.UseSqlServer(connectionString));
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
-    {
-        options.User.RequireUniqueEmail = true;
-    })
+        options.User.RequireUniqueEmail = true)
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services
-    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddAuthentication(options =>
+    {
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
     .AddJwtBearer(options =>
     {
         options.SaveToken = true;
@@ -67,8 +72,15 @@ builder.Services
         //};
     });
 
-builder.Services.AddTransient<IAuthService, AuthService>();
+builder.Services.AddTransient<HttpExceptionMiddleware>();
+
 builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
+builder.Services.AddTransient<IAuthService, AuthService>();
+builder.Services.AddTransient<IUsersService, UsersService>();
+builder.Services.AddTransient<IQuizzesService, QuizzesService>();
+builder.Services.AddTransient<IQuestionsService, QuestionsService>();
+builder.Services.AddTransient<IAnswersService, AnswersService>();
+builder.Services.AddTransient<IStudentScoresService, StudentScoresService>();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services.AddAuthorization();
@@ -102,6 +114,7 @@ builder.Services.AddSwaggerGen(c =>
 
 
 
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -110,6 +123,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+// app.UseCors(options =>
+//     options
+//         .AllowAnyOrigin()
+//         .AllowAnyHeader()
+//         .AllowAnyMethod()
+//         .AllowCredentials());
 
 app.UseHttpsRedirection();
 

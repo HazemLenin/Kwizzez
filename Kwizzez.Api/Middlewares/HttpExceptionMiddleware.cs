@@ -28,10 +28,9 @@ namespace Kwizzez.Api.Middlewares
 
                 ApiResponse<object> response = new()
                 {
-                    IsSucceed = false,
                     Errors = new()
                     {
-                        {String.Empty, "Internal server error."}
+                        {String.Empty, new() { "Internal server error." }}
                     }
                 };
 

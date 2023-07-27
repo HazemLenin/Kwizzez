@@ -41,7 +41,9 @@ namespace Kwizzez.DAL.Services.Seeds
         private async Task SeedAdmin()
         {
             using var userManager = _serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-            var adminExists = userManager.Users.Any(u => userManager.IsInRoleAsync(u, Roles.Admin).Result);
+            using var context = _serviceProvider.GetRequiredService<ApplicationDbContext>();
+            var adminRole = context.Roles.FirstOrDefault(r => r.Name == Roles.Admin);
+            var adminExists = context.UserRoles.Any(r => r.RoleId == adminRole.Id);
             if (!adminExists)
             {
                 var result = await userManager.CreateAsync(new()
@@ -54,6 +56,7 @@ namespace Kwizzez.DAL.Services.Seeds
                 });
                 var admin = await userManager.FindByEmailAsync("admin@example.com");
                 await userManager.AddPasswordAsync(admin, "Hello%world1");
+                await userManager.AddToRoleAsync(admin, Roles.Admin);
             }
         }
     }
