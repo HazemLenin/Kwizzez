@@ -8,6 +8,7 @@ using AutoMapper;
 using Kwizzez.DAL.Dtos.Quizzes;
 using Kwizzez.DAL.Repositories;
 using Kwizzez.DAL.UnitOfWork;
+using Kwizzez.DAL.Utilities;
 using Kwizzez.Domain.Entities;
 
 namespace Kwizzez.DAL.Services.Quizzes
@@ -51,6 +52,24 @@ namespace Kwizzez.DAL.Services.Quizzes
             var quizzes = _unitOfWork.quizzesRepository.GetAll(queryFilter);
 
             return _mapper.Map<List<QuizDto>>(quizzes);
+        }
+
+        public PaginatedList<QuizDto> GetPaginatedQuizzes(QueryFilter<Quiz> queryFilter, int pageNumber, int pageSize)
+        {
+            var quizzes = _unitOfWork.quizzesRepository.GetAll(queryFilter);
+
+            var paginatedQuizzes = PaginatedList<Quiz>.Create(quizzes, pageNumber, pageSize);
+
+            var quizzesDtos = paginatedQuizzes.Select(q => _mapper.Map<QuizDto>(q)).ToList();
+
+            return new(quizzesDtos, quizzes.Count(), pageNumber, pageSize);
+        }
+
+        public QuizDto? GetQuizById(string id)
+        {
+            var quiz = _unitOfWork.quizzesRepository.GetById(id);
+
+            return _mapper.Map<QuizDto>(quiz);
         }
 
         public QuizDto? GetQuizByCode(int code)
