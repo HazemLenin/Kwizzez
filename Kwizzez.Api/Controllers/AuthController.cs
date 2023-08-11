@@ -22,6 +22,7 @@ namespace Kwizzez.Api.Controllers
             _usersService = usersService;
         }
 
+        // POST: api/Auth/Signup
         [HttpPost("Signup")]
         public async Task<ApiResponse<AuthDto>> Signup(RegisterDto registerDto)
         {
@@ -38,6 +39,7 @@ namespace Kwizzez.Api.Controllers
             };
         }
 
+        // POST: api/Auth/Login
         [HttpPost("Login")]
         public async Task<ApiResponse<AuthDto>> Login(LoginDto loginDto)
         {
@@ -55,6 +57,7 @@ namespace Kwizzez.Api.Controllers
             };
         }
 
+        // POST: api/Auth/Refresh
         [HttpPost("Refresh")]
         public async Task<ApiResponse<AuthDto>> Refresh(RefreshTokenDto refreshTokenDto)
         {

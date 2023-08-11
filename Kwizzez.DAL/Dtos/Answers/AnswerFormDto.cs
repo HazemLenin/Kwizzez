@@ -9,15 +9,9 @@ using Kwizzez.DAL.Dtos.StudentScoreAnswers;
 
 namespace Kwizzez.DAL.Dtos.Answers
 {
-    public class AnswerDto : BaseDto
+    public class AnswerFormDto
     {
-        public string QuestionId { get; set; }
         public string Title { get; set; }
         public bool IsCorrect { get; set; }
-
-        // Navigation Props
-
-        public QuestionDto? Question { get; set; }
-        public List<StudentScoreAnswerDto>? ScoreAnswers { get; set; }
     }
 }

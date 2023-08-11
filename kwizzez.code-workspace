@@ -5,6 +5,7 @@
 		}
 	],
 	"settings": {
+		"dotnet.defaultSolution": "Kwizzez.sln"
 		// "emeraldwalk.runonsave": {
 		// 	"commands": [
 		// 		{

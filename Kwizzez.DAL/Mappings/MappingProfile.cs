@@ -14,25 +14,38 @@ namespace Kwizzez.DAL.Mappings
         public MappingProfile()
         {
             CreateMap<ApplicationUser, UserDto>()
-            .ReverseMap();
+                .ReverseMap();
 
             CreateMap<Quiz, QuizDto>()
-            .ReverseMap();
+                .ForMember(dest => dest.TeacherId, src => src.MapFrom(src => src.ApplicationUserId))
+                .ForMember(dest => dest.Teacher, src => src.MapFrom(src => src.ApplicationUser))
+                .ReverseMap();
 
-            CreateMap<Quiz, QuizFormDto>()
-            .ReverseMap();
+            CreateMap<QuizDto, QuizFormDto>()
+                .ForMember(dest => dest.TimeLimitTicks, src => src.MapFrom(src => src.TimeLimitTicks))
+                .ForMember(dest => dest.TimeLimit, src => src.Ignore());
+
+            CreateMap<QuizFormDto, QuizDto>()
+                .ForMember(dest => dest.TimeLimit, src => src.MapFrom(src => src.TimeLimitTicks))
+                .ForMember(dest => dest.TimeLimitTicks, src => src.Ignore());
 
             CreateMap<Question, QuestionDto>()
-            .ReverseMap();
+                .ReverseMap();
+
+            CreateMap<QuestionDto, QuestionFormDto>()
+                .ReverseMap();
 
             CreateMap<Answer, AnswerDto>()
-            .ReverseMap();
+                .ReverseMap();
+
+            CreateMap<AnswerDto, AnswerFormDto>()
+                .ReverseMap();
 
             CreateMap<StudentScore, StudentScoreDto>()
-            .ReverseMap();
+                .ReverseMap();
 
             CreateMap<StudentScoreAnswer, StudentScoreAnswerDto>()
-            .ReverseMap();
+                .ReverseMap();
         }
     }
 }

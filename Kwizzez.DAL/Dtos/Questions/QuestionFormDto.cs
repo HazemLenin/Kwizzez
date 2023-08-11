@@ -1,23 +1,22 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Kwizzez.Domain.Common;
+using Kwizzez.DAL.Common;
+using Kwizzez.DAL.Dtos.Answers;
+using Kwizzez.DAL.Dtos.Quizzes;
 
-namespace Kwizzez.Domain.Entities
+namespace Kwizzez.DAL.Dtos.Questions
 {
-    public class Question : Base
+    public class QuestionFormDto
     {
-        public string QuizId { get; set; }
         public string Title { get; set; }
         public byte[]? Image { get; set; }
         public int Order { get; set; }
         public int Degree { get; set; }
 
         // Navigation Props
-
-        public Quiz? Quiz { get; set; }
-        public List<Answer>? Answers { get; set; }
+        public List<AnswerFormDto>? Answers { get; set; }
     }
 }

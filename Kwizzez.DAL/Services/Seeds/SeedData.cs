@@ -22,26 +22,28 @@ namespace Kwizzez.DAL.Services.Seeds
 
         public async Task Seed()
         {
-            await SeedRoles();
-            await SeedAdmin();
+            using var context = _serviceProvider.GetRequiredService<ApplicationDbContext>();
+            using var userManager = _serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+            using var roleManager = _serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            await SeedRoles(roleManager);
+            await SeedAdmin(context, userManager);
+            await SeedTeacher(context, userManager);
+            await SeedStudent(context, userManager);
         }
 
-        private async Task SeedRoles()
+        private async Task SeedRoles(RoleManager<IdentityRole> roleManager)
         {
             var roles = Roles.GetRoles();
 
-            using var roleManger = _serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
             foreach (var role in roles)
             {
-                if (!await roleManger.RoleExistsAsync(role))
-                    await roleManger.CreateAsync(new() { Name = role });
+                if (!await roleManager.RoleExistsAsync(role))
+                    await roleManager.CreateAsync(new() { Name = role });
             }
         }
 
-        private async Task SeedAdmin()
+        private async Task SeedAdmin(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
-            using var userManager = _serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-            using var context = _serviceProvider.GetRequiredService<ApplicationDbContext>();
             var adminRole = context.Roles.FirstOrDefault(r => r.Name == Roles.Admin);
             var adminExists = context.UserRoles.Any(r => r.RoleId == adminRole.Id);
             if (!adminExists)
@@ -57,6 +59,46 @@ namespace Kwizzez.DAL.Services.Seeds
                 var admin = await userManager.FindByEmailAsync("admin@example.com");
                 await userManager.AddPasswordAsync(admin, "Hello%world1");
                 await userManager.AddToRoleAsync(admin, Roles.Admin);
+            }
+        }
+
+        private async Task SeedTeacher(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        {
+            var teacherRole = context.Roles.FirstOrDefault(r => r.Name == Roles.Teacher);
+            var teacherExists = context.UserRoles.Any(r => r.RoleId == teacherRole.Id);
+            if (!teacherExists)
+            {
+                var result = await userManager.CreateAsync(new()
+                {
+                    Email = "teacher@example.com",
+                    UserName = "teacher",
+                    FirstName = "teacher first name",
+                    LastName = "teacher last name",
+                    DateOfBirth = new(1999, 1, 1)
+                });
+                var teacher = await userManager.FindByEmailAsync("teacher@example.com");
+                await userManager.AddPasswordAsync(teacher, "Hello%world1");
+                await userManager.AddToRoleAsync(teacher, Roles.Teacher);
+            }
+        }
+
+        private async Task SeedStudent(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        {
+            var studentRole = context.Roles.FirstOrDefault(r => r.Name == Roles.Student);
+            var studentExists = context.UserRoles.Any(r => r.RoleId == studentRole.Id);
+            if (!studentExists)
+            {
+                var result = await userManager.CreateAsync(new()
+                {
+                    Email = "student@example.com",
+                    UserName = "student",
+                    FirstName = "student first name",
+                    LastName = "student last name",
+                    DateOfBirth = new(1999, 1, 1)
+                });
+                var student = await userManager.FindByEmailAsync("student@example.com");
+                await userManager.AddPasswordAsync(student, "Hello%world1");
+                await userManager.AddToRoleAsync(student, Roles.Student);
             }
         }
     }
