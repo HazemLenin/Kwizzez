@@ -5,13 +5,14 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using Kwizzez.DAL.Dtos.StudentScores;
+using Kwizzez.DAL.Utilities;
 using Kwizzez.Domain.Entities;
 
 namespace Kwizzez.DAL.Services.StudentScores
 {
     public interface IStudentScoresService
     {
-        List<StudentScoreDto> GetAllStudentScores(QueryFilter<StudentScore> queryFilter);
+        PaginatedList<StudentScoreDto> GetPaginatedStudentScore(QueryFilter<StudentScore> queryFilter, int pageNumber, int pageSize);
         StudentScoreDto GetStudentScoreById(string id, string includeProperties = "");
         void AddStudentScore(StudentScoreDto studentScoreDto);
         void UpdateStudentScore(StudentScoreDto studentScoreDto);

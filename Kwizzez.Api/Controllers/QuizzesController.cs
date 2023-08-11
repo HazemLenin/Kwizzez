@@ -80,7 +80,7 @@ namespace Kwizzez.Api.Controllers
         // PUT: api/Quizzes/{id}
         [HttpPut("{id}")]
         [Authorize(Roles = Roles.Teacher)]
-        public IActionResult PutQuiz([FromRoute] string id, QuizFormDto quizFormDto)
+        public IActionResult PutQuiz(string id, QuizFormDto quizFormDto)
         {
             var quizDto = _mapper.Map<QuizDto>(quizFormDto);
             quizDto.TeacherId = User.Identity.Name;
@@ -108,7 +108,7 @@ namespace Kwizzez.Api.Controllers
         // DELETE: api/Quizzes/{id}
         [HttpDelete("{id}")]
         [Authorize(Roles = $"{Roles.Admin},{Roles.Teacher}")]
-        public IActionResult DeleteQuiz([FromRoute] string id)
+        public IActionResult DeleteQuiz(string id)
         {
             var quizDto = _quizzesService.GetQuizById(id);
 

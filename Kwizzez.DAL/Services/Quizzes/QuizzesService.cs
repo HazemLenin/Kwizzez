@@ -89,5 +89,13 @@ namespace Kwizzez.DAL.Services.Quizzes
             _unitOfWork.quizzesRepository.Update(quiz);
             _unitOfWork.Save();
         }
+
+        public bool QuizExists(string id)
+        {
+            return _unitOfWork.quizzesRepository.GetAll(new()
+            {
+                Filter = q => q.Id == id
+            }).Any();
+        }
     }
 }

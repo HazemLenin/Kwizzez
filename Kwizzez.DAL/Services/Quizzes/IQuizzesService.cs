@@ -20,5 +20,6 @@ namespace Kwizzez.DAL.Services.Quizzes
         void UpdateQuiz(QuizDto quizDto);
         void DeleteQuiz(QuizDto quizDto);
         void DeleteQuizzes(IEnumerable<QuizDto> quizzesDtos);
+        bool QuizExists(string id);
     }
 }

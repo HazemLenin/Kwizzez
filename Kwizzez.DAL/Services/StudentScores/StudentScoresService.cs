@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Kwizzez.DAL.Dtos.StudentScores;
 using Kwizzez.DAL.UnitOfWork;
+using Kwizzez.DAL.Utilities;
 using Kwizzez.Domain.Entities;
 
 namespace Kwizzez.DAL.Services.StudentScores
@@ -39,10 +40,15 @@ namespace Kwizzez.DAL.Services.StudentScores
             _unitOfWork.studentScoresRepository.DeleteRange(studentScores);
         }
 
-        public List<StudentScoreDto> GetAllStudentScores(QueryFilter<StudentScore> queryFilter)
+        public PaginatedList<StudentScoreDto> GetPaginatedStudentScore(QueryFilter<StudentScore> queryFilter, int pageNumber, int pageSize)
         {
-            var studentScores = _unitOfWork.studentScoresRepository.GetAll(queryFilter);
-            return _mapper.Map<List<StudentScoreDto>>(studentScores);
+            var scores = _unitOfWork.studentScoresRepository.GetAll(queryFilter);
+
+            var paginatedScores = PaginatedList<StudentScore>.Create(scores, pageNumber, pageSize);
+
+            var scoresDtos = paginatedScores.Select(q => _mapper.Map<StudentScoreDto>(q)).ToList();
+
+            return new(scoresDtos, scores.Count(), pageNumber, pageSize);
         }
 
         public StudentScoreDto GetStudentScoreById(string id, string includeProperties = "")
