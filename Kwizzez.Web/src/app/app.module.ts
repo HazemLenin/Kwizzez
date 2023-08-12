@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -13,6 +14,9 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { userReducer } from './states/user/user.reducers';
 import { isAuthenticatedReducer } from './states/isAuthenticated/isAuthenticated.reducers';
 import { LogoutComponent } from './pages/logout/logout.component';
+import { HttpClientModule } from '@angular/common/http';
+import { NotFoundComponent } from './pages/not-found/not-found.component';
+import { ToastrModule } from 'ngx-toastr';
 
 @NgModule({
   declarations: [
@@ -22,6 +26,7 @@ import { LogoutComponent } from './pages/logout/logout.component';
     NavbarComponent,
     HomeComponent,
     LogoutComponent,
+    NotFoundComponent,
   ],
   imports: [
     BrowserModule,
@@ -32,6 +37,9 @@ import { LogoutComponent } from './pages/logout/logout.component';
     }),
     FontAwesomeModule,
     ReactiveFormsModule,
+    HttpClientModule,
+    ToastrModule.forRoot(),
+    BrowserAnimationsModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

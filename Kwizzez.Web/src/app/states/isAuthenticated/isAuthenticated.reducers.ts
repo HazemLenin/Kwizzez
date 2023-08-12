@@ -2,7 +2,7 @@ import { createReducer, on } from '@ngrx/store';
 import { login, logout } from './isAuthenticated.actions';
 
 export const isAuthenticatedReducer = createReducer(
-  false,
+  !!localStorage.getItem('token'),
   on(login, (state) => true),
   on(logout, (state) => false)
 );

@@ -2,6 +2,10 @@
   <form [formGroup]="loginForm" (submit)="login()" novalidate class="form">
     <h1 class="text-4xl mb-6">Login</h1>
 
+    <p class="text-danger" *ngIf="error">
+      {{ error }}
+    </p>
+
     <div class="form-group">
       <label for="email" class="form-label">Email/Username</label>
       <input type="text" formControlName="email" class="form-control" />
