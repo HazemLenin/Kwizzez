@@ -99,7 +99,9 @@ namespace Kwizzez.DAL.Services.Users
         {
             var actualUser = _userManager.GetUserAsync(user).Result;
 
-            return _mapper.Map<UserDto>(actualUser);
+            var userDto = _mapper.Map<UserDto>(actualUser);
+            userDto.Roles = (List<string>)_userManager.GetRolesAsync(actualUser).Result;
+            return userDto;
         }
     }
 }

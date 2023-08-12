@@ -1,6 +1,10 @@
 <header class="bg-primary text-white h-16 flex items-center px-5">
   <nav class="flex gap-5">
     <a routerLink="/">Home</a>
-    <a routerLink="/login">Login</a>
+  </nav>
+  <nav class="flex gap-5 ml-auto">
+    <a routerLink="/logout" *ngIf="isAuthenticated$ | async">Logout</a>
+    <a routerLink="/login" *ngIf="!(isAuthenticated$ | async)">Login</a>
+    <a routerLink="/signup" *ngIf="!(isAuthenticated$ | async)">Signup</a>
   </nav>
 </header>

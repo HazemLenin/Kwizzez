@@ -16,6 +16,11 @@ module.exports = {
         DEFAULT: colors.slate["400"],
         dark: colors.slate["600"],
       },
+      danger: {
+        light: colors.red["200"],
+        DEFAULT: colors.red["500"],
+        dark: colors.red["600"],
+      },
       dark: colors.slate["400"],
       black: colors.black,
       white: colors.white,
