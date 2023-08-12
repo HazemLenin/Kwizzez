@@ -12,8 +12,7 @@ namespace Kwizzez.DAL.Services.Quizzes
 {
     public interface IQuizzesService
     {
-        List<QuizDto> GetAllQuizzes(QueryFilter<Quiz> queryFilter);
-        PaginatedList<QuizDto> GetPaginatedQuizzes(QueryFilter<Quiz> queryFilter, int pageIndex, int pageSize);
+        PaginatedList<QuizDto> GetPaginatedQuizzes(int pageIndex, int pageSize);
         QuizDto? GetQuizById(string code);
         QuizDto? GetQuizByCode(int code);
         void AddQuiz(QuizDto quizDto);

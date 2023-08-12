@@ -33,12 +33,7 @@ namespace Kwizzez.Api.Controllers
         [HttpGet]
         public ActionResult<ApiPaginatedResponse<PaginatedList<QuizDto>>> GetQuizzes(int pageNumber = 1, int pageSize = 10)
         {
-            var quizzes = _quizzesService.GetPaginatedQuizzes(new()
-            {
-                OrderExpression = quizzes => quizzes.OrderByDescending(q => q.CreatedAt),
-            },
-            pageNumber,
-            pageSize);
+            var quizzes = _quizzesService.GetPaginatedQuizzes(pageNumber, pageSize);
 
             return new ApiPaginatedResponse<PaginatedList<QuizDto>>()
             {

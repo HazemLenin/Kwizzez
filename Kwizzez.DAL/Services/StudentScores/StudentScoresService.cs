@@ -40,15 +40,16 @@ namespace Kwizzez.DAL.Services.StudentScores
             _unitOfWork.studentScoresRepository.DeleteRange(studentScores);
         }
 
-        public PaginatedList<StudentScoreDto> GetPaginatedStudentScore(QueryFilter<StudentScore> queryFilter, int pageNumber, int pageSize)
+        public PaginatedList<StudentScoreDto> GetPaginatedStudentScore(int pageNumber, int pageSize)
         {
-            var scores = _unitOfWork.studentScoresRepository.GetAll(queryFilter);
+            var scores = _unitOfWork.studentScoresRepository
+                .GetAll(new()
+                {
+                    OrderExpression = scores => scores.OrderByDescending(s => s.CreatedAt)
+                })
+                .Select(q => _mapper.Map<StudentScoreDto>(q));
 
-            var paginatedScores = PaginatedList<StudentScore>.Create(scores, pageNumber, pageSize);
-
-            var scoresDtos = paginatedScores.Select(q => _mapper.Map<StudentScoreDto>(q)).ToList();
-
-            return new(scoresDtos, scores.Count(), pageNumber, pageSize);
+            return PaginatedList<StudentScoreDto>.Create(scores, pageNumber, pageSize);
         }
 
         public StudentScoreDto GetStudentScoreById(string id, string includeProperties = "")

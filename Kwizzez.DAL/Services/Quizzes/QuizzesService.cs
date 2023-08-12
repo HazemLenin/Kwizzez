@@ -47,22 +47,16 @@ namespace Kwizzez.DAL.Services.Quizzes
             _unitOfWork.Save();
         }
 
-        public List<QuizDto> GetAllQuizzes(QueryFilter<Quiz> queryFilter)
+        public PaginatedList<QuizDto> GetPaginatedQuizzes(int pageNumber, int pageSize)
         {
-            var quizzes = _unitOfWork.quizzesRepository.GetAll(queryFilter);
+            var quizzes = _unitOfWork.quizzesRepository
+                .GetAll(new()
+                {
+                    OrderExpression = quizzes => quizzes.OrderByDescending(q => q.CreatedAt)
+                })
+                .Select(q => _mapper.Map<QuizDto>(q));
 
-            return _mapper.Map<List<QuizDto>>(quizzes);
-        }
-
-        public PaginatedList<QuizDto> GetPaginatedQuizzes(QueryFilter<Quiz> queryFilter, int pageNumber, int pageSize)
-        {
-            var quizzes = _unitOfWork.quizzesRepository.GetAll(queryFilter);
-
-            var paginatedQuizzes = PaginatedList<Quiz>.Create(quizzes, pageNumber, pageSize);
-
-            var quizzesDtos = paginatedQuizzes.Select(q => _mapper.Map<QuizDto>(q)).ToList();
-
-            return new(quizzesDtos, quizzes.Count(), pageNumber, pageSize);
+            return PaginatedList<QuizDto>.Create(quizzes, pageNumber, pageSize);
         }
 
         public QuizDto? GetQuizById(string id)

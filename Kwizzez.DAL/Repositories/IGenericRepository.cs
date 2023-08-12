@@ -10,7 +10,8 @@ namespace Kwizzez.DAL.Repositories
 {
     public interface IGenericRepository<T> where T : Base
     {
-        IQueryable<T> GetAll(QueryFilter<T> queryFilter);
+        IQueryable<T> GetAll();
+        IQueryable<T> GetAll(QueryFilter<T>? queryFilter);
         T? GetById(string id, string includeProperties = "");
         void Add(T entity);
         void AddRange(IEnumerable<T> entities);

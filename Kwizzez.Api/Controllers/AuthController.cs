@@ -22,6 +22,14 @@ namespace Kwizzez.Api.Controllers
             _usersService = usersService;
         }
 
+        // GET: api/Auth/Profile
+        [HttpGet("Profile")]
+        [Authorize]
+        public ApiResponse<UserDto> Profile() => new()
+        {
+            Data = _usersService.GetLoggedInUser(User)
+        };
+
         // POST: api/Auth/Signup
         [HttpPost("Signup")]
         public async Task<ApiResponse<AuthDto>> Signup(RegisterDto registerDto)

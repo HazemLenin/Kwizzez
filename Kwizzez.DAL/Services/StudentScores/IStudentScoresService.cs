@@ -12,7 +12,7 @@ namespace Kwizzez.DAL.Services.StudentScores
 {
     public interface IStudentScoresService
     {
-        PaginatedList<StudentScoreDto> GetPaginatedStudentScore(QueryFilter<StudentScore> queryFilter, int pageNumber, int pageSize);
+        PaginatedList<StudentScoreDto> GetPaginatedStudentScore(int pageNumber, int pageSize);
         StudentScoreDto GetStudentScoreById(string id, string includeProperties = "");
         void AddStudentScore(StudentScoreDto studentScoreDto);
         void UpdateStudentScore(StudentScoreDto studentScoreDto);
