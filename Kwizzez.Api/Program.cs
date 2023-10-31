@@ -39,19 +39,20 @@ builder.Services
         options.SaveToken = true;
         options.TokenValidationParameters = new TokenValidationParameters()
         {
-            ValidateIssuerSigningKey = bool.Parse(builder.Configuration["JsonWebTokenKeys:ValidateIssuerSigningKey"]),
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JsonWebTokenKeys:IssuerSigningKey"])),
+            ValidateIssuerSigningKey = bool.Parse(builder.Configuration["JsonWebTokenKeys:ValidateIssuerSigningKey"] ?? "false"),
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JsonWebTokenKeys:IssuerSigningKey"] ?? "")),
 
-            ValidateIssuer = bool.Parse(builder.Configuration["JsonWebTokenKeys:ValidateIssuer"]),
+            ValidateIssuer = bool.Parse(builder.Configuration["JsonWebTokenKeys:ValidateIssuer"] ?? "false"),
             ValidIssuer = builder.Configuration["JsonWebTokenKeys:ValidIssuer"],
 
             ValidAudience = builder.Configuration["JsonWebTokenKeys:ValidAudience"],
-            ValidateAudience = bool.Parse(builder.Configuration["JsonWebTokenKeys:ValidateAudience"]),
+            ValidateAudience = bool.Parse(builder.Configuration["JsonWebTokenKeys:ValidateAudience"] ?? "false"),
 
-            RequireExpirationTime = bool.Parse(builder.Configuration["JsonWebTokenKeys:RequireExpirationTime"]),
-            ValidateLifetime = bool.Parse(builder.Configuration["JsonWebTokenKeys:ValidateLifetime"]),
+            RequireExpirationTime = bool.Parse(builder.Configuration["JsonWebTokenKeys:RequireExpirationTime"] ?? "false"),
+            ValidateLifetime = bool.Parse(builder.Configuration["JsonWebTokenKeys:ValidateLifetime"] ?? "false"),
         };
 
+        // SignalR authorization
         //options.Events = new JwtBearerEvents
         //{
         //    OnMessageReceived = context =>
@@ -105,7 +106,7 @@ builder.Services.AddSwaggerGen(c =>
             new OpenApiSecurityScheme {
                 Reference = new OpenApiReference {
                     Type = ReferenceType.SecurityScheme,
-                        Id = "Bearer"
+                    Id = "Bearer"
                 }
             },
             new string[] {}

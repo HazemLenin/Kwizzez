@@ -42,7 +42,6 @@ export class LoginComponent {
       this.authService
         .login(this.email?.value ?? '', this.password?.value ?? '')
         .subscribe((response) => {
-          console.log(response);
           if (response.isSucceed) {
             localStorage.setItem('token', response.data.token);
             this.store.dispatch(login());
