@@ -14,9 +14,12 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { userReducer } from './states/user/user.reducers';
 import { isAuthenticatedReducer } from './states/isAuthenticated/isAuthenticated.reducers';
 import { LogoutComponent } from './pages/logout/logout.component';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { ToastrModule } from 'ngx-toastr';
+import { TokenRefreshInterceptor } from './interceptors/token-refresh.interceptor';
+import { SecretComponent } from './pages/secret/secret.component';
+import { UnauthorizedComponent } from './pages/unauthorized/unauthorized.component';
 
 @NgModule({
   declarations: [
@@ -27,6 +30,8 @@ import { ToastrModule } from 'ngx-toastr';
     HomeComponent,
     LogoutComponent,
     NotFoundComponent,
+    SecretComponent,
+    UnauthorizedComponent,
   ],
   imports: [
     BrowserModule,
@@ -41,7 +46,13 @@ import { ToastrModule } from 'ngx-toastr';
     ToastrModule.forRoot(),
     BrowserAnimationsModule,
   ],
-  providers: [],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: TokenRefreshInterceptor,
+      multi: true,
+    },
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

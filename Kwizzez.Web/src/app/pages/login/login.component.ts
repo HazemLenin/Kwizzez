@@ -44,6 +44,7 @@ export class LoginComponent {
         .subscribe((response) => {
           if (response.isSucceed) {
             localStorage.setItem('token', response.data.token);
+            localStorage.setItem('refreshToken', response.data.refreshToken);
             this.store.dispatch(login());
             this.router.navigate(['']);
           } else {

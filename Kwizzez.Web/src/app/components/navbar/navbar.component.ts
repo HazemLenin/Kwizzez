@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-navbar',
@@ -10,7 +10,7 @@ import { Observable } from 'rxjs';
 export class NavbarComponent {
   isAuthenticated$: Observable<boolean>;
 
-  constructor(private store: Store<{ isAuthenticated: boolean }>) {
-    this.isAuthenticated$ = store.select('isAuthenticated');
+  constructor(private authService: AuthService) {
+    this.isAuthenticated$ = authService.isAuthenticated();
   }
 }

@@ -2,9 +2,9 @@
   <form [formGroup]="signupForm" (submit)="signup()" novalidate class="form">
     <h1 class="text-4xl mb-6">Signup</h1>
 
-    <p class="text-danger" *ngIf="error">
-      {{ error }}
-    </p>
+    <ul class="text-danger list-disc" *ngIf="errors">
+      <li *ngFor="let error of errors">{{ error }}</li>
+    </ul>
 
     <div class="form-group">
       <label for="email" class="form-label">Email</label>
@@ -66,15 +66,17 @@
     </div>
 
     <div class="form-group">
-      <label for="isTeacher" class="form-label">Is Teacher</label>
-      <input type="checkbox" formControlName="isTeacher" class="form-control" />
-      <div
-        *ngIf="isTeacher?.invalid && (isTeacher?.dirty || isTeacher?.touched)"
-      >
-        <p class="text-danger" *ngIf="isTeacher?.errors?.['required']">
-          Is teacher is required.
-        </p>
-      </div>
+      <label class="relative inline-flex items-center cursor-pointer">
+        <input
+          type="checkbox"
+          formControlName="isTeacher"
+          class="sr-only peer"
+        />
+        <div
+          class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary dark:peer-focus:ring-primary rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"
+        ></div>
+        <span class="ml-3 text-sm font-medium">Teacher Account</span>
+      </label>
     </div>
 
     <div class="form-group">
@@ -83,6 +85,30 @@
       <div *ngIf="password?.invalid && (password?.dirty || password?.touched)">
         <p class="text-danger" *ngIf="password?.errors?.['required']">
           Password is required.
+        </p>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="passwordConfirmation" class="form-label"
+        >Password Confirmation</label
+      >
+      <input
+        type="password"
+        formControlName="passwordConfirmation"
+        class="form-control"
+      />
+      <div
+        *ngIf="
+          passwordConfirmation?.invalid &&
+          (passwordConfirmation?.dirty || passwordConfirmation?.touched)
+        "
+      >
+        <p
+          class="text-danger"
+          *ngIf="passwordConfirmation?.errors?.['required']"
+        >
+          Password Confirmation is required.
         </p>
       </div>
     </div>

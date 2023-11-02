@@ -19,21 +19,26 @@ export class SignupComponent {
   ) {}
 
   signupForm = this.formBuilder.group({
-    email: ['', Validators.required, Validators.email],
+    email: ['', [Validators.required, Validators.email]],
     password: ['', Validators.required],
+    passwordConfirmation: ['', Validators.required],
     firstName: ['', Validators.required],
     lastName: ['', Validators.required],
     userName: ['', Validators.required],
     dateOfBirth: ['', Validators.required],
-    isTeacher: ['', Validators.required],
+    isTeacher: [false],
   });
 
-  error: string = '';
+  errors: string[] = [];
+
   get email() {
     return this.signupForm.get('email');
   }
   get password() {
     return this.signupForm.get('password');
+  }
+  get passwordConfirmation() {
+    return this.signupForm.get('passwordConfirmation');
   }
   get firstName() {
     return this.signupForm.get('firstName');
@@ -52,7 +57,11 @@ export class SignupComponent {
   }
 
   signup() {
-    if (this.signupForm.valid) {
+    this.errors = [];
+    this.signupForm.markAllAsTouched();
+    if (this.password?.value !== this.passwordConfirmation?.value) {
+      this.errors = ["Passwords don't match."];
+    } else if (this.signupForm.valid) {
       this.authService
         .signup({
           email: this.email?.value ?? '',
@@ -61,7 +70,7 @@ export class SignupComponent {
           lastName: this.lastName?.value ?? '',
           userName: this.userName?.value ?? '',
           dateOfBirth: new Date(this.dateOfBirth?.value ?? ''),
-          isTeacher: this.isTeacher?.value ?? '',
+          isTeacher: this.isTeacher?.value ?? false,
         })
         .subscribe((response) => {
           if (response.isSucceed) {
@@ -69,7 +78,7 @@ export class SignupComponent {
             this.store.dispatch(login());
             this.router.navigate(['']);
           } else {
-            this.error = response.errors[''];
+            this.errors = Object.values(response.errors);
           }
         });
     }

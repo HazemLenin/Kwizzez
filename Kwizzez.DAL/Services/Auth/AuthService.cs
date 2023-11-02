@@ -119,20 +119,26 @@ namespace Kwizzez.DAL.Services.Auth
             var addPasswordResult = await _userManager.AddPasswordAsync(user, registerUserDto.Password);
 
             if (!addPasswordResult.Succeeded)
+            {
+                await _userManager.DeleteAsync(user);
                 return new()
                 {
                     Errors = GetErrorsFromIdentityResult(addPasswordResult)
                 };
+            }
 
             var addRoleResult = registerUserDto.IsTeacher ?
                 await _userManager.AddToRoleAsync(user, Roles.Teacher) :
                 await _userManager.AddToRoleAsync(user, Roles.Student);
 
             if (!addRoleResult.Succeeded)
+            {
+                await _userManager.DeleteAsync(user);
                 return new()
                 {
                     Errors = GetErrorsFromIdentityResult(addRoleResult)
                 };
+            }
 
 
             return await GenerateUserTokens(user);

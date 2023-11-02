@@ -5,5 +5,5 @@ export default interface RegistrationModel {
   lastName: String;
   userName: String;
   dateOfBirth: Date;
-  isTeacher: String;
+  isTeacher: Boolean;
 }

@@ -5,12 +5,24 @@ import { LoginComponent } from './pages/login/login.component';
 import { SignupComponent } from './pages/signup/signup.component';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { LogoutComponent } from './pages/logout/logout.component';
+import { SecretComponent } from './pages/secret/secret.component';
+import { authorizationGuard } from './guards/authorization.guard';
+import { UnauthorizedComponent } from './pages/unauthorized/unauthorized.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'login', component: LoginComponent },
   { path: 'signup', component: SignupComponent },
   { path: 'logout', component: LogoutComponent },
+  {
+    path: 'secret',
+    component: SecretComponent,
+    canActivate: [authorizationGuard],
+  },
+  {
+    path: 'unauthorized',
+    component: UnauthorizedComponent,
+  },
   { path: '**', component: NotFoundComponent },
 ];
 
