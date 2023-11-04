@@ -18,7 +18,6 @@ import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { ToastrModule } from 'ngx-toastr';
 import { TokenRefreshInterceptor } from './interceptors/token-refresh.interceptor';
-import { SecretComponent } from './pages/secret/secret.component';
 import { UnauthorizedComponent } from './pages/unauthorized/unauthorized.component';
 
 @NgModule({
@@ -30,7 +29,6 @@ import { UnauthorizedComponent } from './pages/unauthorized/unauthorized.compone
     HomeComponent,
     LogoutComponent,
     NotFoundComponent,
-    SecretComponent,
     UnauthorizedComponent,
   ],
   imports: [
@@ -45,6 +43,7 @@ import { UnauthorizedComponent } from './pages/unauthorized/unauthorized.compone
     HttpClientModule,
     ToastrModule.forRoot(),
     BrowserAnimationsModule,
+    FontAwesomeModule,
   ],
   providers: [
     {

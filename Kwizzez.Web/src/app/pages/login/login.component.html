@@ -2,16 +2,16 @@
   <form [formGroup]="loginForm" (submit)="login()" novalidate class="form">
     <h1 class="text-4xl mb-6">Login</h1>
 
-    <p class="text-danger" *ngIf="error">
-      {{ error }}
-    </p>
+    <ul class="text-danger list-disc" *ngIf="errors">
+      <li *ngFor="let error of errors">{{ error }}</li>
+    </ul>
 
     <div class="form-group">
       <label for="email" class="form-label">Email/Username</label>
       <input type="text" formControlName="email" class="form-control" />
       <div *ngIf="email?.invalid && (email?.dirty || email?.touched)">
         <p class="text-danger" *ngIf="email?.errors?.['required']">
-          Email is required.
+          Email/Username is required.
         </p>
       </div>
     </div>
@@ -25,6 +25,13 @@
         </p>
       </div>
     </div>
-    <button type="submit" class="btn btn-primary">Submit</button>
+    <button type="submit" class="btn btn-primary">
+      <span *ngIf="!loading">Login</span>
+      <fa-icon
+        *ngIf="loading"
+        [icon]="faCircleNotch"
+        animation="spin"
+      ></fa-icon>
+    </button>
   </form>
 </div>
