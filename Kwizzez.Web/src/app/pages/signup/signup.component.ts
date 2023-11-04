@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { AuthService } from 'src/app/services/auth.service';
 import { login } from 'src/app/states/isAuthenticated/isAuthenticated.actions';
+import { faCircleNotch } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-signup',
@@ -31,6 +32,7 @@ export class SignupComponent {
 
   errors: string[] = [];
   loading: boolean = false;
+  faCircleNotch = faCircleNotch;
 
   get email() {
     return this.signupForm.get('email');

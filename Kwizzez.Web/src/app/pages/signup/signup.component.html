@@ -112,6 +112,13 @@
         </p>
       </div>
     </div>
-    <button type="submit" class="btn btn-primary">Submit</button>
+    <button type="submit" class="btn btn-primary">
+      <span *ngIf="!loading">Signup</span>
+      <fa-icon
+        *ngIf="loading"
+        [icon]="faCircleNotch"
+        animation="spin"
+      ></fa-icon>
+    </button>
   </form>
 </div>
