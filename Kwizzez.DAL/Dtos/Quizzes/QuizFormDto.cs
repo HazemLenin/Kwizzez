@@ -22,6 +22,8 @@ namespace Kwizzez.DAL.Dtos.Quizzes
         public DateTime PublishDate { get; set; }
         [Required]
         public DateTime ExpirationDate { get; set; }
+        [Required]
+        public bool IsPublic { get; set; }
         public List<QuestionFormDto>? Questions { get; set; }
     }
 }

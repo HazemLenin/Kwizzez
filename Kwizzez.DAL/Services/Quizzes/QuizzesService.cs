@@ -52,6 +52,7 @@ namespace Kwizzez.DAL.Services.Quizzes
             var quizzes = _unitOfWork.quizzesRepository
                 .GetAll(new()
                 {
+                    Filter = q => q.IsPublic,
                     OrderExpression = quizzes => quizzes.OrderByDescending(q => q.CreatedAt)
                 })
                 .Select(q => _mapper.Map<QuizDto>(q));

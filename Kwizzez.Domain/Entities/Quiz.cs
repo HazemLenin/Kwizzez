@@ -17,6 +17,7 @@ namespace Kwizzez.Domain.Entities
         public int Code { get; set; } = new Random().Next(1000000, 9999999);
         public int Score { get; set; }
         public string ApplicationUserId { get; set; }
+        public bool IsPublic { get; set; } = true;
 
         // Navigation Props
 
