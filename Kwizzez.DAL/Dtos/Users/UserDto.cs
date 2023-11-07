@@ -20,7 +20,7 @@ namespace Kwizzez.DAL.Dtos.Users
 
         // Navigation Props
 
-        public List<QuizDto>? Quizzes { get; set; }
+        public List<QuizDetailedDto>? Quizzes { get; set; }
         public List<StudentScoreDto>? StudentScores { get; set; }
     }
 }

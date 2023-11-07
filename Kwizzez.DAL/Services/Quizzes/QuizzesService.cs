@@ -10,6 +10,8 @@ using Kwizzez.DAL.Repositories;
 using Kwizzez.DAL.UnitOfWork;
 using Kwizzez.DAL.Utilities;
 using Kwizzez.Domain.Entities;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace Kwizzez.DAL.Services.Quizzes
 {
@@ -17,29 +19,31 @@ namespace Kwizzez.DAL.Services.Quizzes
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        public QuizzesService(IUnitOfWork unitOfWork, IMapper mapper)
+        private readonly UserManager<ApplicationUser> _userManager;
+        public QuizzesService(IUnitOfWork unitOfWork, IMapper mapper, UserManager<ApplicationUser> userManager)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _userManager = userManager;
         }
 
-        public void AddQuiz(QuizDto quizDto)
+        public void AddQuiz(QuizDetailedDto QuizDetailedDto)
         {
-            var quiz = _mapper.Map<Quiz>(quizDto);
+            var quiz = _mapper.Map<Quiz>(QuizDetailedDto);
 
             _unitOfWork.quizzesRepository.Add(quiz);
             _unitOfWork.Save();
         }
 
-        public void DeleteQuiz(QuizDto quizDto)
+        public void DeleteQuiz(QuizDetailedDto QuizDetailedDto)
         {
-            var quiz = _mapper.Map<Quiz>(quizDto);
+            var quiz = _mapper.Map<Quiz>(QuizDetailedDto);
 
             _unitOfWork.quizzesRepository.Delete(quiz);
             _unitOfWork.Save();
         }
 
-        public void DeleteQuizzes(IEnumerable<QuizDto> quizzesDtos)
+        public void DeleteQuizzes(IEnumerable<QuizDetailedDto> quizzesDtos)
         {
             var quizzes = _mapper.Map<List<Quiz>>(quizzesDtos);
 
@@ -49,37 +53,51 @@ namespace Kwizzez.DAL.Services.Quizzes
 
         public PaginatedList<QuizDto> GetPaginatedQuizzes(int pageNumber, int pageSize)
         {
-            var quizzes = _unitOfWork.quizzesRepository
-                .GetAll(new()
-                {
-                    Filter = q => q.IsPublic,
-                    OrderExpression = quizzes => quizzes.OrderByDescending(q => q.CreatedAt)
-                })
-                .Select(q => _mapper.Map<QuizDto>(q));
+            // var quizzes = _unitOfWork.quizzesRepository
+            //     .GetAll(new()
+            //     {
+            //         Filter = q => q.IsPublic,
+            //         OrderExpression = quizzes => quizzes.OrderByDescending(q => q.CreatedAt)
+            //     })
+            //     .Select(q => _mapper.Map<QuizDto>(q));
+            var quizzes = from quiz in _unitOfWork.quizzesRepository.GetAll()
+                          join teacher in _userManager.Users
+                          on quiz.ApplicationUserId equals teacher.Id
+                          where quiz.IsPublic &&
+                                teacher.IsActive
+                          orderby quiz.CreatedAt descending
+                          select new QuizDto()
+                          {
+                              Title= quiz.Title,
+                              Score= quiz.Score,
+                              QuestionsNumber= quiz.QuestionsNumber,
+                              TeacherId= quiz.ApplicationUserId,
+                              TeacherName= $"{teacher.FirstName} {teacher.LastName}",
+                          };
 
             return PaginatedList<QuizDto>.Create(quizzes, pageNumber, pageSize);
         }
 
-        public QuizDto? GetQuizById(string id)
+        public QuizDetailedDto? GetQuizById(string id)
         {
             var quiz = _unitOfWork.quizzesRepository.GetById(id);
 
-            return _mapper.Map<QuizDto>(quiz);
+            return _mapper.Map<QuizDetailedDto>(quiz);
         }
 
-        public QuizDto? GetQuizByCode(int code)
+        public QuizDetailedDto? GetQuizByCode(int code)
         {
             var quiz = _unitOfWork.quizzesRepository.GetAll(new()
             {
                 Filter = q => q.Code == code
             }).FirstOrDefault();
 
-            return _mapper.Map<QuizDto>(quiz);
+            return _mapper.Map<QuizDetailedDto>(quiz);
         }
 
-        public void UpdateQuiz(QuizDto quizDto)
+        public void UpdateQuiz(QuizDetailedDto QuizDetailedDto)
         {
-            var quiz = _mapper.Map<Quiz>(quizDto);
+            var quiz = _mapper.Map<Quiz>(QuizDetailedDto);
 
             _unitOfWork.quizzesRepository.Update(quiz);
             _unitOfWork.Save();

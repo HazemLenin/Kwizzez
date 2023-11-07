@@ -15,19 +15,9 @@ namespace Kwizzez.DAL.Dtos.Quizzes
     public class QuizDto : BaseDto
     {
         public string Title { get; set; }
-        public bool HasLimitedTime { get; set; }
-        public TimeSpan? TimeLimit { get; set; }
-        public long? TimeLimitTicks => TimeLimit.HasValue ? TimeLimit.Value.Ticks : null;
-        public DateTime PublishDate { get; set; }
-        public DateTime ExpirationDate { get; set; }
-        public int Code { get; set; }
         public int Score { get; set; }
+        public int QuestionsNumber { get; set; }
         public string TeacherId { get; set; }
-
-        // Navigation Props
-
-        public UserDto? Teacher { get; set; }
-        public List<QuestionDto>? Questions { get; set; }
-        public List<StudentScoreDto>? StudentScores { get; set; }
+        public string TeacherName { get; set; }
     }
 }

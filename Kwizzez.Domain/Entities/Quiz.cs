@@ -18,6 +18,7 @@ namespace Kwizzez.Domain.Entities
         public int Score { get; set; }
         public string ApplicationUserId { get; set; }
         public bool IsPublic { get; set; } = true;
+        public int QuestionsNumber { get; set; }
 
         // Navigation Props
 
