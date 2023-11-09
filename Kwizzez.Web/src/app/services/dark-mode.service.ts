@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
   providedIn: 'root',
 })
 export class DarkModeService {
-  private isDarkMode = !!localStorage.getItem('darkMode');
+  private isDarkMode = JSON.parse(localStorage.getItem('darkMode') ?? 'false');
 
   toggleDarkMode() {
     this.isDarkMode = !this.isDarkMode;

@@ -19,6 +19,8 @@ import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { ToastrModule } from 'ngx-toastr';
 import { TokenRefreshInterceptor } from './interceptors/token-refresh.interceptor';
 import { UnauthorizedComponent } from './pages/unauthorized/unauthorized.component';
+import { QuizComponent } from './components/home/quiz/quiz.component';
+import { FooterComponent } from './components/footer/footer.component';
 
 @NgModule({
   declarations: [
@@ -30,6 +32,8 @@ import { UnauthorizedComponent } from './pages/unauthorized/unauthorized.compone
     LogoutComponent,
     NotFoundComponent,
     UnauthorizedComponent,
+    QuizComponent,
+    FooterComponent,
   ],
   imports: [
     BrowserModule,

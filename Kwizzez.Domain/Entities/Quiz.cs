@@ -19,6 +19,7 @@ namespace Kwizzez.Domain.Entities
         public string ApplicationUserId { get; set; }
         public bool IsPublic { get; set; } = true;
         public int QuestionsNumber { get; set; }
+        public string? Description { get; set; }
 
         // Navigation Props
 

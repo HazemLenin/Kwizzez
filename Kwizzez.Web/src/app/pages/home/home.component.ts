@@ -17,7 +17,7 @@ export class HomeComponent implements OnInit {
   ngOnInit() {
     this.quizzesService.getQuizzes(1).subscribe((response) => {
       this.loading = false;
-      if (response.isSuccess) {
+      if (response.isSucceed) {
         this.quizzes = response.data;
       }
     });

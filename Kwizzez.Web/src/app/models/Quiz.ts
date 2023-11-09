@@ -5,4 +5,5 @@ export default interface Quiz {
   questionsNumber: Number;
   teacherId: String;
   teacherName: String;
+  description: String;
 }
