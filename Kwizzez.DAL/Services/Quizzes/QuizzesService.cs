@@ -5,7 +5,10 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
+using Kwizzez.DAL.Dtos.Questions;
 using Kwizzez.DAL.Dtos.Quizzes;
+using Kwizzez.DAL.Dtos.StudentScores;
+using Kwizzez.DAL.Dtos.Users;
 using Kwizzez.DAL.Repositories;
 using Kwizzez.DAL.UnitOfWork;
 using Kwizzez.DAL.Utilities;
@@ -138,17 +141,18 @@ namespace Kwizzez.DAL.Services.Quizzes
 
         public QuizDetailedDto? GetQuizById(string id)
         {
-            var quiz = _unitOfWork.quizzesRepository.GetById(id);
+            var quiz = _unitOfWork.quizzesRepository.GetAll(new() {
+                IncludeProperties = "Teacher,Questions,StudentScores"
+            }).FirstOrDefault(q => q.Id == id);
 
             return _mapper.Map<QuizDetailedDto>(quiz);
         }
 
         public QuizDetailedDto? GetQuizByCode(int code)
         {
-            var quiz = _unitOfWork.quizzesRepository.GetAll(new()
-            {
-                Filter = q => q.Code == code
-            }).FirstOrDefault();
+            var quiz = _unitOfWork.quizzesRepository.GetAll(new() {
+                IncludeProperties = "Teacher,Questions,StudentScores"
+            }).FirstOrDefault(q => q.Code == code);
 
             return _mapper.Map<QuizDetailedDto>(quiz);
         }
@@ -171,9 +175,26 @@ namespace Kwizzez.DAL.Services.Quizzes
 
         public QuizInfoDto? GetQuizInfo(string id)
         {
-            var quiz = _unitOfWork.quizzesRepository.GetById(id);
+            var quiz = (from q in _unitOfWork.quizzesRepository.GetAll()
+                        join t in _userManager.Users
+                        on q.ApplicationUserId equals t.Id
+                        where q.Id == id
+                        orderby q.CreatedAt descending
+                        select new QuizInfoDto()
+                        {
+                            Title = q.Title,
+                            Score = q.Score,
+                            QuestionsNumber = q.QuestionsNumber,
+                            TeacherId = q.ApplicationUserId,
+                            TeacherName = $"{t.FirstName} {t.LastName}",
+                            Description = q.Description,
+                            HasLimitedTime = q.HasLimitedTime,
+                            TimeLimit = q.TimeLimit,
+                            PublishDate = q.PublishDate,
+                            ExpirationDate = q.ExpirationDate,
+                        }).FirstOrDefault();
 
-            return _mapper.Map<QuizInfoDto>(quiz);
+            return quiz;
         }
     }
 }
