@@ -6,10 +6,32 @@
 
 <div>
   <div
-    class="rounded-3xl from-primary to-primary-light bg-gradient-to-r mb-5 w-full h-60 p-5 text-white"
+    class="rounded-3xl from-primary-dark to-primary-light bg-gradient-to-tr mb-5 w-full h-60 p-5 text-white"
   >
     <h1 class="text-4xl bold">Kwizzez</h1>
-    <p></p>
+    <p
+      *ngIf="
+        (isAuthenticated$ | async) &&
+        (user$ | async)?.roles?.includes('Student')
+      "
+    >
+      Student Mode
+    </p>
+    <p
+      *ngIf="
+        (isAuthenticated$ | async) &&
+        (user$ | async)?.roles?.includes('Teacher')
+      "
+    >
+      Teacher Mode
+    </p>
+    <p
+      *ngIf="
+        (isAuthenticated$ | async) && (user$ | async)?.roles?.includes('Admin')
+      "
+    >
+      Admin Mode
+    </p>
   </div>
   <h2 class="text-3xl mb-5">Find out new Quizzes!</h2>
   <div *ngIf="loading" class="grid md:grid-cols-3 gap-10">
@@ -19,7 +41,7 @@
     ></div>
   </div>
   <div *ngIf="!loading && quizzes" class="grid md:grid-cols-3 gap-10">
-    <app-quiz *ngFor="let quiz of quizzes" [quiz]="quiz"> </app-quiz>
+    <app-quiz *ngFor="let quiz of quizzes" [quiz]="quiz"></app-quiz>
   </div>
   <h3 class="text-2xl" *ngIf="!loading && !quizzes">
     No Quizzes right now!! :/

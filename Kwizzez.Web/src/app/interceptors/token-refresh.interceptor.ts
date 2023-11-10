@@ -7,10 +7,16 @@ import {
 } from '@angular/common/http';
 import { Observable, catchError, switchMap, throwError } from 'rxjs';
 import { AuthService } from '../services/auth.service';
+import { Store } from '@ngrx/store';
+import Tokens from '../models/Tokens';
+import { login } from '../states/tokens/tokens.actions';
 
 @Injectable()
 export class TokenRefreshInterceptor implements HttpInterceptor {
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private store: Store<{ tokens: Tokens }>
+  ) {}
 
   intercept(
     request: HttpRequest<unknown>,
@@ -19,20 +25,19 @@ export class TokenRefreshInterceptor implements HttpInterceptor {
     return next.handle(request).pipe(
       catchError((err) => {
         if (err.status == 401) {
-          return this.authService.refreshToken().pipe(
+          return this.authService.refreshTokens().pipe(
             switchMap((response: any) => {
-              this.authService.setAccessToken(response.data.token);
-              this.authService.setRefreshToken(response.data.refreshToken);
+              this.store.dispatch(login({ payload: response.data }));
               const newRequest = request.clone({
                 setHeaders: {
-                  Authorization: `Bearer ${this.authService.getAccessToken()}`,
+                  Authorization: `Bearer ${response.data.token}`,
                 },
               });
               return next.handle(newRequest);
             })
           );
         }
-        return throwError(err);
+        return throwError(() => err);
       })
     );
   }

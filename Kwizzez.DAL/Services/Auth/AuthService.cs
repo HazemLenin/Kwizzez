@@ -84,9 +84,10 @@ namespace Kwizzez.DAL.Services.Auth
 
             if (user == null || !await _userManager.CheckPasswordAsync(user, loginDto.Password))
             {
-                Dictionary<string, List<string>> errors = new();
-
-                errors.Add(String.Empty, new() { "Incorrect email/password." });
+                Dictionary<string, List<string>> errors = new()
+                {
+                    { String.Empty, new() { "Incorrect email/password." } }
+                };
 
                 return new()
                 {

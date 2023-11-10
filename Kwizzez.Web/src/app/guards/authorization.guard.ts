@@ -10,7 +10,9 @@ export const authorizationGuard: CanActivateFn = (route, state) => {
   return authService.isAuthenticated().pipe(
     tap((isAuthenticated) => {
       return !isAuthenticated
-        ? router.navigate(['/unauthorized'], { skipLocationChange: true })
+        ? router.navigate(['/login'], {
+            queryParams: { redirectUrl: state.url },
+          })
         : true;
     })
   );

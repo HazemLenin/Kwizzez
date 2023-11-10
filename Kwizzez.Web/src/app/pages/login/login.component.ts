@@ -8,8 +8,9 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { AuthService } from 'src/app/services/auth.service';
-import { login } from 'src/app/states/isAuthenticated/isAuthenticated.actions';
+import { login } from 'src/app/states/tokens/tokens.actions';
 import { faCircleNotch } from '@fortawesome/free-solid-svg-icons';
+import { loadUser } from 'src/app/states/user/user.actions';
 
 @Component({
   selector: 'app-login',
@@ -64,9 +65,8 @@ export class LoginComponent implements OnInit {
           this.email?.enable();
           this.password?.enable();
           if (response.isSucceed) {
-            localStorage.setItem('token', response.data.token);
-            localStorage.setItem('refreshToken', response.data.refreshToken);
-            this.store.dispatch(login());
+            this.store.dispatch(login({ payload: response.data }));
+            this.authService.UpdateUser();
             this.router.navigate([this.redirectUrl]);
           } else {
             this.errors = Object.values(response.errors);

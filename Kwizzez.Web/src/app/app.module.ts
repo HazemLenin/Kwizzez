@@ -12,7 +12,7 @@ import { HomeComponent } from './pages/home/home.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { ReactiveFormsModule } from '@angular/forms';
 import { userReducer } from './states/user/user.reducers';
-import { isAuthenticatedReducer } from './states/isAuthenticated/isAuthenticated.reducers';
+import { tokensReducer } from './states/tokens/tokens.reducers';
 import { LogoutComponent } from './pages/logout/logout.component';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
@@ -40,7 +40,7 @@ import { FooterComponent } from './components/footer/footer.component';
     AppRoutingModule,
     StoreModule.forRoot({
       user: userReducer,
-      isAuthenticated: isAuthenticatedReducer,
+      tokens: tokensReducer,
     }),
     FontAwesomeModule,
     ReactiveFormsModule,

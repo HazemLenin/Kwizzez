@@ -3,8 +3,9 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { AuthService } from 'src/app/services/auth.service';
-import { login } from 'src/app/states/isAuthenticated/isAuthenticated.actions';
+import { login } from 'src/app/states/tokens/tokens.actions';
 import { faCircleNotch } from '@fortawesome/free-solid-svg-icons';
+import Tokens from 'src/app/models/Tokens';
 
 @Component({
   selector: 'app-signup',
@@ -15,7 +16,7 @@ export class SignupComponent {
   constructor(
     private formBuilder: FormBuilder,
     private authService: AuthService,
-    private store: Store<{ isAuthenticated: boolean }>,
+    private store: Store<{ tokens: Tokens }>,
     private router: Router
   ) {}
 
@@ -98,8 +99,7 @@ export class SignupComponent {
           this.isTeacher?.enable();
 
           if (response.isSucceed) {
-            localStorage.setItem('token', response.data.token);
-            this.store.dispatch(login());
+            this.store.dispatch(login({ payload: response.data }));
             this.router.navigate(['']);
           } else {
             this.errors = Object.values(response.errors);

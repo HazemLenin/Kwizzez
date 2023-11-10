@@ -3,6 +3,9 @@
 >
   <nav class="flex gap-5">
     <a routerLink="/">Home</a>
+    <span *ngIf="isAuthenticated$ | async"
+      >Welcome {{ (user$ | async)?.firstName }}</span
+    >
   </nav>
   <nav class="flex gap-5 ml-auto">
     <button (click)="toggleDarkMode()">

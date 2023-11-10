@@ -75,63 +75,63 @@ namespace Kwizzez.DAL.Services.Quizzes
                               TeacherName= $"{teacher.FirstName} {teacher.LastName}",
                           };
 
-            quizzes = new List<QuizDto>(){
-                new() {
-                    Id = "1",
-                    CreatedAt = DateTime.Now,
-                    QuestionsNumber = 3,
-                    Score = 300,
-                    TeacherId = "1",
-                    TeacherName = "teacher 1",
-                    Title = "Quiz 1: about engineering and the software development",
-                    Description = "This is just a description to provide you with essential information  about the quiz and for the clarification about our website.!!",
-                    UpdatedAt = DateTime.Now
-                },
-                new() {
-                    Id = "2",
-                    CreatedAt = DateTime.Now,
-                    QuestionsNumber = 3,
-                    Score = 300,
-                    TeacherId = "1",
-                    TeacherName = "teacher 1",
-                    Title = "Quiz 2: about graphic design and history",
-                    Description = "This is just a description to provide you with essential information  about the quiz and for the clarification about our website.!!",
-                    UpdatedAt = DateTime.Now
-                },
-                new() {
-                    Id = "3",
-                    CreatedAt = DateTime.Now,
-                    QuestionsNumber = 3,
-                    Score = 300,
-                    TeacherId = "1",
-                    TeacherName = "teacher 1",
-                    Title = "Quiz 2: about graphic design and history",
-                    Description = "This is just a description to provide you with essential information  about the quiz and for the clarification about our website.!!",
-                    UpdatedAt = DateTime.Now
-                },
-                new() {
-                    Id = "4",
-                    CreatedAt = DateTime.Now,
-                    QuestionsNumber = 3,
-                    Score = 300,
-                    TeacherId = "1",
-                    TeacherName = "teacher 1",
-                    Title = "Quiz 2: about graphic design and history",
-                    Description = "This is just a description to provide you with essential information  about the quiz and for the clarification about our website.!!",
-                    UpdatedAt = DateTime.Now
-                },
-                new() {
-                    Id = "5",
-                    CreatedAt = DateTime.Now,
-                    QuestionsNumber = 3,
-                    Score = 300,
-                    TeacherId = "1",
-                    TeacherName = "teacher 1",
-                    Title = "Quiz 2: about graphic design and history",
-                    Description = "This is just a description to provide you with essential information  about the quiz and for the clarification about our website.!!",
-                    UpdatedAt = DateTime.Now
-                },
-            }.AsQueryable();
+            // quizzes = new List<QuizDto>(){
+            //     new() {
+            //         Id = "1",
+            //         CreatedAt = DateTime.Now,
+            //         QuestionsNumber = 3,
+            //         Score = 300,
+            //         TeacherId = "1",
+            //         TeacherName = "teacher 1",
+            //         Title = "Quiz 1: about engineering and the software development",
+            //         Description = "This is just a description to provide you with essential information  about the quiz and for the clarification about our website.!!",
+            //         UpdatedAt = DateTime.Now
+            //     },
+            //     new() {
+            //         Id = "2",
+            //         CreatedAt = DateTime.Now,
+            //         QuestionsNumber = 3,
+            //         Score = 300,
+            //         TeacherId = "1",
+            //         TeacherName = "teacher 1",
+            //         Title = "Quiz 2: about graphic design and history",
+            //         Description = "This is just a description to provide you with essential information  about the quiz and for the clarification about our website.!!",
+            //         UpdatedAt = DateTime.Now
+            //     },
+            //     new() {
+            //         Id = "3",
+            //         CreatedAt = DateTime.Now,
+            //         QuestionsNumber = 3,
+            //         Score = 300,
+            //         TeacherId = "1",
+            //         TeacherName = "teacher 1",
+            //         Title = "Quiz 2: about graphic design and history",
+            //         Description = "This is just a description to provide you with essential information  about the quiz and for the clarification about our website.!!",
+            //         UpdatedAt = DateTime.Now
+            //     },
+            //     new() {
+            //         Id = "4",
+            //         CreatedAt = DateTime.Now,
+            //         QuestionsNumber = 3,
+            //         Score = 300,
+            //         TeacherId = "1",
+            //         TeacherName = "teacher 1",
+            //         Title = "Quiz 2: about graphic design and history",
+            //         Description = "This is just a description to provide you with essential information  about the quiz and for the clarification about our website.!!",
+            //         UpdatedAt = DateTime.Now
+            //     },
+            //     new() {
+            //         Id = "5",
+            //         CreatedAt = DateTime.Now,
+            //         QuestionsNumber = 3,
+            //         Score = 300,
+            //         TeacherId = "1",
+            //         TeacherName = "teacher 1",
+            //         Title = "Quiz 2: about graphic design and history",
+            //         Description = "This is just a description to provide you with essential information  about the quiz and for the clarification about our website.!!",
+            //         UpdatedAt = DateTime.Now
+            //     },
+            // }.AsQueryable();
 
             return PaginatedList<QuizDto>.Create(quizzes, pageNumber, pageSize);
         }
@@ -167,6 +167,13 @@ namespace Kwizzez.DAL.Services.Quizzes
             {
                 Filter = q => q.Id == id
             }).Any();
+        }
+
+        public QuizInfoDto? GetQuizInfo(string id)
+        {
+            var quiz = _unitOfWork.quizzesRepository.GetById(id);
+
+            return _mapper.Map<QuizInfoDto>(quiz);
         }
     }
 }

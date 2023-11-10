@@ -1,8 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, map, switchMap } from 'rxjs';
 import RegistrationModel from '../models/RegistrationModel';
 import { Store } from '@ngrx/store';
+import { User } from '../models/User';
+import { loadUser } from '../states/user/user.actions';
+import Tokens from '../models/Tokens';
 
 @Injectable({
   providedIn: 'root',
@@ -10,10 +13,19 @@ import { Store } from '@ngrx/store';
 export class AuthService {
   constructor(
     private http: HttpClient,
-    private store: Store<{ isAuthenticated: boolean }>
-  ) {}
+    private store: Store<{ tokens: Tokens; user: User }>
+  ) {
+    this.getTokens().subscribe((tokens) => {
+      if (tokens != null) {
+        this.refreshToken = tokens?.refreshToken;
+        this.HEADERS = { Authorization: `Bearer ${tokens?.token}` };
+      }
+    });
+  }
+
+  private refreshToken: string;
+  HEADERS = {};
   BASE_URL = 'http://localhost:5221/api';
-  HEADERS = { Authorization: `Bearer ${this.getAccessToken()}` };
 
   login(email: string, password: string): Observable<any> {
     return this.http.post(
@@ -29,33 +41,37 @@ export class AuthService {
     });
   }
 
-  refreshToken() {
+  refreshTokens() {
     return this.http.post(
       `${this.BASE_URL}/Auth/Signup`,
       {
-        refreshToken: this.getRefreshToken(),
+        refreshToken: this.refreshToken,
       },
       { headers: this.HEADERS }
     );
   }
 
-  getAccessToken(): string {
-    return localStorage.getItem('token') as string;
+  getTokens(): Observable<Tokens> {
+    return this.store.select('tokens');
   }
 
-  setAccessToken(token: string) {
-    localStorage.setItem('token', token);
+  getUser(): Observable<User> {
+    return this.store.select('user');
   }
 
-  private getRefreshToken(): string {
-    return localStorage.getItem('refreshToken') as string;
-  }
-
-  setRefreshToken(token: string) {
-    localStorage.setItem('refrsehToken', token);
+  UpdateUser(): void {
+    this.http
+      .get(`${this.BASE_URL}/Auth/Profile`, { headers: this.HEADERS })
+      .subscribe((response: any) => {
+        this.store.dispatch(loadUser({ payload: response.data }));
+      });
   }
 
   isAuthenticated(): Observable<boolean> {
-    return this.store.select('isAuthenticated');
+    return this.getTokens().pipe(
+      map((tokens) => {
+        return tokens == null ? false : true;
+      })
+    );
   }
 }

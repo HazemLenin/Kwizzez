@@ -52,7 +52,26 @@ namespace Kwizzez.Api.Controllers
         {
             var quiz = _quizzesService.GetQuizById(id);
 
+            if (quiz == null)
+                return NotFound();
+
             return new ApiResponse<QuizDetailedDto>()
+            {
+                Data = quiz
+            };
+        }
+
+        // GET: api/Quizzes/GetQuizInfo/{id}/
+        [HttpGet("GetQuizInfo/{id}")]
+        [Authorize(Roles = Roles.Student)]
+        public ActionResult<ApiResponse<QuizInfoDto>> GetQuizInfo(string id)
+        {
+            var quiz = _quizzesService.GetQuizInfo(id);
+
+            if (quiz == null)
+                return NotFound();
+
+            return new ApiResponse<QuizInfoDto>()
             {
                 Data = quiz
             };
@@ -65,6 +84,9 @@ namespace Kwizzez.Api.Controllers
         {
             var quiz = _quizzesService.GetQuizByCode(code);
 
+            if (quiz == null)
+                return NotFound();
+
             return new ApiResponse<QuizDetailedDto>()
             {
                 Data = quiz
@@ -76,6 +98,9 @@ namespace Kwizzez.Api.Controllers
         [Authorize(Roles = Roles.Teacher)]
         public IActionResult PutQuiz(string id, QuizFormDto quizFormDto)
         {
+            if (!_quizzesService.QuizExists(id))
+                return NotFound();
+                
             var QuizDetailedDto = _mapper.Map<QuizDetailedDto>(quizFormDto);
             QuizDetailedDto.TeacherId = User.Identity.Name;
             QuizDetailedDto.Score = QuizDetailedDto.Questions.Sum(q => q.Degree);
