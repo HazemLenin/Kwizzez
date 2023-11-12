@@ -50,10 +50,7 @@ namespace Kwizzez.Api.Controllers
         [Authorize(Roles = Roles.Teacher)]
         public ActionResult<ApiPaginatedResponse<PaginatedList<QuizDto>>> MyQuizzes(int pageNumber = 1, int pageSize = 10)
         {
-            Console.WriteLine("fffffffffffffffffffffffffff");
-            Console.WriteLine(User.Identity.Name);
-            Console.WriteLine("fffffffffffffffffffffffffff");
-            var quizzes = _quizzesService.GetPaginatedUserQuizzes(User.Identity.Name, pageNumber, pageSize);
+            var quizzes = _quizzesService.GetPaginatedUserQuizzes(User.FindFirstValue(ClaimTypes.NameIdentifier), pageNumber, pageSize);
 
             return new ApiPaginatedResponse<PaginatedList<QuizDto>>()
             {
