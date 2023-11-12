@@ -30,6 +30,14 @@ namespace Kwizzez.Api.Controllers
             Data = _usersService.GetLoggedInUser(User)
         };
 
+        // GET: api/Auth/Roles
+        [HttpGet("Roles")]
+        [Authorize]
+        public ApiResponse<List<string>> Roles() => new()
+        {
+            Data = _usersService.GetUserRoles(User)
+        };
+
         // POST: api/Auth/Signup
         [HttpPost("Signup")]
         public async Task<ApiResponse<AuthDto>> Signup(RegisterDto registerDto)

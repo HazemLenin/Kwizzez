@@ -17,5 +17,6 @@ namespace Kwizzez.DAL.Services.Users
         UserDto GetUserByEmail(string email, string includeProperties = "");
         UserDto GetUserByUserName(string userName, string includeProperties = "");
         UserDto GetLoggedInUser(ClaimsPrincipal user);
+        List<string> GetUserRoles(ClaimsPrincipal user);
     }
 }

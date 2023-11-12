@@ -6,6 +6,11 @@
     <span *ngIf="isAuthenticated$ | async"
       >Welcome {{ (user$ | async)?.firstName }}</span
     >
+    <a
+      routerLink="/my-quizzes"
+      *ngIf="(isAuthenticated$ | async) && (isTeacher$ | async)"
+      >My Quizzes</a
+    >
   </nav>
   <nav class="flex gap-5 ml-auto">
     <button (click)="toggleDarkMode()">

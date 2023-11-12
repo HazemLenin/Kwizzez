@@ -6,6 +6,8 @@ import { Store } from '@ngrx/store';
 import { User } from '../models/User';
 import { loadUser } from '../states/user/user.actions';
 import Tokens from '../models/Tokens';
+import { Role } from '../types/Role';
+// import Roles from '../types/Role';
 
 @Injectable({
   providedIn: 'root',
@@ -71,6 +73,22 @@ export class AuthService {
     return this.getTokens().pipe(
       map((tokens) => {
         return tokens == null ? false : true;
+      })
+    );
+  }
+
+  private getUserRoles(): Observable<any> {
+    return this.http.get(`${this.BASE_URL}/Auth/Roles`, {
+      headers: this.HEADERS,
+    });
+  }
+
+  HasRole(role: Role): Observable<boolean> {
+    return this.getUserRoles().pipe(
+      map(({ isSucceed, data }: { isSucceed: Boolean; data: Role[] }) => {
+        if (!isSucceed) return false;
+        if (!data.includes('Teacher')) return false;
+        return true;
       })
     );
   }

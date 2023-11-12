@@ -13,6 +13,7 @@ namespace Kwizzez.DAL.Services.Quizzes
     public interface IQuizzesService
     {
         PaginatedList<QuizDto> GetPaginatedQuizzes(int pageIndex, int pageSize);
+        PaginatedList<QuizDto> GetPaginatedUserQuizzes(string userId, int pageIndex, int pageSize);
         QuizDetailedDto? GetQuizById(string code);
         QuizDetailedDto? GetQuizByCode(int code);
         QuizInfoDto? GetQuizInfo(string id);

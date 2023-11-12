@@ -25,4 +25,10 @@ export class QuizzesService {
       headers: this.HEADERS,
     });
   }
+
+  getCurrentUsersQuizzes(): Observable<any> {
+    return this.http.get(`${this.BASE_URL}/Quizzes/MyQuizzes`, {
+      headers: this.HEADERS,
+    });
+  }
 }

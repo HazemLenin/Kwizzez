@@ -14,12 +14,14 @@ import Tokens from 'src/app/models/Tokens';
 export class NavbarComponent {
   user$: Observable<User>;
   isAuthenticated$: Observable<boolean>;
+  isTeacher$: Observable<boolean>;
 
   constructor(
     private authService: AuthService,
     private darkModeService: DarkModeService
   ) {
     this.isAuthenticated$ = authService.isAuthenticated();
+    this.isTeacher$ = authService.HasRole('Teacher');
     this.user$ = authService.getUser();
   }
 

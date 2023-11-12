@@ -8,6 +8,9 @@ import { LogoutComponent } from './pages/logout/logout.component';
 import { authorizationGuard } from './guards/authorization.guard';
 import { UnauthorizedComponent } from './pages/unauthorized/unauthorized.component';
 import { QuizComponent } from './pages/quiz/quiz.component';
+import { MyQuizzesComponent } from './pages/my-quizzes/my-quizzes.component';
+import { teacherGuard } from './guards/teacher.guard';
+import { ForbiddenComponent } from './pages/forbidden/forbidden.component';
 
 const routes: Routes = [
   {
@@ -32,8 +35,17 @@ const routes: Routes = [
     canActivate: [authorizationGuard],
   },
   {
+    path: 'my-quizzes',
+    component: MyQuizzesComponent,
+    canActivate: [authorizationGuard, teacherGuard],
+  },
+  {
     path: 'unauthorized',
     component: UnauthorizedComponent,
+  },
+  {
+    path: 'forbidden',
+    component: ForbiddenComponent,
   },
   {
     path: 'notFound',

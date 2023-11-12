@@ -103,5 +103,11 @@ namespace Kwizzez.DAL.Services.Users
             userDto.Roles = (List<string>)_userManager.GetRolesAsync(actualUser).Result;
             return userDto;
         }
+
+        public List<string> GetUserRoles(ClaimsPrincipal user)
+        {
+            var actualUser = _userManager.GetUserAsync(user).Result;
+            return (List<string>)_userManager.GetRolesAsync(actualUser).Result;
+        }
     }
 }

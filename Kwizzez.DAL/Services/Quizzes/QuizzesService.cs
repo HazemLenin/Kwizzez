@@ -196,5 +196,31 @@ namespace Kwizzez.DAL.Services.Quizzes
 
             return quiz;
         }
+
+        public PaginatedList<QuizDto> GetPaginatedUserQuizzes(string userId, int pageNumber, int pageSize)
+        {
+            // var quizzes = _unitOfWork.quizzesRepository
+            //     .GetAll(new()
+            //     {
+            //         Filter = q => q.IsPublic,
+            //         OrderExpression = quizzes => quizzes.OrderByDescending(q => q.CreatedAt)
+            //     })
+            //     .Select(q => _mapper.Map<QuizDto>(q));
+            var quizzes = from quiz in _unitOfWork.quizzesRepository.GetAll()
+                          join teacher in _userManager.Users
+                          on quiz.ApplicationUserId equals teacher.Id
+                          where teacher.Id == userId
+                          orderby quiz.CreatedAt descending
+                          select new QuizDto()
+                          {
+                              Title= quiz.Title,
+                              Score= quiz.Score,
+                              QuestionsNumber= quiz.QuestionsNumber,
+                              TeacherId= quiz.ApplicationUserId,
+                              TeacherName= $"{teacher.FirstName} {teacher.LastName}",
+                          };
+
+            return PaginatedList<QuizDto>.Create(quizzes, pageNumber, pageSize);
+        }
     }
 }

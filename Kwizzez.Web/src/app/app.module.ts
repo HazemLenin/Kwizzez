@@ -21,6 +21,8 @@ import { TokenRefreshInterceptor } from './interceptors/token-refresh.intercepto
 import { UnauthorizedComponent } from './pages/unauthorized/unauthorized.component';
 import { QuizComponent } from './components/home/quiz/quiz.component';
 import { FooterComponent } from './components/footer/footer.component';
+import { MyQuizzesComponent } from './pages/my-quizzes/my-quizzes.component';
+import { ForbiddenComponent } from './pages/forbidden/forbidden.component';
 
 @NgModule({
   declarations: [
@@ -34,6 +36,8 @@ import { FooterComponent } from './components/footer/footer.component';
     UnauthorizedComponent,
     QuizComponent,
     FooterComponent,
+    MyQuizzesComponent,
+    ForbiddenComponent,
   ],
   imports: [
     BrowserModule,

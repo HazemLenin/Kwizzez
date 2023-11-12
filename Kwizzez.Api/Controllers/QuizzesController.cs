@@ -45,6 +45,27 @@ namespace Kwizzez.Api.Controllers
             };
         }
 
+        // GET: api/Quizzes/MyQuizzes
+        [HttpGet("MyQuizzes")]
+        [Authorize(Roles = Roles.Teacher)]
+        public ActionResult<ApiPaginatedResponse<PaginatedList<QuizDto>>> MyQuizzes(int pageNumber = 1, int pageSize = 10)
+        {
+            Console.WriteLine("fffffffffffffffffffffffffff");
+            Console.WriteLine(User.Identity.Name);
+            Console.WriteLine("fffffffffffffffffffffffffff");
+            var quizzes = _quizzesService.GetPaginatedUserQuizzes(User.Identity.Name, pageNumber, pageSize);
+
+            return new ApiPaginatedResponse<PaginatedList<QuizDto>>()
+            {
+                Data = quizzes,
+                PageIndex = quizzes.PageIndex,
+                TotalPages = quizzes.TotalPages,
+                TotalCount = quizzes.TotalCount,
+                HasNext = quizzes.HasNext,
+                HasPrevious = quizzes.HasPrevious
+            };
+        }
+
         // GET: api/Quizzes/{id}
         [HttpGet("{id}")]
         [Authorize(Roles = $"{Roles.Admin},{Roles.Teacher}")]
