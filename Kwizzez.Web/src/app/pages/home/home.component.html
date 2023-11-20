@@ -43,7 +43,7 @@
   <div *ngIf="!loading && quizzes" class="grid md:grid-cols-3 gap-10">
     <app-quiz *ngFor="let quiz of quizzes" [quiz]="quiz"></app-quiz>
   </div>
-  <h3 class="text-2xl" *ngIf="!loading && !quizzes">
+  <h3 class="text-2xl" *ngIf="!loading && !quizzes.length">
     No Quizzes right now!! :/
   </h3>
 </div>

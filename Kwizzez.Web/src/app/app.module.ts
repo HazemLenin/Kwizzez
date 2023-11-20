@@ -23,6 +23,7 @@ import { QuizComponent } from './components/home/quiz/quiz.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { MyQuizzesComponent } from './pages/my-quizzes/my-quizzes.component';
 import { ForbiddenComponent } from './pages/forbidden/forbidden.component';
+import { AddQuizComponent } from './pages/add-quiz/add-quiz.component';
 
 @NgModule({
   declarations: [
@@ -38,6 +39,7 @@ import { ForbiddenComponent } from './pages/forbidden/forbidden.component';
     FooterComponent,
     MyQuizzesComponent,
     ForbiddenComponent,
+    AddQuizComponent,
   ],
   imports: [
     BrowserModule,
@@ -52,6 +54,7 @@ import { ForbiddenComponent } from './pages/forbidden/forbidden.component';
     ToastrModule.forRoot(),
     BrowserAnimationsModule,
     FontAwesomeModule,
+    ReactiveFormsModule,
   ],
   providers: [
     {

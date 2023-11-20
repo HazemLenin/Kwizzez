@@ -131,14 +131,16 @@ namespace Kwizzez.Api.Controllers
         // POST: api/Quizzes
         [HttpPost]
         [Authorize(Roles = Roles.Teacher)]
-        public ActionResult<ApiResponse<QuizDetailedDto>> PostQuiz(QuizFormDto quizFormDto)
+        public ActionResult<ApiResponse<QuizDto>> PostQuiz(QuizFormDto quizFormDto)
         {
             var QuizDetailedDto = _mapper.Map<QuizDetailedDto>(quizFormDto);
             QuizDetailedDto.TeacherId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             QuizDetailedDto.Score = QuizDetailedDto.Questions.Sum(q => q.Degree);
             _quizzesService.AddQuiz(QuizDetailedDto);
 
-            return CreatedAtAction(nameof(GetQuiz), new { id = QuizDetailedDto.Id }, QuizDetailedDto);
+            return CreatedAtAction(nameof(GetQuiz), new { id = QuizDetailedDto.Id }, new ApiResponse<QuizDto>() {
+                Data = _mapper.Map<QuizDto>(quizFormDto)
+            });
         }
 
 

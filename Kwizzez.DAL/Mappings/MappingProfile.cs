@@ -30,8 +30,7 @@ namespace Kwizzez.DAL.Mappings
                 .ReverseMap();
 
             CreateMap<QuizDetailedDto, QuizFormDto>()
-                .ForMember(dest => dest.TimeLimitTicks, src => src.MapFrom(src => src.TimeLimitTicks))
-                .ForMember(dest => dest.TimeLimit, src => src.Ignore());
+                .ForMember(dest => dest.TimeLimitTicks, src => src.MapFrom(src => src.TimeLimitTicks));
 
             CreateMap<QuizFormDto, QuizDetailedDto>()
                 .ForMember(dest => dest.TimeLimit, src => src.MapFrom(src => src.TimeLimitTicks))

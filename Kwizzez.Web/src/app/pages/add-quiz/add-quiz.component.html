@@ -1,0 +1,129 @@
+<div class="flex flex-col items-center gap-10">
+  <form [formGroup]="quizForm" (submit)="addQuiz()" novalidate class="form">
+    <h1 class="text-4xl mb-6">Add Quiz</h1>
+
+    <ul class="text-danger list-disc" *ngIf="errors">
+      <li *ngFor="let error of errors">{{ error }}</li>
+    </ul>
+
+    <div class="form-group">
+      <label for="title" class="form-label">Title</label>
+      <input type="text" formControlName="title" class="form-control" />
+      <div *ngIf="title?.invalid && (title?.dirty || title?.touched)">
+        <p class="text-danger" *ngIf="title?.errors?.['required']">
+          Title is required.
+        </p>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="relative inline-flex items-center cursor-pointer">
+        <input
+          type="checkbox"
+          formControlName="hasLimitedTime"
+          class="sr-only peer"
+        />
+        <div
+          class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary dark:peer-focus:ring-primary rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"
+        ></div>
+        <span class="ml-3 text-sm font-medium">Time Limited</span>
+      </label>
+    </div>
+
+    <div
+      class="form-group flex gap-2 items-center"
+      *ngIf="hasLimitedTime?.value"
+    >
+      <div>
+        <label for="hours">Hours</label>
+        <input type="number" formControlName="hours" class="form-control" />
+        <div *ngIf="hours?.invalid && (hours?.dirty || hours?.touched)">
+          <p class="text-danger" *ngIf="hours?.errors?.['required']">
+            Hours is required.
+          </p>
+          <p class="text-danger" *ngIf="hours?.errors?.['min']">
+            Hours musn't be less than 0.
+          </p>
+        </div>
+      </div>
+      <span>:</span>
+      <div>
+        <label for="minutes">Minutes</label>
+        <input type="number" formControlName="minutes" class="form-control" />
+        <div *ngIf="minutes?.invalid && (minutes?.dirty || minutes?.touched)">
+          <p class="text-danger" *ngIf="minutes?.errors?.['required']">
+            Minutes is required.
+          </p>
+          <p class="text-danger" *ngIf="minutes?.errors?.['max']">
+            Minutes musn't be more than 59.
+          </p>
+          <p class="text-danger" *ngIf="minutes?.errors?.['min']">
+            Minutes musn't be less than 0.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="publishDate" class="form-label">Publish Date</label>
+      <input type="date" formControlName="publishDate" class="form-control" />
+      <div
+        *ngIf="
+          publishDate?.invalid && (publishDate?.dirty || publishDate?.touched)
+        "
+      >
+        <p class="text-danger" *ngIf="publishDate?.errors?.['required']">
+          Publish Date is required.
+        </p>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="expirationDate" class="form-label">Expiration Date</label>
+      <input
+        type="date"
+        formControlName="expirationDate"
+        class="form-control"
+      />
+      <div
+        *ngIf="
+          expirationDate?.invalid &&
+          (expirationDate?.dirty || expirationDate?.touched)
+        "
+      >
+        <p class="text-danger" *ngIf="expirationDate?.errors?.['required']">
+          Expiration Date is required.
+        </p>
+        <p
+          class="text-danger"
+          *ngIf="expirationDate?.errors?.['greaterThanPublishDate']"
+        >
+          Expiration Date greater than publish date.
+        </p>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="relative inline-flex items-center cursor-pointer">
+        <input
+          type="checkbox"
+          formControlName="isPublic"
+          class="sr-only peer"
+        />
+        <div
+          class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary dark:peer-focus:ring-primary rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"
+        ></div>
+        <span class="ml-3 text-sm font-medium">Public</span>
+      </label>
+    </div>
+
+    <button type="submit" class="btn btn-primary">
+      <span *ngIf="!loading">Add</span>
+      <fa-icon
+        *ngIf="loading"
+        [icon]="faCircleNotch"
+        animation="spin"
+      ></fa-icon>
+    </button>
+  </form>
+</div>

@@ -11,6 +11,7 @@ import { QuizComponent } from './pages/quiz/quiz.component';
 import { MyQuizzesComponent } from './pages/my-quizzes/my-quizzes.component';
 import { teacherGuard } from './guards/teacher.guard';
 import { ForbiddenComponent } from './pages/forbidden/forbidden.component';
+import { AddQuizComponent } from './pages/add-quiz/add-quiz.component';
 
 const routes: Routes = [
   {
@@ -37,6 +38,11 @@ const routes: Routes = [
   {
     path: 'my-quizzes',
     component: MyQuizzesComponent,
+    canActivate: [authorizationGuard, teacherGuard],
+  },
+  {
+    path: 'add-quiz',
+    component: AddQuizComponent,
     canActivate: [authorizationGuard, teacherGuard],
   },
   {

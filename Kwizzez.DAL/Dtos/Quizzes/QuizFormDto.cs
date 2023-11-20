@@ -16,8 +16,6 @@ namespace Kwizzez.DAL.Dtos.Quizzes
         public string Title { get; set; }
         public bool HasLimitedTime { get; set; } = false;
         public long? TimeLimitTicks { get; set; }
-        [JsonIgnore]
-        public TimeSpan? TimeLimit => TimeLimitTicks.HasValue ? new(TimeLimitTicks.Value) : null;
         [Required]
         public DateTime PublishDate { get; set; }
         [Required]

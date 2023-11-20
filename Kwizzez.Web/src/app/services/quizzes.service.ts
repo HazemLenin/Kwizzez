@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AuthService } from './auth.service';
 import { Observable } from 'rxjs';
+import QuizForm from '../models/QuizForm';
 
 @Injectable({
   providedIn: 'root',
@@ -28,6 +29,12 @@ export class QuizzesService {
 
   getCurrentUsersQuizzes(): Observable<any> {
     return this.http.get(`${this.BASE_URL}/Quizzes/MyQuizzes`, {
+      headers: this.HEADERS,
+    });
+  }
+
+  addQuiz(quiz: QuizForm): Observable<any> {
+    return this.http.post(`${this.BASE_URL}/Quizzes`, quiz, {
       headers: this.HEADERS,
     });
   }
