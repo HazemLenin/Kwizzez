@@ -24,6 +24,8 @@ import { FooterComponent } from './components/footer/footer.component';
 import { MyQuizzesComponent } from './pages/my-quizzes/my-quizzes.component';
 import { ForbiddenComponent } from './pages/forbidden/forbidden.component';
 import { AddQuizComponent } from './pages/add-quiz/add-quiz.component';
+import { TestComponent } from './pages/test/test.component';
+import { EditQuizComponent } from './pages/edit-quiz/edit-quiz.component';
 
 @NgModule({
   declarations: [
@@ -40,6 +42,8 @@ import { AddQuizComponent } from './pages/add-quiz/add-quiz.component';
     MyQuizzesComponent,
     ForbiddenComponent,
     AddQuizComponent,
+    TestComponent,
+    EditQuizComponent,
   ],
   imports: [
     BrowserModule,

@@ -1,15 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { catchError, throwError } from 'rxjs';
 import Quiz from 'src/app/models/Quiz';
 import { QuizzesService } from 'src/app/services/quizzes.service';
 
 @Component({
-  selector: 'app-quiz',
-  templateUrl: './quiz.component.html',
-  styleUrls: ['./quiz.component.css'],
+  selector: 'app-edit-quiz',
+  templateUrl: './edit-quiz.component.html',
+  styleUrls: ['./edit-quiz.component.css'],
 })
-export class QuizComponent implements OnInit {
+export class EditQuizComponent {
   loading = false;
   quiz: Quiz;
 
@@ -21,7 +21,7 @@ export class QuizComponent implements OnInit {
   ngOnInit(): void {
     this.route.paramMap.subscribe((params) => {
       this.quizzesService
-        .getQuizInfoById(params.get('id') ?? '')
+        .getQuizById(params.get('id') ?? '')
         .pipe(
           catchError((err) => {
             if (err.status === 404) {

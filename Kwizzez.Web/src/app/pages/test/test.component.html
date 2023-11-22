@@ -1,0 +1,15 @@
+<form [formGroup]="form">
+  <input
+    [formControl]="form.controls['title']"
+    class="form-control"
+    placeholder="Title"
+  />
+  <div *ngFor="let skill of form.controls['skills'].controls; let i = index">
+    <input
+      [formControl]="skill.controls['title']"
+      class="form-control"
+      placeholder="Skill {{ i + 1 }}"
+    />
+  </div>
+  <button class="btn btn-primary" (click)="addSkill()">add</button>
+</form>

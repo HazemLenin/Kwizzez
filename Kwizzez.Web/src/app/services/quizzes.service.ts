@@ -21,6 +21,12 @@ export class QuizzesService {
     return this.http.get(`${this.BASE_URL}/Quizzes/`);
   }
 
+  getQuizById(id: string): Observable<any> {
+    return this.http.get(`${this.BASE_URL}/Quizzes/${id}`, {
+      headers: this.HEADERS,
+    });
+  }
+
   getQuizInfoById(id: string): Observable<any> {
     return this.http.get(`${this.BASE_URL}/Quizzes/GetQuizInfo/${id}`, {
       headers: this.HEADERS,

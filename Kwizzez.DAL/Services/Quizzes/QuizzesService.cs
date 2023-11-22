@@ -78,80 +78,22 @@ namespace Kwizzez.DAL.Services.Quizzes
                               TeacherName= $"{teacher.FirstName} {teacher.LastName}",
                           };
 
-            // quizzes = new List<QuizDto>(){
-            //     new() {
-            //         Id = "1",
-            //         CreatedAt = DateTime.Now,
-            //         QuestionsNumber = 3,
-            //         Score = 300,
-            //         TeacherId = "1",
-            //         TeacherName = "teacher 1",
-            //         Title = "Quiz 1: about engineering and the software development",
-            //         Description = "This is just a description to provide you with essential information  about the quiz and for the clarification about our website.!!",
-            //         UpdatedAt = DateTime.Now
-            //     },
-            //     new() {
-            //         Id = "2",
-            //         CreatedAt = DateTime.Now,
-            //         QuestionsNumber = 3,
-            //         Score = 300,
-            //         TeacherId = "1",
-            //         TeacherName = "teacher 1",
-            //         Title = "Quiz 2: about graphic design and history",
-            //         Description = "This is just a description to provide you with essential information  about the quiz and for the clarification about our website.!!",
-            //         UpdatedAt = DateTime.Now
-            //     },
-            //     new() {
-            //         Id = "3",
-            //         CreatedAt = DateTime.Now,
-            //         QuestionsNumber = 3,
-            //         Score = 300,
-            //         TeacherId = "1",
-            //         TeacherName = "teacher 1",
-            //         Title = "Quiz 2: about graphic design and history",
-            //         Description = "This is just a description to provide you with essential information  about the quiz and for the clarification about our website.!!",
-            //         UpdatedAt = DateTime.Now
-            //     },
-            //     new() {
-            //         Id = "4",
-            //         CreatedAt = DateTime.Now,
-            //         QuestionsNumber = 3,
-            //         Score = 300,
-            //         TeacherId = "1",
-            //         TeacherName = "teacher 1",
-            //         Title = "Quiz 2: about graphic design and history",
-            //         Description = "This is just a description to provide you with essential information  about the quiz and for the clarification about our website.!!",
-            //         UpdatedAt = DateTime.Now
-            //     },
-            //     new() {
-            //         Id = "5",
-            //         CreatedAt = DateTime.Now,
-            //         QuestionsNumber = 3,
-            //         Score = 300,
-            //         TeacherId = "1",
-            //         TeacherName = "teacher 1",
-            //         Title = "Quiz 2: about graphic design and history",
-            //         Description = "This is just a description to provide you with essential information  about the quiz and for the clarification about our website.!!",
-            //         UpdatedAt = DateTime.Now
-            //     },
-            // }.AsQueryable();
-
             return PaginatedList<QuizDto>.Create(quizzes, pageNumber, pageSize);
         }
 
         public QuizDetailedDto? GetQuizById(string id)
         {
             var quiz = _unitOfWork.quizzesRepository.GetAll(new() {
-                IncludeProperties = "Teacher,Questions,StudentScores"
+                IncludeProperties = "ApplicationUser,Questions,StudentScores"
             }).FirstOrDefault(q => q.Id == id);
-
+            
             return _mapper.Map<QuizDetailedDto>(quiz);
         }
 
         public QuizDetailedDto? GetQuizByCode(int code)
         {
             var quiz = _unitOfWork.quizzesRepository.GetAll(new() {
-                IncludeProperties = "Teacher,Questions,StudentScores"
+                IncludeProperties = "ApplicationUser,Questions,StudentScores"
             }).FirstOrDefault(q => q.Code == code);
 
             return _mapper.Map<QuizDetailedDto>(quiz);
@@ -192,6 +134,8 @@ namespace Kwizzez.DAL.Services.Quizzes
                             TimeLimit = q.TimeLimit,
                             PublishDate = q.PublishDate,
                             ExpirationDate = q.ExpirationDate,
+                            CreatedAt = q.CreatedAt,
+                            UpdatedAt = q.UpdatedAt
                         }).FirstOrDefault();
 
             return quiz;
@@ -213,11 +157,14 @@ namespace Kwizzez.DAL.Services.Quizzes
                           orderby quiz.CreatedAt descending
                           select new QuizDto()
                           {
+                              Id = quiz.Id,
                               Title= quiz.Title,
                               Score= quiz.Score,
                               QuestionsNumber= quiz.QuestionsNumber,
                               TeacherId= quiz.ApplicationUserId,
                               TeacherName= $"{teacher.FirstName} {teacher.LastName}",
+                              CreatedAt = quiz.CreatedAt,
+                              UpdatedAt = quiz.UpdatedAt
                           };
 
             return PaginatedList<QuizDto>.Create(quizzes, pageNumber, pageSize);
