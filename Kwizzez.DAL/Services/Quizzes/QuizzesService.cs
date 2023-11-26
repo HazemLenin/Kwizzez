@@ -5,6 +5,7 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
+using Kwizzez.DAL.Data;
 using Kwizzez.DAL.Dtos.Questions;
 using Kwizzez.DAL.Dtos.Quizzes;
 using Kwizzez.DAL.Dtos.StudentScores;
@@ -22,52 +23,44 @@ namespace Kwizzez.DAL.Services.Quizzes
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
-        public QuizzesService(IUnitOfWork unitOfWork, IMapper mapper, UserManager<ApplicationUser> userManager)
+        public QuizzesService(IUnitOfWork unitOfWork, IMapper mapper, ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _context = context;
             _userManager = userManager;
         }
 
-        public void AddQuiz(QuizDetailedDto QuizDetailedDto)
+        public void AddQuiz(AddQuizDto QuizAddDto, string teacherId)
         {
-            var quiz = _mapper.Map<Quiz>(QuizDetailedDto);
+            var quiz = _mapper.Map<Quiz>(QuizAddDto);
+            quiz.ApplicationUserId = teacherId;
+            quiz.Score = quiz.Questions.Sum(q => q.Degree);
 
             _unitOfWork.quizzesRepository.Add(quiz);
             _unitOfWork.Save();
         }
 
-        public void DeleteQuiz(QuizDetailedDto QuizDetailedDto)
+        public void DeleteQuiz(string id)
         {
-            var quiz = _mapper.Map<Quiz>(QuizDetailedDto);
-
-            _unitOfWork.quizzesRepository.Delete(quiz);
+            _unitOfWork.quizzesRepository.Delete(id);
             _unitOfWork.Save();
         }
 
-        public void DeleteQuizzes(IEnumerable<QuizDetailedDto> quizzesDtos)
+        public void DeleteQuizzes(IEnumerable<string> ids)
         {
-            var quizzes = _mapper.Map<List<Quiz>>(quizzesDtos);
-
-            _unitOfWork.quizzesRepository.DeleteRange(quizzes);
+            _unitOfWork.quizzesRepository.DeleteRange(ids);
             _unitOfWork.Save();
         }
 
         public PaginatedList<QuizDto> GetPaginatedQuizzes(int pageNumber, int pageSize)
         {
-            // var quizzes = _unitOfWork.quizzesRepository
-            //     .GetAll(new()
-            //     {
-            //         Filter = q => q.IsPublic,
-            //         OrderExpression = quizzes => quizzes.OrderByDescending(q => q.CreatedAt)
-            //     })
-            //     .Select(q => _mapper.Map<QuizDto>(q));
             var quizzes = from quiz in _unitOfWork.quizzesRepository.GetAll()
                           join teacher in _userManager.Users
                           on quiz.ApplicationUserId equals teacher.Id
-                          where quiz.IsPublic &&
-                                teacher.IsActive
+                          where teacher.IsActive
                           orderby quiz.CreatedAt descending
                           select new QuizDto()
                           {
@@ -90,18 +83,15 @@ namespace Kwizzez.DAL.Services.Quizzes
             return _mapper.Map<QuizDetailedDto>(quiz);
         }
 
-        public QuizDetailedDto? GetQuizByCode(int code)
+        public void UpdateQuiz(EditQuizDto editQuizDto)
         {
-            var quiz = _unitOfWork.quizzesRepository.GetAll(new() {
-                IncludeProperties = "ApplicationUser,Questions,StudentScores"
-            }).FirstOrDefault(q => q.Code == code);
+            var quiz = _unitOfWork.quizzesRepository.GetById(editQuizDto.Id);
 
-            return _mapper.Map<QuizDetailedDto>(quiz);
-        }
-
-        public void UpdateQuiz(QuizDetailedDto QuizDetailedDto)
-        {
-            var quiz = _mapper.Map<Quiz>(QuizDetailedDto);
+            quiz.Score = quiz.Questions.Sum(q => q.Degree);
+            quiz.Id = editQuizDto.Id;
+            quiz.Title = editQuizDto.Title;
+            quiz.Description = editQuizDto.Description;
+            quiz.Questions = _mapper.Map<List<Question>>(editQuizDto.Questions);
 
             _unitOfWork.quizzesRepository.Update(quiz);
             _unitOfWork.Save();
@@ -130,10 +120,6 @@ namespace Kwizzez.DAL.Services.Quizzes
                             TeacherId = q.ApplicationUserId,
                             TeacherName = $"{t.FirstName} {t.LastName}",
                             Description = q.Description,
-                            HasLimitedTime = q.HasLimitedTime,
-                            TimeLimit = q.TimeLimit,
-                            PublishDate = q.PublishDate,
-                            ExpirationDate = q.ExpirationDate,
                             CreatedAt = q.CreatedAt,
                             UpdatedAt = q.UpdatedAt
                         }).FirstOrDefault();

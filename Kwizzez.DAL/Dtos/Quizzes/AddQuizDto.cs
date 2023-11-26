@@ -10,18 +10,11 @@ using Kwizzez.DAL.Dtos.Questions;
 
 namespace Kwizzez.DAL.Dtos.Quizzes
 {
-    public class QuizFormDto
+    public class AddQuizDto
     {
         [Required]
         public string Title { get; set; }
-        public bool HasLimitedTime { get; set; } = false;
-        public long? TimeLimitTicks { get; set; }
-        [Required]
-        public DateTime PublishDate { get; set; }
-        [Required]
-        public DateTime ExpirationDate { get; set; }
-        [Required]
-        public bool IsPublic { get; set; }
+        public string Description { get; set; }
         public List<QuestionFormDto>? Questions { get; set; }
     }
 }

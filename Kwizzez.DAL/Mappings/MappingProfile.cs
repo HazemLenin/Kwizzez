@@ -29,14 +29,22 @@ namespace Kwizzez.DAL.Mappings
                 .ForMember(dest => dest.TeacherId, src => src.MapFrom(src => src.ApplicationUserId))
                 .ReverseMap();
 
-            CreateMap<QuizDetailedDto, QuizFormDto>()
-                .ForMember(dest => dest.TimeLimitTicks, src => src.MapFrom(src => src.TimeLimitTicks));
+            CreateMap<QuizDetailedDto, AddQuizDto>()
+                .ReverseMap();
 
-            CreateMap<QuizFormDto, QuizDetailedDto>()
-                .ForMember(dest => dest.TimeLimit, src => src.MapFrom(src => src.TimeLimitTicks))
-                .ForMember(dest => dest.TimeLimitTicks, src => src.Ignore());
+            CreateMap<AddQuizDto, QuizDetailedDto>()
+                .ReverseMap();
 
-            CreateMap<QuizFormDto, QuizDto>()
+            CreateMap<AddQuizDto, QuizDto>()
+                .ReverseMap();
+
+            CreateMap<QuizDetailedDto, EditQuizDto>()
+                .ReverseMap();
+
+            CreateMap<EditQuizDto, QuizDetailedDto>()
+                .ReverseMap();
+
+            CreateMap<EditQuizDto, QuizDto>()
                 .ReverseMap();
 
             CreateMap<Question, QuestionDto>()

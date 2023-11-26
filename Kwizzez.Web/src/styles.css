@@ -49,4 +49,8 @@
   .btn.btn-primary {
     @apply text-white bg-primary hover:bg-primary focus:ring-primary dark:bg-primary dark:hover:bg-primary dark:focus:ring-primary;
   }
+
+  .btn.btn-success {
+    @apply text-white bg-success hover:bg-success focus:ring-success dark:bg-success dark:hover:bg-success dark:focus:ring-success;
+  }
 }

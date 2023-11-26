@@ -69,14 +69,6 @@ export class SignupComponent {
       this.errors = ["Passwords don't match."];
     } else if (this.signupForm.valid) {
       this.loading = true;
-      this.email?.disable();
-      this.password?.disable();
-      this.passwordConfirmation?.disable();
-      this.firstName?.disable();
-      this.lastName?.disable();
-      this.userName?.disable();
-      this.dateOfBirth?.disable();
-      this.isTeacher?.disable();
       this.authService
         .signup({
           email: this.email?.value ?? '',
@@ -89,14 +81,6 @@ export class SignupComponent {
         })
         .subscribe((response) => {
           this.loading = false;
-          this.email?.enable();
-          this.password?.enable();
-          this.passwordConfirmation?.enable();
-          this.firstName?.enable();
-          this.lastName?.enable();
-          this.userName?.enable();
-          this.dateOfBirth?.enable();
-          this.isTeacher?.enable();
 
           if (response.isSucceed) {
             this.store.dispatch(login({ payload: response.data }));

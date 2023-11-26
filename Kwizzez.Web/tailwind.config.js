@@ -11,6 +11,11 @@ module.exports = {
         DEFAULT: colors.blue["500"],
         dark: colors.blue["600"],
       },
+      success: {
+        light: colors.emerald["300"],
+        DEFAULT: colors.emerald["500"],
+        dark: colors.emerald["600"],
+      },
       secondary: {
         light: colors.slate["200"],
         DEFAULT: colors.slate["400"],

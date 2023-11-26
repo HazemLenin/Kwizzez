@@ -105,7 +105,7 @@ namespace Kwizzez.Api.Controllers
             if (studentScoreDto == null)
                 return NotFound();
 
-            _studentScoresService.DeleteStudentScore(studentScoreDto);
+            _studentScoresService.DeleteStudentScore(quizId);
             return NoContent();
         }
     }

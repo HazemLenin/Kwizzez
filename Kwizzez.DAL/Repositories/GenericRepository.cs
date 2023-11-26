@@ -33,14 +33,18 @@ namespace Kwizzez.DAL.Repositories
             _context.Set<T>().AddRange(entities);
         }
 
-        public void Delete(T entity)
+        public void Delete(string id)
         {
+            var entity = _context.Set<T>().Find(id);
             entity.DeletedAt = DateTime.UtcNow;
             _context.Set<T>().Remove(entity);
         }
 
-        public void DeleteRange(IEnumerable<T> entities)
+        public void DeleteRange(IEnumerable<string> ids)
         {
+            var entities = _context.Set<T>()
+                .Where(e => ids.Contains(e.Id))
+                .ToList();
             foreach (var entity in entities)
                 entity.DeletedAt = DateTime.UtcNow;
 

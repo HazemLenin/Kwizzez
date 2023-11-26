@@ -28,16 +28,14 @@ namespace Kwizzez.DAL.Services.StudentScores
             _unitOfWork.studentScoresRepository.Add(studentScore);
         }
 
-        public void DeleteStudentScore(StudentScoreDto studentScoreDto)
+        public void DeleteStudentScore(string id)
         {
-            var studentScore = _mapper.Map<StudentScore>(studentScoreDto);
-            _unitOfWork.studentScoresRepository.Delete(studentScore);
+            _unitOfWork.studentScoresRepository.Delete(id);
         }
 
-        public void DeleteStudentScores(IEnumerable<StudentScoreDto> studentScoreDtos)
+        public void DeleteStudentScores(IEnumerable<string> ids)
         {
-            var studentScores = _mapper.Map<List<StudentScore>>(studentScoreDtos);
-            _unitOfWork.studentScoresRepository.DeleteRange(studentScores);
+            _unitOfWork.studentScoresRepository.DeleteRange(ids);
         }
 
         public PaginatedList<StudentScoreDto> GetPaginatedStudentScore(int pageNumber, int pageSize)

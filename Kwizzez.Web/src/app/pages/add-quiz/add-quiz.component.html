@@ -13,7 +13,7 @@
 
     <div class="form-group">
       <label for="title" class="form-label">Title</label>
-      <input type="text" formControlName="title" class="form-control" />
+      <input type="text" formControlName="title" class="form-control my-3" />
       <div *ngIf="title?.invalid && (title?.dirty || title?.touched)">
         <p class="text-danger" *ngIf="title?.errors?.['required']">
           Title is required.
@@ -22,107 +22,20 @@
     </div>
 
     <div class="form-group">
-      <label class="relative inline-flex items-center cursor-pointer">
-        <input
-          type="checkbox"
-          formControlName="hasLimitedTime"
-          class="sr-only peer"
-        />
-        <div
-          class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary dark:peer-focus:ring-primary rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"
-        ></div>
-        <span class="ml-3 text-sm font-medium">Time Limited</span>
-      </label>
-    </div>
-
-    <div
-      class="form-group flex gap-2 items-center"
-      *ngIf="hasLimitedTime?.value"
-    >
-      <div>
-        <label for="hours">Hours</label>
-        <input type="number" formControlName="hours" class="form-control" />
-        <div *ngIf="hours?.invalid && (hours?.dirty || hours?.touched)">
-          <p class="text-danger" *ngIf="hours?.errors?.['required']">
-            Hours is required.
-          </p>
-          <p class="text-danger" *ngIf="hours?.errors?.['min']">
-            Hours musn't be less than 0.
-          </p>
-        </div>
-      </div>
-      <span>:</span>
-      <div>
-        <label for="minutes">Minutes</label>
-        <input type="number" formControlName="minutes" class="form-control" />
-        <div *ngIf="minutes?.invalid && (minutes?.dirty || minutes?.touched)">
-          <p class="text-danger" *ngIf="minutes?.errors?.['required']">
-            Minutes is required.
-          </p>
-          <p class="text-danger" *ngIf="minutes?.errors?.['max']">
-            Minutes musn't be more than 59.
-          </p>
-          <p class="text-danger" *ngIf="minutes?.errors?.['min']">
-            Minutes musn't be less than 0.
-          </p>
-        </div>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label for="publishDate" class="form-label">Publish Date</label>
-      <input type="date" formControlName="publishDate" class="form-control" />
+      <label for="description" class="form-label">Description</label>
+      <textarea
+        formControlName="description"
+        class="form-control my-3"
+      ></textarea>
       <div
         *ngIf="
-          publishDate?.invalid && (publishDate?.dirty || publishDate?.touched)
+          description?.invalid && (description?.dirty || description?.touched)
         "
       >
-        <p class="text-danger" *ngIf="publishDate?.errors?.['required']">
-          Publish Date is required.
+        <p class="text-danger" *ngIf="description?.errors?.['required']">
+          Description is required.
         </p>
       </div>
-    </div>
-
-    <div class="form-group">
-      <label for="expirationDate" class="form-label">Expiration Date</label>
-      <input
-        type="date"
-        formControlName="expirationDate"
-        class="form-control"
-      />
-      <div
-        *ngIf="
-          expirationDate?.invalid &&
-          (expirationDate?.dirty || expirationDate?.touched)
-        "
-      >
-        <p class="text-danger" *ngIf="expirationDate?.errors?.['required']">
-          Expiration Date is required.
-        </p>
-        <p
-          class="text-danger"
-          *ngIf="expirationDate?.errors?.['greaterThanPublishDate']"
-        >
-          Expiration Date greater than publish date.
-        </p>
-        <p class="text-danger" *ngIf="expirationDate?.errors?.['lessThanNow']">
-          Expiration Date musn't be in the past.
-        </p>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label class="relative inline-flex items-center cursor-pointer">
-        <input
-          type="checkbox"
-          formControlName="isPublic"
-          class="sr-only peer"
-        />
-        <div
-          class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary dark:peer-focus:ring-primary rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"
-        ></div>
-        <span class="ml-3 text-sm font-medium">Public</span>
-      </label>
     </div>
 
     <button type="submit" class="btn btn-primary w-full">
@@ -136,10 +49,10 @@
   </div>
   <div class="form md:w-2/3">
     <h2 class="text-3xl mb-6">Questions</h2>
-    <div>
-      <div
+    <ul class="list-disc">
+      <li
         *ngFor="let questionGroup of questionGroups; let i = index"
-        class="question-group"
+        class="mb-3 ml-5"
       >
         <h3 class="text-2xl">Question {{ i + 1 }}:</h3>
         <div class="flex gap-5">
@@ -150,7 +63,7 @@
               [formControl]="
                 quizForm.controls.questions.controls[i].controls.title
               "
-              class="form-control"
+              class="form-control my-3"
             />
             <div
               *ngIf="
@@ -180,7 +93,7 @@
               [formControl]="
                 quizForm.controls.questions.controls[i].controls.degree
               "
-              class="form-control"
+              class="form-control my-3"
             />
             <div
               *ngIf="
@@ -216,10 +129,9 @@
           </div>
         </div>
 
-        <div>
+        <div class="ml-5">
           <div
             *ngFor="let answerGroup of getAnswers(questionGroup); let j = index"
-            class="answer-group"
           >
             <label for="answerText">Answer {{ j + 1 }}:</label>
             <input
@@ -228,7 +140,7 @@
                 quizForm.controls.questions.controls[i].controls.answers
                   .controls[j].controls.title
               "
-              class="form-control"
+              class="form-control my-3"
             />
             <div
               *ngIf="
@@ -250,31 +162,38 @@
                 Title is required.
               </p>
             </div>
-            <div class="flex items-center mb-4">
-              <input
-                type="radio"
-                [formControl]="
-                  quizForm.controls.questions.controls[i].controls.answers
-                    .controls[j].controls.isCorrect
-                "
-                class="w-4 h-4 text-primary bg-gray-100 border-gray-300 focus:ring-primary dark:focus:ring-primary dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-              />
-              <label
-                for="default-radio-1"
-                class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                >Correct</label
-              >
+            <div class="form-group">
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  [formControl]="
+                    quizForm.controls.questions.controls[i].controls.answers
+                      .controls[j].controls.isCorrect
+                  "
+                  class="sr-only peer"
+                />
+                <div
+                  class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary dark:peer-focus:ring-primary rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"
+                ></div>
+                <span class="ml-3 text-sm font-medium">Correct</span>
+              </label>
             </div>
           </div>
-        </div>
 
-        <button type="button" class="btn btn-primary" (click)="addAnswer(i)">
-          Add Answer
-        </button>
-      </div>
-      <button type="button" class="btn btn-primary" (click)="addQuestion()">
+          <button type="button" class="btn btn-success" (click)="addAnswer(i)">
+            <fa-icon [icon]="faPlus"></fa-icon>
+            Add Answer
+          </button>
+        </div>
+      </li>
+      <button
+        type="button"
+        class="btn btn-success w-full"
+        (click)="addQuestion()"
+      >
+        <fa-icon [icon]="faPlus"></fa-icon>
         Add Question
       </button>
-    </div>
+    </ul>
   </div>
 </form>

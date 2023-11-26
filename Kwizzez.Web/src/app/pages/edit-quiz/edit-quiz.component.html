@@ -1,1 +1,178 @@
-<p>edit-quiz works!</p>
+<fa-icon *ngIf="loadingQuiz" [icon]="faCircleNotch" animation="spin"></fa-icon>
+<form
+  [formGroup]="quizForm"
+  (submit)="editQuiz()"
+  novalidate
+  class="flex flex-col md:flex-row gap-10"
+  *ngIf="!loadingQuiz"
+>
+  <div class="form md:w-1/3">
+    <h1 class="text-4xl mb-6">Edit Quiz</h1>
+
+    <ul class="text-danger list-disc" *ngIf="errors">
+      <li *ngFor="let error of errors">{{ error }}</li>
+    </ul>
+
+    <div class="form-group">
+      <label for="title" class="form-label">Title</label>
+      <input type="text" formControlName="title" class="form-control" />
+      <div *ngIf="title?.invalid && (title?.dirty || title?.touched)">
+        <p class="text-danger" *ngIf="title?.errors?.['required']">
+          Title is required.
+        </p>
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary w-full">
+      <span *ngIf="!loading">Edit</span>
+      <fa-icon
+        *ngIf="loading"
+        [icon]="faCircleNotch"
+        animation="spin"
+      ></fa-icon>
+    </button>
+  </div>
+  <div class="form md:w-2/3">
+    <h2 class="text-3xl mb-6">Questions</h2>
+    <div>
+      <div
+        *ngFor="let questionGroup of questionGroups; let i = index"
+        class="question-group"
+      >
+        <h3 class="text-2xl">Question {{ i + 1 }}:</h3>
+        <div class="flex gap-5">
+          <div class="w-1/2">
+            <label for="title" class="mb-2 block">Title</label>
+            <input
+              type="text"
+              [formControl]="
+                quizForm.controls.questions.controls[i].controls.title
+              "
+              class="form-control"
+            />
+            <div
+              *ngIf="
+                quizForm.controls.questions.controls[i].controls.title
+                  .invalid &&
+                (quizForm.controls.questions.controls[i].controls.title.dirty ||
+                  quizForm.controls.questions.controls[i].controls.title
+                    .touched)
+              "
+            >
+              <p
+                class="text-danger"
+                *ngIf="
+                quizForm.controls.questions.controls[i].controls.title.errors?.[
+                  'required'
+                ]
+              "
+              >
+                Title is required.
+              </p>
+            </div>
+          </div>
+          <div class="w-1/2">
+            <label for="degree" class="mb-2 block">Degree</label>
+            <input
+              type="number"
+              [formControl]="
+                quizForm.controls.questions.controls[i].controls.degree
+              "
+              class="form-control"
+            />
+            <div
+              *ngIf="
+                quizForm.controls.questions.controls[i].controls.degree
+                  .invalid &&
+                (quizForm.controls.questions.controls[i].controls.degree
+                  .dirty ||
+                  quizForm.controls.questions.controls[i].controls.degree
+                    .touched)
+              "
+            >
+              <p
+                class="text-danger"
+                *ngIf="
+                quizForm.controls.questions.controls[i].controls.degree.errors?.[
+                  'required'
+                ]
+              "
+              >
+                Degree is required.
+              </p>
+              <p
+                class="text-danger"
+                *ngIf="
+                quizForm.controls.questions.controls[i].controls.degree.errors?.[
+                  'min'
+                ]
+              "
+              >
+                Degree must be greater than 0.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div
+            *ngFor="let answerGroup of getAnswers(questionGroup); let j = index"
+            class="answer-group"
+          >
+            <label for="answerText">Answer {{ j + 1 }}:</label>
+            <input
+              type="text"
+              [formControl]="
+                quizForm.controls.questions.controls[i].controls.answers
+                  .controls[j].controls.title
+              "
+              class="form-control"
+            />
+            <div
+              *ngIf="
+                quizForm.controls.questions.controls[i].controls.answers
+                  .controls[j].controls.title.invalid &&
+                (quizForm.controls.questions.controls[i].controls.answers
+                  .controls[j].controls.title.dirty ||
+                  quizForm.controls.questions.controls[i].controls.answers
+                    .controls[j].controls.title.touched)
+              "
+            >
+              <p
+                class="text-danger"
+                *ngIf="
+                  quizForm.controls.questions.controls[i].controls.answers
+                    .controls[j].controls.title.errors!['required']
+                "
+              >
+                Title is required.
+              </p>
+            </div>
+            <div class="flex items-center mb-4">
+              <input
+                type="radio"
+                [formControl]="
+                  quizForm.controls.questions.controls[i].controls.answers
+                    .controls[j].controls.isCorrect
+                "
+                class="w-4 h-4 text-primary bg-gray-100 border-gray-300 focus:ring-primary dark:focus:ring-primary dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+              />
+              <label
+                for="default-radio-1"
+                class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                >Correct</label
+              >
+            </div>
+          </div>
+        </div>
+
+        <button type="button" class="btn btn-primary" (click)="addAnswer(i)">
+          Add Answer
+        </button>
+      </div>
+      <button type="button" class="btn btn-primary" (click)="addQuestion()">
+        Add Question
+      </button>
+    </div>
+  </div>
+</form>

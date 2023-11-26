@@ -2,7 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AuthService } from './auth.service';
 import { Observable } from 'rxjs';
-import QuizForm from '../models/QuizForm';
+import AddQuiz from '../models/AddQuiz';
+import EditQuiz from '../models/EditQuiz';
 
 @Injectable({
   providedIn: 'root',
@@ -39,8 +40,14 @@ export class QuizzesService {
     });
   }
 
-  addQuiz(quiz: QuizForm): Observable<any> {
+  addQuiz(quiz: AddQuiz): Observable<any> {
     return this.http.post(`${this.BASE_URL}/Quizzes`, quiz, {
+      headers: this.HEADERS,
+    });
+  }
+
+  editQuiz(quiz: EditQuiz): Observable<any> {
+    return this.http.post(`${this.BASE_URL}/Quizzes/${quiz.id}`, quiz, {
       headers: this.HEADERS,
     });
   }

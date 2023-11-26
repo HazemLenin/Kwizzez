@@ -16,7 +16,7 @@ namespace Kwizzez.DAL.Services.StudentScores
         StudentScoreDto GetStudentScoreById(string id, string includeProperties = "");
         void AddStudentScore(StudentScoreDto studentScoreDto);
         void UpdateStudentScore(StudentScoreDto studentScoreDto);
-        void DeleteStudentScore(StudentScoreDto studentScoreDto);
-        void DeleteStudentScores(IEnumerable<StudentScoreDto> studentScoreDtos);
+        void DeleteStudentScore(string id);
+        void DeleteStudentScores(IEnumerable<string> ids);
     }
 }
