@@ -54,7 +54,12 @@
         *ngFor="let questionGroup of questionGroups; let i = index"
         class="mb-3 ml-5"
       >
-        <h3 class="text-2xl">Question {{ i + 1 }}:</h3>
+        <div class="flex justify-between">
+          <h3 class="text-2xl">Question {{ i + 1 }}:</h3>
+          <button class="btn btn-danger" (click)="removeQuestion(i)">
+            <fa-icon [icon]="faXmark" size="lg"></fa-icon>
+          </button>
+        </div>
         <div class="flex gap-5">
           <div class="w-1/2">
             <label for="title" class="mb-2 block">Title</label>
@@ -133,7 +138,12 @@
           <div
             *ngFor="let answerGroup of getAnswers(questionGroup); let j = index"
           >
-            <label for="answerText">Answer {{ j + 1 }}:</label>
+            <div class="flex justify-between">
+              <h3 class="text-2xl">Answer {{ j + 1 }}:</h3>
+              <button class="btn btn-danger" (click)="removeAnswer(i, j)">
+                <fa-icon [icon]="faXmark" size="lg"></fa-icon>
+              </button>
+            </div>
             <input
               type="text"
               [formControl]="

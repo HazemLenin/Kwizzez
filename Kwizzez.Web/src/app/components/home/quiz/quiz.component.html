@@ -19,7 +19,9 @@
       {{ quiz.title }}
       <div class="tooltip-arrow" data-popper-arrow></div>
     </div>
-    <p class="text-gray-400">{{ quiz.description }}</p>
+    <p class="text-gray-400 overflow-visible md:truncate">
+      {{ quiz.description }}
+    </p>
     <a
       class="text-gray-400 underline"
       [routerLink]="['/teachers', quiz.teacherId]"

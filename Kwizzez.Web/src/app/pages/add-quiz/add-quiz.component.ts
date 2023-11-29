@@ -8,10 +8,14 @@ import {
   Validators,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { faCircleNotch, faPlus } from '@fortawesome/free-solid-svg-icons';
+import {
+  faCircleNotch,
+  faPlus,
+  faXmark,
+} from '@fortawesome/free-solid-svg-icons';
 import AddQuiz from 'src/app/models/AddQuiz';
-import AnswerForm from 'src/app/models/AnswerForm';
-import QuestionForm from 'src/app/models/QuestionForm';
+import AnswerForm from 'src/app/models/AddAnswer';
+import QuestionForm from 'src/app/models/AddQuestion';
 import { QuizzesService } from 'src/app/services/quizzes.service';
 
 @Component({
@@ -29,6 +33,7 @@ export class AddQuizComponent {
   redirectUrl: String = '';
   faCircleNotch = faCircleNotch;
   faPlus = faPlus;
+  faXmark = faXmark;
   loading: boolean = false;
 
   ngOnInit(): void {}
@@ -68,11 +73,22 @@ export class AddQuizComponent {
     questions.push(newQuestion);
   }
 
+  removeQuestion(index: number) {
+    const questions = this.quizForm.get('questions') as FormArray;
+    questions.removeAt(index);
+  }
+
   addAnswer(questionIndex: number) {
     const question = this.questionGroups[questionIndex];
     const answers = question.get('answers') as FormArray;
     const newAnswer = this.getNewAnswer();
     answers.push(newAnswer);
+  }
+
+  removeAnswer(quetsionIndex: number, answerIndex: number) {
+    const question = this.questionGroups[quetsionIndex];
+    const answers = question.get('answers') as FormArray;
+    answers.removeAt(answerIndex);
   }
 
   getNewQuestion() {

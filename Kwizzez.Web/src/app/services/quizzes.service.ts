@@ -47,7 +47,7 @@ export class QuizzesService {
   }
 
   editQuiz(quiz: EditQuiz): Observable<any> {
-    return this.http.post(`${this.BASE_URL}/Quizzes/${quiz.id}`, quiz, {
+    return this.http.put(`${this.BASE_URL}/Quizzes/${quiz.id}`, quiz, {
       headers: this.HEADERS,
     });
   }

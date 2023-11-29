@@ -10,6 +10,7 @@ using Kwizzez.DAL.Dtos.Questions;
 using Kwizzez.DAL.Dtos.Quizzes;
 using Kwizzez.DAL.Dtos.StudentScores;
 using Kwizzez.DAL.Dtos.Users;
+using Kwizzez.DAL.Migrations;
 using Kwizzez.DAL.Repositories;
 using Kwizzez.DAL.UnitOfWork;
 using Kwizzez.DAL.Utilities;
@@ -33,7 +34,7 @@ namespace Kwizzez.DAL.Services.Quizzes
             _userManager = userManager;
         }
 
-        public void AddQuiz(AddQuizDto QuizAddDto, string teacherId)
+        public string AddQuiz(AddQuizDto QuizAddDto, string teacherId)
         {
             var quiz = _mapper.Map<Quiz>(QuizAddDto);
             quiz.ApplicationUserId = teacherId;
@@ -41,6 +42,7 @@ namespace Kwizzez.DAL.Services.Quizzes
 
             _unitOfWork.quizzesRepository.Add(quiz);
             _unitOfWork.Save();
+            return quiz.Id;
         }
 
         public void DeleteQuiz(string id)
@@ -76,9 +78,7 @@ namespace Kwizzez.DAL.Services.Quizzes
 
         public QuizDetailedDto? GetQuizById(string id)
         {
-            var quiz = _unitOfWork.quizzesRepository.GetAll(new() {
-                IncludeProperties = "ApplicationUser,Questions,StudentScores"
-            }).FirstOrDefault(q => q.Id == id);
+            var quiz = _unitOfWork.quizzesRepository.GetById(id, "ApplicationUser,Questions,Questions.Answers,StudentScores");
             
             return _mapper.Map<QuizDetailedDto>(quiz);
         }
@@ -87,13 +87,80 @@ namespace Kwizzez.DAL.Services.Quizzes
         {
             var quiz = _unitOfWork.quizzesRepository.GetById(editQuizDto.Id);
 
-            quiz.Score = quiz.Questions.Sum(q => q.Degree);
+
+            // Update the quiz only without its questions
+            quiz.Score = editQuizDto.Questions.Sum(q => q.Degree);
             quiz.Id = editQuizDto.Id;
             quiz.Title = editQuizDto.Title;
             quiz.Description = editQuizDto.Description;
-            quiz.Questions = _mapper.Map<List<Question>>(editQuizDto.Questions);
 
             _unitOfWork.quizzesRepository.Update(quiz);
+
+            // Updating the old questions
+            foreach (var editedQuestionDto in editQuizDto.Questions.Where(q => q.Id != null))
+            {
+                var question = _unitOfWork.questionsRepository.GetById(editedQuestionDto.Id);
+                question.Title = editedQuestionDto.Title;
+                question.Degree = editedQuestionDto.Degree;
+
+                _unitOfWork.questionsRepository.Update(question);
+
+                // Updating the old answers
+                foreach (var editedAnswerDto in editedQuestionDto.Answers.Where(a => a.Id != null))
+                {
+                    var answer = _unitOfWork.answersRepository.GetById(editedAnswerDto.Id);
+                    answer.Title = editedAnswerDto.Title;
+                    answer.IsCorrect = editedAnswerDto.IsCorrect;
+
+                    _unitOfWork.answersRepository.Update(answer);
+                }
+
+                // Adding the new answers
+                foreach(var newAnswerDto in editedQuestionDto.Answers.Where(a => a.Id == null))
+                {
+                    var newAnswer = _mapper.Map<Answer>(newAnswerDto);
+                    // Changing the ID because it's mapped from edit dto not add dto
+                    newAnswer.Id = Guid.NewGuid().ToString();
+                    newAnswer.QuestionId = editedQuestionDto.Id;
+                    _unitOfWork.answersRepository.Add(newAnswer);
+                }
+
+                // Deleting the removed answers
+                var removedAnswersIds = _unitOfWork.answersRepository.GetAll(new()
+                {
+                    Filter = a => a.QuestionId == editedQuestionDto.Id && !editedQuestionDto.Answers.Select(a => a.Id).Contains(a.Id)
+                }).Select(a => a.Id);
+
+                _unitOfWork.answersRepository.DeleteRange(removedAnswersIds);
+            }
+
+            // Adding the new questions
+            foreach (var newQuestionDto in editQuizDto.Questions.Where(q => q.Id == null))
+            {
+                var question = _mapper.Map<Question>(newQuestionDto);
+                // Changing the ID because it's mapped from edit dto not add dto
+                question.Id = Guid.NewGuid().ToString();
+                question.Answers.ForEach(a => a.Id = Guid.NewGuid().ToString());
+                question.QuizId = editQuizDto.Id;
+                _unitOfWork.questionsRepository.Add(question);
+            }
+
+            // Deleting the removed questions
+            var removedQuestionsIds = _unitOfWork.questionsRepository.GetAll(new()
+            {
+                Filter = q => q.QuizId == editQuizDto.Id && !editQuizDto.Questions.Select(q => q.Id).Contains(q.Id)
+            }).Select(q => q.Id);
+            
+            _unitOfWork.questionsRepository.DeleteRange(removedQuestionsIds);
+
+            // Deleting removed questions answers
+            var removedQuestionAnswersIds = _unitOfWork.answersRepository.GetAll(new()
+            {
+                Filter = a => removedQuestionsIds.Contains(a.QuestionId)
+            }).Select(a => a.Id);
+
+            _unitOfWork.answersRepository.DeleteRange(removedQuestionAnswersIds);
+
             _unitOfWork.Save();
         }
 
@@ -129,13 +196,6 @@ namespace Kwizzez.DAL.Services.Quizzes
 
         public PaginatedList<QuizDto> GetPaginatedUserQuizzes(string userId, int pageNumber, int pageSize)
         {
-            // var quizzes = _unitOfWork.quizzesRepository
-            //     .GetAll(new()
-            //     {
-            //         Filter = q => q.IsPublic,
-            //         OrderExpression = quizzes => quizzes.OrderByDescending(q => q.CreatedAt)
-            //     })
-            //     .Select(q => _mapper.Map<QuizDto>(q));
             var quizzes = from quiz in _unitOfWork.quizzesRepository.GetAll()
                           join teacher in _userManager.Users
                           on quiz.ApplicationUserId equals teacher.Id
@@ -146,6 +206,7 @@ namespace Kwizzez.DAL.Services.Quizzes
                               Id = quiz.Id,
                               Title= quiz.Title,
                               Score= quiz.Score,
+                              Description = quiz.Description,
                               QuestionsNumber= quiz.QuestionsNumber,
                               TeacherId= quiz.ApplicationUserId,
                               TeacherName= $"{teacher.FirstName} {teacher.LastName}",

@@ -8,13 +8,19 @@ import {
   Validators,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { faCircleNotch } from '@fortawesome/free-solid-svg-icons';
+import {
+  faCircleNotch,
+  faPlus,
+  faXmark,
+} from '@fortawesome/free-solid-svg-icons';
 import { catchError, throwError } from 'rxjs';
-import AnswerForm from 'src/app/models/AnswerForm';
-import QuestionForm from 'src/app/models/QuestionForm';
+import AnswerForm from 'src/app/models/AddAnswer';
+import QuestionForm from 'src/app/models/AddQuestion';
 import Quiz from 'src/app/models/Quiz';
 import EditQuiz from 'src/app/models/EditQuiz';
 import { QuizzesService } from 'src/app/services/quizzes.service';
+import EditQuestion from 'src/app/models/EditQuestion';
+import EditAnswer from 'src/app/models/EditAnswer';
 
 @Component({
   selector: 'app-edit-quiz',
@@ -23,6 +29,8 @@ import { QuizzesService } from 'src/app/services/quizzes.service';
 })
 export class EditQuizComponent implements OnInit {
   loadingQuiz = true;
+  faXmark = faXmark;
+  faPlus = faPlus;
 
   constructor(
     private router: Router,
@@ -60,13 +68,54 @@ export class EditQuizComponent implements OnInit {
         )
         .subscribe((response) => {
           if (response.isSucceed) {
-            this.quizForm.controls.description.setValue(
-              response.data.description
-            ),
-              this.quizForm.controls.title.setValue(response.data.title),
-              this.quizForm.controls.questions.patchValue(
-                this.setQuestions(response.data.questions)
-              );
+            this.quizForm.patchValue({
+              title: response.data.title,
+              description: response.data.description,
+            });
+            // this.quizForm.setControl(
+            //   'questions',
+            //   this.setQuestions(response.data.questions)
+            // );
+            while (this.questions.length) {
+              this.questions.removeAt(0);
+            }
+
+            response.data.questions.forEach((question: any) => {
+              const questionFormGroup = this.formBuilder.group({
+                id: new FormControl(null),
+                title: new FormControl(''),
+                degree: new FormControl(null),
+                answers: this.formBuilder.array([]),
+              });
+              questionFormGroup.patchValue({
+                id: question.id,
+                title: question.title,
+                degree: question.degree,
+              });
+
+              const answersFormArray = questionFormGroup.get(
+                'answers'
+              ) as FormArray;
+
+              // Iterate over the answers in the backend data and add them to the answers form array
+              console.log(question);
+              question.answers.forEach((answer: any) => {
+                const answerFormGroup = this.formBuilder.group({
+                  id: new FormControl(null),
+                  title: new FormControl(''),
+                  isCorrect: new FormControl(false),
+                });
+                answerFormGroup.patchValue({
+                  id: answer.id,
+                  title: answer.title,
+                  isCorrect: answer.isCorrect,
+                });
+
+                answersFormArray.push(answerFormGroup);
+              });
+
+              this.questions.push(questionFormGroup);
+            });
           }
 
           this.loadingQuiz = false;
@@ -74,26 +123,16 @@ export class EditQuizComponent implements OnInit {
     });
   }
 
-  setQuestions(questions: any) {
-    return questions
-      .sort((a: any, b: any) => a.order - b.order)
-      .map((question: any) => ({
-        tilte: question.title,
-        degree: question.degree,
-        answers: question.answers
-          .sort((a: any, b: any) => a.order - b.order)
-          .map((answer: any) => ({
-            title: answer.title,
-            isCorrect: answer.isCorrect,
-          })),
-      }));
-  }
   get title() {
     return this.quizForm.get('title');
   }
 
   get description() {
     return this.quizForm.get('description');
+  }
+
+  get questions() {
+    return this.quizForm.get('questions') as FormArray;
   }
 
   get questionGroups() {
@@ -111,6 +150,11 @@ export class EditQuizComponent implements OnInit {
     questions.push(newQuestion);
   }
 
+  removeQuestion(index: number) {
+    const questions = this.quizForm.get('questions') as FormArray;
+    questions.removeAt(index);
+  }
+
   addAnswer(questionIndex: number) {
     const question = this.questionGroups[questionIndex];
     const answers = question.get('answers') as FormArray;
@@ -118,8 +162,15 @@ export class EditQuizComponent implements OnInit {
     answers.push(newAnswer);
   }
 
+  removeAnswer(quetsionIndex: number, answerIndex: number) {
+    const question = this.questionGroups[quetsionIndex];
+    const answers = question.get('answers') as FormArray;
+    answers.removeAt(answerIndex);
+  }
+
   getNewQuestion() {
     return this.formBuilder.group({
+      id: [''],
       title: ['', Validators.required],
       degree: [1, [Validators.required, Validators.min(1)]],
       answers: this.formBuilder.array([this.getNewAnswer()]),
@@ -128,6 +179,7 @@ export class EditQuizComponent implements OnInit {
 
   getNewAnswer() {
     return this.formBuilder.group({
+      id: [''],
       title: ['', Validators.required],
       isCorrect: [false, Validators.required],
     });
@@ -144,16 +196,18 @@ export class EditQuizComponent implements OnInit {
         id: this.quizId,
         title: this.title?.value || '',
         description: this.description?.value || null,
-        questions: this.questionGroups?.map((group, index): QuestionForm => {
+        questions: this.questionGroups?.map((group, index): EditQuestion => {
           return {
+            id: group.controls['id'].value || null,
             title: group.controls['title'].value,
             image: null,
             order: index + 1,
             degree: group.controls['degree'].value,
             answers: (
               (group.controls['answers'] as FormArray).controls as FormGroup[]
-            ).map((answer, index): AnswerForm => {
+            ).map((answer, index): EditAnswer => {
               return {
+                id: answer.controls['id'].value || null,
                 title: answer.controls['title'].value,
                 isCorrect: answer.controls['isCorrect'].value,
                 order: index + 1,
@@ -164,12 +218,7 @@ export class EditQuizComponent implements OnInit {
       };
       this.quizzesService.editQuiz(data).subscribe((response) => {
         this.loading = false;
-
-        if (response.isSucceed) {
-          this.router.navigate(['/my-quizzes']);
-        } else {
-          this.errors = Object.values(response.errors);
-        }
+        this.router.navigate(['/my-quizzes']);
       });
     }
   }

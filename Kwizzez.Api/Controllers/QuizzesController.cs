@@ -113,10 +113,9 @@ namespace Kwizzez.Api.Controllers
         [Authorize(Roles = Roles.Teacher)]
         public ActionResult<ApiResponse<QuizDto>> PostQuiz(AddQuizDto quizAddDto)
         {
-            var QuizDetailedDto = _mapper.Map<QuizDetailedDto>(quizAddDto);
-            _quizzesService.AddQuiz(quizAddDto, User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var quizId = _quizzesService.AddQuiz(quizAddDto, User.FindFirstValue(ClaimTypes.NameIdentifier));
 
-            return CreatedAtAction(nameof(GetQuiz), new { id = QuizDetailedDto.Id }, new ApiResponse<QuizDto>() {
+            return CreatedAtAction(nameof(GetQuiz), new { id = quizId }, new ApiResponse<QuizDto>() {
                 Data = _mapper.Map<QuizDto>(quizAddDto)
             });
         }

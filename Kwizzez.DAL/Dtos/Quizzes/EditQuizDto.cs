@@ -16,7 +16,9 @@ namespace Kwizzez.DAL.Dtos.Quizzes
         public string Id { get; set; }
         [Required]
         public string Title { get; set; }
+        [Required]
         public string Description { get; set; }
-        public List<QuestionFormDto>? Questions { get; set; }
+        [Required]
+        public List<EditQuestionDto> Questions { get; set; }
     }
 }

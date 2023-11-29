@@ -53,4 +53,8 @@
   .btn.btn-success {
     @apply text-white bg-success hover:bg-success focus:ring-success dark:bg-success dark:hover:bg-success dark:focus:ring-success;
   }
+
+  .btn.btn-danger {
+    @apply text-white bg-danger hover:bg-danger focus:ring-danger dark:bg-danger dark:hover:bg-danger dark:focus:ring-danger;
+  }
 }

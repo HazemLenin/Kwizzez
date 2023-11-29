@@ -1,10 +1,8 @@
-<fa-icon *ngIf="loadingQuiz" [icon]="faCircleNotch" animation="spin"></fa-icon>
 <form
   [formGroup]="quizForm"
   (submit)="editQuiz()"
   novalidate
   class="flex flex-col md:flex-row gap-10"
-  *ngIf="!loadingQuiz"
 >
   <div class="form md:w-1/3">
     <h1 class="text-4xl mb-6">Edit Quiz</h1>
@@ -15,10 +13,27 @@
 
     <div class="form-group">
       <label for="title" class="form-label">Title</label>
-      <input type="text" formControlName="title" class="form-control" />
+      <input type="text" formControlName="title" class="form-control my-3" />
       <div *ngIf="title?.invalid && (title?.dirty || title?.touched)">
         <p class="text-danger" *ngIf="title?.errors?.['required']">
           Title is required.
+        </p>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="description" class="form-label">Description</label>
+      <textarea
+        formControlName="description"
+        class="form-control my-3"
+      ></textarea>
+      <div
+        *ngIf="
+          description?.invalid && (description?.dirty || description?.touched)
+        "
+      >
+        <p class="text-danger" *ngIf="description?.errors?.['required']">
+          Description is required.
         </p>
       </div>
     </div>
@@ -34,12 +49,17 @@
   </div>
   <div class="form md:w-2/3">
     <h2 class="text-3xl mb-6">Questions</h2>
-    <div>
-      <div
+    <ul class="list-disc">
+      <li
         *ngFor="let questionGroup of questionGroups; let i = index"
-        class="question-group"
+        class="mb-3 ml-5"
       >
-        <h3 class="text-2xl">Question {{ i + 1 }}:</h3>
+        <div class="flex justify-between">
+          <h3 class="text-2xl">Question {{ i + 1 }}:</h3>
+          <button class="btn btn-danger" (click)="removeQuestion(i)">
+            <fa-icon [icon]="faXmark" size="lg"></fa-icon>
+          </button>
+        </div>
         <div class="flex gap-5">
           <div class="w-1/2">
             <label for="title" class="mb-2 block">Title</label>
@@ -48,7 +68,7 @@
               [formControl]="
                 quizForm.controls.questions.controls[i].controls.title
               "
-              class="form-control"
+              class="form-control my-3"
             />
             <div
               *ngIf="
@@ -78,7 +98,7 @@
               [formControl]="
                 quizForm.controls.questions.controls[i].controls.degree
               "
-              class="form-control"
+              class="form-control my-3"
             />
             <div
               *ngIf="
@@ -114,19 +134,23 @@
           </div>
         </div>
 
-        <div>
+        <div class="ml-5">
           <div
             *ngFor="let answerGroup of getAnswers(questionGroup); let j = index"
-            class="answer-group"
           >
-            <label for="answerText">Answer {{ j + 1 }}:</label>
+            <div class="flex justify-between">
+              <h3 class="text-2xl">Answer {{ j + 1 }}:</h3>
+              <button class="btn btn-danger" (click)="removeAnswer(i, j)">
+                <fa-icon [icon]="faXmark" size="lg"></fa-icon>
+              </button>
+            </div>
             <input
               type="text"
               [formControl]="
                 quizForm.controls.questions.controls[i].controls.answers
                   .controls[j].controls.title
               "
-              class="form-control"
+              class="form-control my-3"
             />
             <div
               *ngIf="
@@ -148,31 +172,38 @@
                 Title is required.
               </p>
             </div>
-            <div class="flex items-center mb-4">
-              <input
-                type="radio"
-                [formControl]="
-                  quizForm.controls.questions.controls[i].controls.answers
-                    .controls[j].controls.isCorrect
-                "
-                class="w-4 h-4 text-primary bg-gray-100 border-gray-300 focus:ring-primary dark:focus:ring-primary dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-              />
-              <label
-                for="default-radio-1"
-                class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                >Correct</label
-              >
+            <div class="form-group">
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  [formControl]="
+                    quizForm.controls.questions.controls[i].controls.answers
+                      .controls[j].controls.isCorrect
+                  "
+                  class="sr-only peer"
+                />
+                <div
+                  class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary dark:peer-focus:ring-primary rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"
+                ></div>
+                <span class="ml-3 text-sm font-medium">Correct</span>
+              </label>
             </div>
           </div>
-        </div>
 
-        <button type="button" class="btn btn-primary" (click)="addAnswer(i)">
-          Add Answer
-        </button>
-      </div>
-      <button type="button" class="btn btn-primary" (click)="addQuestion()">
+          <button type="button" class="btn btn-success" (click)="addAnswer(i)">
+            <fa-icon [icon]="faPlus"></fa-icon>
+            Add Answer
+          </button>
+        </div>
+      </li>
+      <button
+        type="button"
+        class="btn btn-success w-full"
+        (click)="addQuestion()"
+      >
+        <fa-icon [icon]="faPlus"></fa-icon>
         Add Question
       </button>
-    </div>
+    </ul>
   </div>
 </form>

@@ -57,7 +57,7 @@ namespace Kwizzez.DAL.Migrations
 
                     b.HasIndex("QuestionId");
 
-                    b.ToTable("Answers");
+                    b.ToTable("Answers", (string)null);
                 });
 
             modelBuilder.Entity("Kwizzez.Domain.Entities.ApplicationUser", b =>
@@ -186,7 +186,7 @@ namespace Kwizzez.DAL.Migrations
 
                     b.HasIndex("QuizId");
 
-                    b.ToTable("Questions");
+                    b.ToTable("Questions", (string)null);
                 });
 
             modelBuilder.Entity("Kwizzez.Domain.Entities.Quiz", b =>
@@ -227,7 +227,7 @@ namespace Kwizzez.DAL.Migrations
 
                     b.HasIndex("ApplicationUserId");
 
-                    b.ToTable("Quizzes");
+                    b.ToTable("Quizzes", (string)null);
                 });
 
             modelBuilder.Entity("Kwizzez.Domain.Entities.StudentScore", b =>
@@ -264,7 +264,7 @@ namespace Kwizzez.DAL.Migrations
 
                     b.HasIndex("QuizId");
 
-                    b.ToTable("StudentScores");
+                    b.ToTable("StudentScores", (string)null);
                 });
 
             modelBuilder.Entity("Kwizzez.Domain.Entities.StudentScoreAnswer", b =>
@@ -298,7 +298,7 @@ namespace Kwizzez.DAL.Migrations
 
                     b.HasIndex("StudentScoreId");
 
-                    b.ToTable("StudentScoreAnswers");
+                    b.ToTable("StudentScoreAnswers", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

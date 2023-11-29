@@ -3,18 +3,22 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Kwizzez.DAL.Common;
 using Kwizzez.DAL.Dtos.Questions;
+using Kwizzez.DAL.Dtos.StudentScoreAnswers;
 
-namespace Kwizzez.DAL.Dtos.Quizzes
+namespace Kwizzez.DAL.Dtos.Answers
 {
-    public class AddQuizDto
+    public class EditAnswerDto
     {
+        public string? Id { get; set; }
         [Required]
         public string Title { get; set; }
-        public string Description { get; set; }
-        public List<AddQuestionDto> Questions { get; set; }
+        [Required]
+        public bool IsCorrect { get; set; }
+        [Required]
+        public int Order { get; set; }
+
     }
 }
