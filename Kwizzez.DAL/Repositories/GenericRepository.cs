@@ -19,13 +19,13 @@ namespace Kwizzez.DAL.Repositories
             _context = context;
         }
 
-        public virtual void Add(T entity)
+        public void Add(T entity)
         {
             entity.CreatedAt = DateTime.UtcNow;
             _context.Set<T>().Add(entity);
         }
 
-        public virtual void AddRange(IEnumerable<T> entities)
+        public void AddRange(IEnumerable<T> entities)
         {
             foreach (var entity in entities)
                 entity.CreatedAt = DateTime.UtcNow;
@@ -33,21 +33,25 @@ namespace Kwizzez.DAL.Repositories
             _context.Set<T>().AddRange(entities);
         }
 
-        public virtual void Delete(T entity)
+        public void Delete(string id)
         {
+            var entity = _context.Set<T>().Find(id);
             entity.DeletedAt = DateTime.UtcNow;
             _context.Set<T>().Remove(entity);
         }
 
-        public virtual void DeleteRange(IEnumerable<T> entities)
+        public void DeleteRange(IEnumerable<string> ids)
         {
+            var entities = _context.Set<T>()
+                .Where(e => ids.Contains(e.Id))
+                .ToList();
             foreach (var entity in entities)
                 entity.DeletedAt = DateTime.UtcNow;
 
             _context.Set<T>().RemoveRange(entities);
         }
 
-        public virtual IQueryable<T> GetAll(QueryFilter<T> queryFilter)
+        public IQueryable<T> GetAll(QueryFilter<T>? queryFilter)
         {
             var query = _context.Set<T>().AsNoTracking();
 
@@ -69,7 +73,9 @@ namespace Kwizzez.DAL.Repositories
             return query;
         }
 
-        public virtual T? GetById(string id, string includeProperties = "")
+        public IQueryable<T> GetAll() => _context.Set<T>().AsNoTracking();
+
+        public T? GetById(string id, string includeProperties = "")
         {
             var query = _context.Set<T>().AsNoTracking();
 
@@ -79,7 +85,7 @@ namespace Kwizzez.DAL.Repositories
             return query.FirstOrDefault(e => e.Id == id);
         }
 
-        public virtual void Update(T entity)
+        public void Update(T entity)
         {
             var oldEntity = GetById(entity.Id);
             entity.CreatedAt = oldEntity.CreatedAt;
@@ -87,7 +93,7 @@ namespace Kwizzez.DAL.Repositories
             _context.Set<T>().Update(entity);
         }
 
-        public virtual void UpdateRange(IEnumerable<T> entities)
+        public void UpdateRange(IEnumerable<T> entities)
         {
             foreach (var entity in entities)
             {
@@ -99,7 +105,7 @@ namespace Kwizzez.DAL.Repositories
             _context.Set<T>().UpdateRange(entities);
         }
 
-        public virtual int Save()
+        public int Save()
         {
             return _context.SaveChanges();
         }

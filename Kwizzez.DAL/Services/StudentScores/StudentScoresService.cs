@@ -28,27 +28,26 @@ namespace Kwizzez.DAL.Services.StudentScores
             _unitOfWork.studentScoresRepository.Add(studentScore);
         }
 
-        public void DeleteStudentScore(StudentScoreDto studentScoreDto)
+        public void DeleteStudentScore(string id)
         {
-            var studentScore = _mapper.Map<StudentScore>(studentScoreDto);
-            _unitOfWork.studentScoresRepository.Delete(studentScore);
+            _unitOfWork.studentScoresRepository.Delete(id);
         }
 
-        public void DeleteStudentScores(IEnumerable<StudentScoreDto> studentScoreDtos)
+        public void DeleteStudentScores(IEnumerable<string> ids)
         {
-            var studentScores = _mapper.Map<List<StudentScore>>(studentScoreDtos);
-            _unitOfWork.studentScoresRepository.DeleteRange(studentScores);
+            _unitOfWork.studentScoresRepository.DeleteRange(ids);
         }
 
-        public PaginatedList<StudentScoreDto> GetPaginatedStudentScore(QueryFilter<StudentScore> queryFilter, int pageNumber, int pageSize)
+        public PaginatedList<StudentScoreDto> GetPaginatedStudentScore(int pageNumber, int pageSize)
         {
-            var scores = _unitOfWork.studentScoresRepository.GetAll(queryFilter);
+            var scores = _unitOfWork.studentScoresRepository
+                .GetAll(new()
+                {
+                    OrderExpression = scores => scores.OrderByDescending(s => s.CreatedAt)
+                })
+                .Select(q => _mapper.Map<StudentScoreDto>(q));
 
-            var paginatedScores = PaginatedList<StudentScore>.Create(scores, pageNumber, pageSize);
-
-            var scoresDtos = paginatedScores.Select(q => _mapper.Map<StudentScoreDto>(q)).ToList();
-
-            return new(scoresDtos, scores.Count(), pageNumber, pageSize);
+            return PaginatedList<StudentScoreDto>.Create(scores, pageNumber, pageSize);
         }
 
         public StudentScoreDto GetStudentScoreById(string id, string includeProperties = "")

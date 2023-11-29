@@ -1,0 +1,24 @@
+<header
+  class="backdrop-blur-sm h-16 w-full border-b dark:border-gray-600 flex items-center px-5 fixed"
+>
+  <nav class="flex gap-5">
+    <a routerLink="/">Home</a>
+    <span *ngIf="isAuthenticated$ | async"
+      >Welcome {{ (user$ | async)?.firstName }}</span
+    >
+    <a
+      routerLink="/my-quizzes"
+      *ngIf="(isAuthenticated$ | async) && (isTeacher$ | async)"
+      >My Quizzes</a
+    >
+  </nav>
+  <nav class="flex gap-5 ml-auto">
+    <button (click)="toggleDarkMode()">
+      <fa-icon *ngIf="!isDarkMode" [icon]="faMoon"></fa-icon>
+      <fa-icon *ngIf="isDarkMode" [icon]="faSun"></fa-icon>
+    </button>
+    <a routerLink="/logout" *ngIf="isAuthenticated$ | async">Logout</a>
+    <a routerLink="/login" *ngIf="!(isAuthenticated$ | async)">Login</a>
+    <a routerLink="/signup" *ngIf="!(isAuthenticated$ | async)">Signup</a>
+  </nav>
+</header>

@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Kwizzez.DAL.Dtos.Users;
 using Kwizzez.Domain.Entities;
+using System.Security.Claims;
 
 namespace Kwizzez.DAL.Services.Users
 {
@@ -15,5 +16,7 @@ namespace Kwizzez.DAL.Services.Users
         UserDto GetUserById(string id, string includeProperties = "");
         UserDto GetUserByEmail(string email, string includeProperties = "");
         UserDto GetUserByUserName(string userName, string includeProperties = "");
+        UserDto GetLoggedInUser(ClaimsPrincipal user);
+        List<string> GetUserRoles(ClaimsPrincipal user);
     }
 }

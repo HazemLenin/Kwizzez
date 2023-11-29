@@ -19,7 +19,7 @@ namespace Kwizzez.DAL.Dtos.Questions
 
         // Navigation Props
 
-        public QuizDto? Quiz { get; set; }
+        public QuizDetailedDto? Quiz { get; set; }
         public List<AnswerDto>? Answers { get; set; }
     }
 }

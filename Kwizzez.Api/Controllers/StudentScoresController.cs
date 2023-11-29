@@ -31,12 +31,7 @@ namespace Kwizzez.Api.Controllers
         [HttpGet]
         public ActionResult<ApiPaginatedResponse<PaginatedList<StudentScoreDto>>> GetStudentScores(int pageNumber = 1, int pageSize = 10)
         {
-            var scores = _studentScoresService.GetPaginatedStudentScore(new()
-            {
-                OrderExpression = scores => scores.OrderByDescending(s => s.CreatedAt),
-            },
-            pageNumber,
-            pageSize);
+            var scores = _studentScoresService.GetPaginatedStudentScore(pageNumber, pageSize);
 
             return new ApiPaginatedResponse<PaginatedList<StudentScoreDto>>()
             {
@@ -54,7 +49,7 @@ namespace Kwizzez.Api.Controllers
         [Authorize(Roles = $"{Roles.Admin},{Roles.Teacher}")]
         public ActionResult<ApiResponse<StudentScoreDto>> GetStudentScore([FromRoute] string quizId, string id)
         {
-            if (!QuizExists(quizId))
+            if (!_quizzesService.QuizExists(quizId))
                 return NotFound();
 
             var studentScore = _studentScoresService.GetStudentScoreById(id);
@@ -102,7 +97,7 @@ namespace Kwizzez.Api.Controllers
         [Authorize(Roles = $"{Roles.Admin},{Roles.Teacher}")]
         public IActionResult DeleteStudentScore([FromRoute] string quizId, string id)
         {
-            if (!QuizExists(quizId))
+            if (!_quizzesService.QuizExists(quizId))
                 return NotFound();
 
             var studentScoreDto = _studentScoresService.GetStudentScoreById(id);
@@ -110,10 +105,8 @@ namespace Kwizzez.Api.Controllers
             if (studentScoreDto == null)
                 return NotFound();
 
-            _studentScoresService.DeleteStudentScore(studentScoreDto);
+            _studentScoresService.DeleteStudentScore(quizId);
             return NoContent();
         }
-
-        private bool QuizExists(string quizId) => _quizzesService.QuizExists(quizId);
     }
 }

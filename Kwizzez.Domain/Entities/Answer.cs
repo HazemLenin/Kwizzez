@@ -12,6 +12,7 @@ namespace Kwizzez.Domain.Entities
         public string QuestionId { get; set; }
         public string Title { get; set; }
         public bool IsCorrect { get; set; }
+        public int Order { get; set; }
 
         // Navigation Props
 

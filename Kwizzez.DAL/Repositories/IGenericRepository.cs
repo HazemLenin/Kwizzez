@@ -10,14 +10,15 @@ namespace Kwizzez.DAL.Repositories
 {
     public interface IGenericRepository<T> where T : Base
     {
-        IQueryable<T> GetAll(QueryFilter<T> queryFilter);
+        IQueryable<T> GetAll();
+        IQueryable<T> GetAll(QueryFilter<T>? queryFilter);
         T? GetById(string id, string includeProperties = "");
         void Add(T entity);
         void AddRange(IEnumerable<T> entities);
         void Update(T entity);
         void UpdateRange(IEnumerable<T> entities);
-        void Delete(T entity);
-        void DeleteRange(IEnumerable<T> entities);
+        void Delete(string id);
+        void DeleteRange(IEnumerable<string> ids);
         int Save();
     }
 }

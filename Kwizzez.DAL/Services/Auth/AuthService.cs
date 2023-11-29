@@ -37,24 +37,15 @@ namespace Kwizzez.DAL.Services.Auth
             var user = await _userManager.FindByIdAsync(userDto.Id);
 
             var result = await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
-            AuthDto authDto = new()
-            {
-                UserName = user.UserName,
-                Email = user.Email,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Roles = (List<string>)await _userManager.GetRolesAsync(user)
-            };
+            AuthDto authDto;
 
             if (result.Succeeded)
-            {
-                return authDto;
-            }
+                return new();
             else
-            {
-                authDto.Errors = GetErrorsFromIdentityResult(result);
-                return authDto;
-            }
+                return new()
+                {
+                    Errors = GetErrorsFromIdentityResult(result)
+                };
         }
 
         public async Task<AuthDto> DeactivateUserAsync(string userId)
@@ -68,23 +59,14 @@ namespace Kwizzez.DAL.Services.Auth
             var result = await _userManager.UpdateAsync(user);
             if (!result.Succeeded)
             {
-                var errors = GetErrorsFromIdentityResult(result);
-
                 return new()
                 {
-                    Errors = errors
+                    Errors = GetErrorsFromIdentityResult(result)
                 };
             }
             else
             {
-                return new()
-                {
-                    Email = user.Email,
-                    UserName = user.UserName,
-                    FirstName = user.FirstName,
-                    LastName = user.LastName,
-                    Roles = (List<string>)await _userManager.GetRolesAsync(user)
-                };
+                return new();
             }
         }
 
@@ -102,9 +84,10 @@ namespace Kwizzez.DAL.Services.Auth
 
             if (user == null || !await _userManager.CheckPasswordAsync(user, loginDto.Password))
             {
-                Dictionary<string, List<string>> errors = new();
-
-                errors.Add(String.Empty, new() { "Incorrect email/password." });
+                Dictionary<string, List<string>> errors = new()
+                {
+                    { String.Empty, new() { "Incorrect email/password." } }
+                };
 
                 return new()
                 {
@@ -137,21 +120,26 @@ namespace Kwizzez.DAL.Services.Auth
             var addPasswordResult = await _userManager.AddPasswordAsync(user, registerUserDto.Password);
 
             if (!addPasswordResult.Succeeded)
+            {
+                await _userManager.DeleteAsync(user);
                 return new()
                 {
                     Errors = GetErrorsFromIdentityResult(addPasswordResult)
                 };
+            }
 
             var addRoleResult = registerUserDto.IsTeacher ?
                 await _userManager.AddToRoleAsync(user, Roles.Teacher) :
                 await _userManager.AddToRoleAsync(user, Roles.Student);
 
             if (!addRoleResult.Succeeded)
+            {
+                await _userManager.DeleteAsync(user);
                 return new()
                 {
                     Errors = GetErrorsFromIdentityResult(addRoleResult)
                 };
-
+            }
 
 
             return await GenerateUserTokens(user);
@@ -218,14 +206,7 @@ namespace Kwizzez.DAL.Services.Auth
 
             if (result.Succeeded)
             {
-                return new()
-                {
-                    Email = user.Email,
-                    UserName = user.UserName,
-                    FirstName = user.FirstName,
-                    LastName = user.LastName,
-                    Roles = (List<string>)await _userManager.GetRolesAsync(user)
-                };
+                return new();
             }
             else
             {
@@ -293,12 +274,6 @@ namespace Kwizzez.DAL.Services.Auth
 
             return new()
             {
-                Email = user.Email,
-                UserName = user.UserName,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Roles = (List<string>)roles,
-
                 Token = token,
                 RefreshToken = refreshToken,
                 RefreshTokenExpiration = refreshTokenExpiration

@@ -16,29 +16,44 @@ namespace Kwizzez.DAL.Mappings
             CreateMap<ApplicationUser, UserDto>()
                 .ReverseMap();
 
-            CreateMap<Quiz, QuizDto>()
+            CreateMap<Quiz, QuizDetailedDto>()
                 .ForMember(dest => dest.TeacherId, src => src.MapFrom(src => src.ApplicationUserId))
                 .ForMember(dest => dest.Teacher, src => src.MapFrom(src => src.ApplicationUser))
                 .ReverseMap();
 
-            CreateMap<QuizDto, QuizFormDto>()
-                .ForMember(dest => dest.TimeLimitTicks, src => src.MapFrom(src => src.TimeLimitTicks))
-                .ForMember(dest => dest.TimeLimit, src => src.Ignore());
+            CreateMap<Quiz, QuizDto>()
+                .ForMember(dest => dest.TeacherId, src => src.MapFrom(src => src.ApplicationUserId))
+                .ReverseMap();
 
-            CreateMap<QuizFormDto, QuizDto>()
-                .ForMember(dest => dest.TimeLimit, src => src.MapFrom(src => src.TimeLimitTicks))
-                .ForMember(dest => dest.TimeLimitTicks, src => src.Ignore());
+            CreateMap<Quiz, QuizInfoDto>()
+                .ForMember(dest => dest.TeacherId, src => src.MapFrom(src => src.ApplicationUserId))
+                .ReverseMap();
+
+            CreateMap<Quiz, AddQuizDto>()
+                .ReverseMap();
+
+            CreateMap<QuizDto, AddQuizDto>()
+                .ReverseMap();
+
+            CreateMap<Quiz, EditQuizDto>()
+                .ReverseMap();
 
             CreateMap<Question, QuestionDto>()
                 .ReverseMap();
 
-            CreateMap<QuestionDto, QuestionFormDto>()
+            CreateMap<Question, AddQuestionDto>()
+                .ReverseMap();
+
+            CreateMap<Question, EditQuestionDto>()
                 .ReverseMap();
 
             CreateMap<Answer, AnswerDto>()
                 .ReverseMap();
 
-            CreateMap<AnswerDto, AnswerFormDto>()
+            CreateMap<Answer, AddAnswerDto>()
+                .ReverseMap();
+
+            CreateMap<Answer, EditAnswerDto>()
                 .ReverseMap();
 
             CreateMap<StudentScore, StudentScoreDto>()

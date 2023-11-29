@@ -1,27 +1,28 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Kwizzez.DAL.Common;
 using Kwizzez.DAL.Dtos.Questions;
+using Kwizzez.DAL.Dtos.StudentScores;
+using Kwizzez.DAL.Dtos.Users;
+using Kwizzez.Domain.Entities;
 
 namespace Kwizzez.DAL.Dtos.Quizzes
 {
-    public class QuizFormDto
+    public class QuizInfoDto : BaseDto
     {
-        [Required]
         public string Title { get; set; }
+        public int Score { get; set; }
+        public int QuestionsNumber { get; set; }
+        public string TeacherId { get; set; }
+        public string TeacherName { get; set; }
+        public string Description { get; set; }
         public bool HasLimitedTime { get; set; } = false;
-        public long? TimeLimitTicks { get; set; }
-        [JsonIgnore]
-        public TimeSpan? TimeLimit => TimeLimitTicks.HasValue ? new(TimeLimitTicks.Value) : null;
-        [Required]
+        public TimeSpan? TimeLimit { get; set; }
         public DateTime PublishDate { get; set; }
-        [Required]
         public DateTime ExpirationDate { get; set; }
-        public List<QuestionFormDto>? Questions { get; set; }
     }
 }

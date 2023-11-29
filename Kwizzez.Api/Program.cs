@@ -2,9 +2,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using Kwizzez.Api.Middlewares;
 using Kwizzez.DAL.Data;
-using Kwizzez.DAL.Services.Answers;
 using Kwizzez.DAL.Services.Auth;
-using Kwizzez.DAL.Services.Questions;
 using Kwizzez.DAL.Services.Quizzes;
 using Kwizzez.DAL.Services.Seeds;
 using Kwizzez.DAL.Services.StudentScores;
@@ -41,19 +39,20 @@ builder.Services
         options.SaveToken = true;
         options.TokenValidationParameters = new TokenValidationParameters()
         {
-            ValidateIssuerSigningKey = bool.Parse(builder.Configuration["JsonWebTokenKeys:ValidateIssuerSigningKey"]),
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JsonWebTokenKeys:IssuerSigningKey"])),
+            ValidateIssuerSigningKey = bool.Parse(builder.Configuration["JsonWebTokenKeys:ValidateIssuerSigningKey"] ?? "false"),
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JsonWebTokenKeys:IssuerSigningKey"] ?? "")),
 
-            ValidateIssuer = bool.Parse(builder.Configuration["JsonWebTokenKeys:ValidateIssuer"]),
+            ValidateIssuer = bool.Parse(builder.Configuration["JsonWebTokenKeys:ValidateIssuer"] ?? "false"),
             ValidIssuer = builder.Configuration["JsonWebTokenKeys:ValidIssuer"],
 
             ValidAudience = builder.Configuration["JsonWebTokenKeys:ValidAudience"],
-            ValidateAudience = bool.Parse(builder.Configuration["JsonWebTokenKeys:ValidateAudience"]),
+            ValidateAudience = bool.Parse(builder.Configuration["JsonWebTokenKeys:ValidateAudience"] ?? "false"),
 
-            RequireExpirationTime = bool.Parse(builder.Configuration["JsonWebTokenKeys:RequireExpirationTime"]),
-            ValidateLifetime = bool.Parse(builder.Configuration["JsonWebTokenKeys:ValidateLifetime"]),
+            RequireExpirationTime = bool.Parse(builder.Configuration["JsonWebTokenKeys:RequireExpirationTime"] ?? "false"),
+            ValidateLifetime = bool.Parse(builder.Configuration["JsonWebTokenKeys:ValidateLifetime"] ?? "false"),
         };
 
+        // SignalR authorization
         //options.Events = new JwtBearerEvents
         //{
         //    OnMessageReceived = context =>
@@ -79,8 +78,6 @@ builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 builder.Services.AddTransient<IAuthService, AuthService>();
 builder.Services.AddTransient<IUsersService, UsersService>();
 builder.Services.AddTransient<IQuizzesService, QuizzesService>();
-builder.Services.AddTransient<IQuestionsService, QuestionsService>();
-builder.Services.AddTransient<IAnswersService, AnswersService>();
 builder.Services.AddTransient<IStudentScoresService, StudentScoresService>();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
@@ -109,7 +106,7 @@ builder.Services.AddSwaggerGen(c =>
             new OpenApiSecurityScheme {
                 Reference = new OpenApiReference {
                     Type = ReferenceType.SecurityScheme,
-                        Id = "Bearer"
+                    Id = "Bearer"
                 }
             },
             new string[] {}
@@ -129,12 +126,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// app.UseCors(options =>
-//     options
-//         .AllowAnyOrigin()
-//         .AllowAnyHeader()
-//         .AllowAnyMethod()
-//         .AllowCredentials());
+app.UseCors(options =>
+    options
+        .AllowAnyOrigin()
+        .AllowAnyHeader()
+        .AllowAnyMethod());
 
 app.UseHttpsRedirection();
 

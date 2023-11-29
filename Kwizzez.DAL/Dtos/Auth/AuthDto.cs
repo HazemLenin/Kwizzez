@@ -13,11 +13,6 @@ namespace Kwizzez.DAL.Dtos.Auth
         public bool IsSucceed => Errors == null;
         [JsonIgnore]
         public Dictionary<string, List<string>>? Errors { get; set; }
-        public string? Email { get; set; }
-        public string? UserName { get; set; }
-        public string? FirstName { get; set; }
-        public string? LastName { get; set; }
-        public List<string>? Roles { get; set; }
         public string? Token { get; set; }
         public string? RefreshToken { get; set; }
         public DateTime? RefreshTokenExpiration { get; set; }

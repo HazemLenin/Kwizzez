@@ -20,8 +20,8 @@ namespace Kwizzez.DAL.Data
 
             builder.Entity<ApplicationUser>().HasQueryFilter(u => u.IsActive);
             builder.Entity<Quiz>().HasQueryFilter(q => !q.IsDeleted);
-            // builder.Entity<Question>().HasQueryFilter(q => !q.IsDeleted);
-            // builder.Entity<Answer>().HasQueryFilter(a => !a.IsDeleted);
+            builder.Entity<Question>().HasQueryFilter(q => !q.IsDeleted);
+            builder.Entity<Answer>().HasQueryFilter(a => !a.IsDeleted);
             builder.Entity<StudentScore>().HasQueryFilter(s => !s.IsDeleted);
             builder.Entity<StudentScoreAnswer>().HasQueryFilter(s => !s.IsDeleted);
 

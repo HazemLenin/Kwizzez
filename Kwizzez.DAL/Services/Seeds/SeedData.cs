@@ -31,7 +31,7 @@ namespace Kwizzez.DAL.Services.Seeds
             await SeedStudent(context, userManager);
         }
 
-        private async Task SeedRoles(RoleManager<IdentityRole> roleManager)
+        private static async Task SeedRoles(RoleManager<IdentityRole> roleManager)
         {
             var roles = Roles.GetRoles();
 
@@ -42,7 +42,7 @@ namespace Kwizzez.DAL.Services.Seeds
             }
         }
 
-        private async Task SeedAdmin(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        private static async Task SeedAdmin(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             var adminRole = context.Roles.FirstOrDefault(r => r.Name == Roles.Admin);
             var adminExists = context.UserRoles.Any(r => r.RoleId == adminRole.Id);

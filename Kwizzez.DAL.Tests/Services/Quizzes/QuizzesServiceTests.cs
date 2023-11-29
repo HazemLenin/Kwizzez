@@ -53,7 +53,7 @@ namespace Kwizzez.DAL.Tests.Services.Quizzes
 
             MapperConfiguration mapperConfiguration = new(config =>
             {
-                config.CreateMap<Quiz, QuizDto>().ReverseMap();
+                config.CreateMap<Quiz, QuizDetailedDto>().ReverseMap();
             });
             _quizzesService = new(_unitOfWorkMock.Object, new Mapper(mapperConfiguration));
         }
@@ -62,13 +62,13 @@ namespace Kwizzez.DAL.Tests.Services.Quizzes
         public void QuizzesService_AddQuiz_ShouldCallRepositoryAdd()
         {
             // Arrange
-            QuizDto quizDto = new()
+            QuizDetailedDto QuizDetailedDto = new()
             {
                 Title = "Quiz 4"
             };
 
             // Act
-            _quizzesService.AddQuiz(quizDto);
+            _quizzesService.AddQuiz(QuizDetailedDto);
 
             // Assert
             _unitOfWorkMock

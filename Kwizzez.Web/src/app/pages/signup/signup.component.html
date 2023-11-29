@@ -1,0 +1,124 @@
+<div class="flex flex-col items-center gap-10">
+  <form [formGroup]="signupForm" (submit)="signup()" novalidate class="form">
+    <h1 class="text-4xl mb-6">Signup</h1>
+
+    <ul class="text-danger list-disc" *ngIf="errors">
+      <li *ngFor="let error of errors">{{ error }}</li>
+    </ul>
+
+    <div class="form-group">
+      <label for="email" class="form-label">Email</label>
+      <input type="email" formControlName="email" class="form-control" />
+      <div *ngIf="email?.invalid && (email?.dirty || email?.touched)">
+        <p class="text-danger" *ngIf="email?.errors?.['required']">
+          Email is required.
+        </p>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="userName" class="form-label">Username</label>
+      <input type="text" formControlName="userName" class="form-control" />
+      <div *ngIf="userName?.invalid && (userName?.dirty || userName?.touched)">
+        <p class="text-danger" *ngIf="userName?.errors?.['required']">
+          Username is required.
+        </p>
+      </div>
+    </div>
+
+    <div class="flex gap-3">
+      <div class="form-group">
+        <label for="firstName" class="form-label">First Name</label>
+        <input type="text" formControlName="firstName" class="form-control" />
+        <div
+          *ngIf="firstName?.invalid && (firstName?.dirty || firstName?.touched)"
+        >
+          <p class="text-danger" *ngIf="firstName?.errors?.['required']">
+            First name is required.
+          </p>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="lastName" class="form-label">Last Name</label>
+        <input type="text" formControlName="lastName" class="form-control" />
+        <div
+          *ngIf="lastName?.invalid && (lastName?.dirty || lastName?.touched)"
+        >
+          <p class="text-danger" *ngIf="lastName?.errors?.['required']">
+            Last Name is required.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="dateOfBirth" class="form-label">Date Of Birth</label>
+      <input type="date" formControlName="dateOfBirth" class="form-control" />
+      <div
+        *ngIf="
+          dateOfBirth?.invalid && (dateOfBirth?.dirty || dateOfBirth?.touched)
+        "
+      >
+        <p class="text-danger" *ngIf="dateOfBirth?.errors?.['required']">
+          Date of birth is required.
+        </p>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="relative inline-flex items-center cursor-pointer">
+        <input
+          type="checkbox"
+          formControlName="isTeacher"
+          class="sr-only peer"
+        />
+        <div
+          class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary dark:peer-focus:ring-primary rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"
+        ></div>
+        <span class="ml-3 text-sm font-medium">Teacher Account</span>
+      </label>
+    </div>
+
+    <div class="form-group">
+      <label for="password" class="form-label">Password</label>
+      <input type="password" formControlName="password" class="form-control" />
+      <div *ngIf="password?.invalid && (password?.dirty || password?.touched)">
+        <p class="text-danger" *ngIf="password?.errors?.['required']">
+          Password is required.
+        </p>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="passwordConfirmation" class="form-label"
+        >Password Confirmation</label
+      >
+      <input
+        type="password"
+        formControlName="passwordConfirmation"
+        class="form-control"
+      />
+      <div
+        *ngIf="
+          passwordConfirmation?.invalid &&
+          (passwordConfirmation?.dirty || passwordConfirmation?.touched)
+        "
+      >
+        <p
+          class="text-danger"
+          *ngIf="passwordConfirmation?.errors?.['required']"
+        >
+          Password Confirmation is required.
+        </p>
+      </div>
+    </div>
+    <button type="submit" class="btn btn-primary">
+      <span *ngIf="!loading">Signup</span>
+      <fa-icon
+        *ngIf="loading"
+        [icon]="faCircleNotch"
+        animation="spin"
+      ></fa-icon>
+    </button>
+  </form>
+</div>

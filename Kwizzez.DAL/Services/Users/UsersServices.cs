@@ -2,13 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
+using AutoMapper.Configuration.Annotations;
 using Kwizzez.DAL.Dtos.Users;
 using Kwizzez.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace Kwizzez.DAL.Services.Users
 {
@@ -90,6 +93,21 @@ namespace Kwizzez.DAL.Services.Users
             var userDto = _mapper.Map<UserDto>(user);
             userDto.Roles = (List<string>)_userManager.GetRolesAsync(user).Result;
             return userDto;
+        }
+
+        public UserDto GetLoggedInUser(ClaimsPrincipal user)
+        {
+            var actualUser = _userManager.GetUserAsync(user).Result;
+
+            var userDto = _mapper.Map<UserDto>(actualUser);
+            userDto.Roles = (List<string>)_userManager.GetRolesAsync(actualUser).Result;
+            return userDto;
+        }
+
+        public List<string> GetUserRoles(ClaimsPrincipal user)
+        {
+            var actualUser = _userManager.GetUserAsync(user).Result;
+            return (List<string>)_userManager.GetRolesAsync(actualUser).Result;
         }
     }
 }

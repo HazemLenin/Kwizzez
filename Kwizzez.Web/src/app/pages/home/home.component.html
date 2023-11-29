@@ -1,0 +1,49 @@
+<!-- <div
+  class="flex flex-col justify-center items-center gap-10 h-screen"
+>
+  <h1 class="text-4xl">Kwizzez</h1>
+</div> -->
+
+<div>
+  <div
+    class="rounded-3xl from-primary-dark to-primary-light bg-gradient-to-tr mb-5 w-full h-60 p-5 text-white"
+  >
+    <h1 class="text-4xl bold">Kwizzez</h1>
+    <p
+      *ngIf="
+        (isAuthenticated$ | async) &&
+        (user$ | async)?.roles?.includes('Student')
+      "
+    >
+      Student Mode
+    </p>
+    <p
+      *ngIf="
+        (isAuthenticated$ | async) &&
+        (user$ | async)?.roles?.includes('Teacher')
+      "
+    >
+      Teacher Mode
+    </p>
+    <p
+      *ngIf="
+        (isAuthenticated$ | async) && (user$ | async)?.roles?.includes('Admin')
+      "
+    >
+      Admin Mode
+    </p>
+  </div>
+  <h2 class="text-3xl mb-5">Find out new Quizzes!</h2>
+  <div *ngIf="loading" class="grid md:grid-cols-3 gap-10">
+    <div
+      *ngFor="let i of [0, 1, 2, 3, 4]"
+      class="skeleton rounded-3xl h-60"
+    ></div>
+  </div>
+  <div *ngIf="!loading && quizzes" class="grid md:grid-cols-3 gap-10">
+    <app-quiz *ngFor="let quiz of quizzes" [quiz]="quiz"></app-quiz>
+  </div>
+  <h3 class="text-2xl" *ngIf="!loading && !quizzes.length">
+    No Quizzes right now!! :/
+  </h3>
+</div>

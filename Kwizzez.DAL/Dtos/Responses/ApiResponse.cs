@@ -6,11 +6,15 @@ using System.Threading.Tasks;
 
 namespace Kwizzez.DAL.Dtos.Responses
 {
-    public class ApiResponse<T>
+    public class ApiResponse
     {
         public bool IsSucceed => Errors == null;
-        public T? Data { get; set; }
         public Dictionary<string, List<string>>? Errors { get; set; }
+    }
+
+    public class ApiResponse<T> : ApiResponse
+    {
+        public T? Data { get; set; }
     }
 
     public class ApiPaginatedResponse<T> : ApiResponse<T>
@@ -22,9 +26,4 @@ namespace Kwizzez.DAL.Dtos.Responses
         public bool HasNext { get; set; }
     }
 
-    public class ApiResponse
-    {
-        public bool IsSucceed => Errors == null;
-        public Dictionary<string, List<string>>? Errors { get; set; }
-    }
 }

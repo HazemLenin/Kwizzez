@@ -39,6 +39,9 @@ namespace Kwizzez.DAL.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
+                    b.Property<int>("Order")
+                        .HasColumnType("int");
+
                     b.Property<string>("QuestionId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
@@ -54,7 +57,7 @@ namespace Kwizzez.DAL.Migrations
 
                     b.HasIndex("QuestionId");
 
-                    b.ToTable("Answers");
+                    b.ToTable("Answers", (string)null);
                 });
 
             modelBuilder.Entity("Kwizzez.Domain.Entities.ApplicationUser", b =>
@@ -183,7 +186,7 @@ namespace Kwizzez.DAL.Migrations
 
                     b.HasIndex("QuizId");
 
-                    b.ToTable("Questions");
+                    b.ToTable("Questions", (string)null);
                 });
 
             modelBuilder.Entity("Kwizzez.Domain.Entities.Quiz", b =>
@@ -195,32 +198,23 @@ namespace Kwizzez.DAL.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("Code")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("DeletedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("ExpirationDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("HasLimitedTime")
-                        .HasColumnType("bit");
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<DateTime>("PublishDate")
-                        .HasColumnType("datetime2");
+                    b.Property<int>("QuestionsNumber")
+                        .HasColumnType("int");
 
                     b.Property<int>("Score")
                         .HasColumnType("int");
-
-                    b.Property<TimeSpan?>("TimeLimit")
-                        .HasColumnType("time");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -233,7 +227,7 @@ namespace Kwizzez.DAL.Migrations
 
                     b.HasIndex("ApplicationUserId");
 
-                    b.ToTable("Quizzes");
+                    b.ToTable("Quizzes", (string)null);
                 });
 
             modelBuilder.Entity("Kwizzez.Domain.Entities.StudentScore", b =>
@@ -270,7 +264,7 @@ namespace Kwizzez.DAL.Migrations
 
                     b.HasIndex("QuizId");
 
-                    b.ToTable("StudentScores");
+                    b.ToTable("StudentScores", (string)null);
                 });
 
             modelBuilder.Entity("Kwizzez.Domain.Entities.StudentScoreAnswer", b =>
@@ -304,7 +298,7 @@ namespace Kwizzez.DAL.Migrations
 
                     b.HasIndex("StudentScoreId");
 
-                    b.ToTable("StudentScoreAnswers");
+                    b.ToTable("StudentScoreAnswers", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

@@ -16,7 +16,6 @@ using Microsoft.AspNetCore.Mvc;
 namespace Kwizzez.Api.Controllers
 {
     [ApiController]
-    [Authorize]
     [Route("api/[controller]")]
     public class QuizzesController : Controller
     {
@@ -33,12 +32,25 @@ namespace Kwizzez.Api.Controllers
         [HttpGet]
         public ActionResult<ApiPaginatedResponse<PaginatedList<QuizDto>>> GetQuizzes(int pageNumber = 1, int pageSize = 10)
         {
-            var quizzes = _quizzesService.GetPaginatedQuizzes(new()
+            var quizzes = _quizzesService.GetPaginatedQuizzes(pageNumber, pageSize);
+
+            return new ApiPaginatedResponse<PaginatedList<QuizDto>>()
             {
-                OrderExpression = quizzes => quizzes.OrderByDescending(q => q.CreatedAt),
-            },
-            pageNumber,
-            pageSize);
+                Data = quizzes,
+                PageIndex = quizzes.PageIndex,
+                TotalPages = quizzes.TotalPages,
+                TotalCount = quizzes.TotalCount,
+                HasNext = quizzes.HasNext,
+                HasPrevious = quizzes.HasPrevious
+            };
+        }
+
+        // GET: api/Quizzes/MyQuizzes
+        [HttpGet("MyQuizzes")]
+        [Authorize(Roles = Roles.Teacher)]
+        public ActionResult<ApiPaginatedResponse<PaginatedList<QuizDto>>> MyQuizzes(int pageNumber = 1, int pageSize = 10)
+        {
+            var quizzes = _quizzesService.GetPaginatedUserQuizzes(User.FindFirstValue(ClaimTypes.NameIdentifier), pageNumber, pageSize);
 
             return new ApiPaginatedResponse<PaginatedList<QuizDto>>()
             {
@@ -54,24 +66,30 @@ namespace Kwizzez.Api.Controllers
         // GET: api/Quizzes/{id}
         [HttpGet("{id}")]
         [Authorize(Roles = $"{Roles.Admin},{Roles.Teacher}")]
-        public ActionResult<ApiResponse<QuizDto>> GetQuiz(string id)
+        public ActionResult<ApiResponse<QuizDetailedDto>> GetQuiz(string id)
         {
             var quiz = _quizzesService.GetQuizById(id);
 
-            return new ApiResponse<QuizDto>()
+            if (quiz == null)
+                return NotFound();
+
+            return new ApiResponse<QuizDetailedDto>()
             {
                 Data = quiz
             };
         }
 
-        // GET: api/Quizzes/GetQuizByCode
-        [HttpGet("GetQuizByCode")]
+        // GET: api/Quizzes/GetQuizInfo/{id}/
+        [HttpGet("GetQuizInfo/{id}")]
         [Authorize(Roles = Roles.Student)]
-        public ActionResult<ApiResponse<QuizDto>> GetQuizByCode(int code)
+        public ActionResult<ApiResponse<QuizInfoDto>> GetQuizInfo(string id)
         {
-            var quiz = _quizzesService.GetQuizByCode(code);
+            var quiz = _quizzesService.GetQuizInfo(id);
 
-            return new ApiResponse<QuizDto>()
+            if (quiz == null)
+                return NotFound();
+
+            return new ApiResponse<QuizInfoDto>()
             {
                 Data = quiz
             };
@@ -80,13 +98,12 @@ namespace Kwizzez.Api.Controllers
         // PUT: api/Quizzes/{id}
         [HttpPut("{id}")]
         [Authorize(Roles = Roles.Teacher)]
-        public IActionResult PutQuiz(string id, QuizFormDto quizFormDto)
+        public IActionResult PutQuiz(string id, EditQuizDto quizEditDto)
         {
-            var quizDto = _mapper.Map<QuizDto>(quizFormDto);
-            quizDto.TeacherId = User.Identity.Name;
-            quizDto.Score = quizDto.Questions.Sum(q => q.Degree);
+            if (!_quizzesService.QuizExists(id))
+                return NotFound();
 
-            _quizzesService.UpdateQuiz(quizDto);
+            _quizzesService.UpdateQuiz(quizEditDto);
 
             return NoContent();
         }
@@ -94,14 +111,13 @@ namespace Kwizzez.Api.Controllers
         // POST: api/Quizzes
         [HttpPost]
         [Authorize(Roles = Roles.Teacher)]
-        public ActionResult<ApiResponse<QuizDto>> PostQuiz(QuizFormDto quizFormDto)
+        public ActionResult<ApiResponse<QuizDto>> PostQuiz(AddQuizDto quizAddDto)
         {
-            var quizDto = _mapper.Map<QuizDto>(quizFormDto);
-            quizDto.TeacherId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            quizDto.Score = quizDto.Questions.Sum(q => q.Degree);
-            _quizzesService.AddQuiz(quizDto);
+            var quizId = _quizzesService.AddQuiz(quizAddDto, User.FindFirstValue(ClaimTypes.NameIdentifier));
 
-            return CreatedAtAction(nameof(GetQuiz), new { id = quizDto.Id }, quizDto);
+            return CreatedAtAction(nameof(GetQuiz), new { id = quizId }, new ApiResponse<QuizDto>() {
+                Data = _mapper.Map<QuizDto>(quizAddDto)
+            });
         }
 
 
@@ -110,12 +126,12 @@ namespace Kwizzez.Api.Controllers
         [Authorize(Roles = $"{Roles.Admin},{Roles.Teacher}")]
         public IActionResult DeleteQuiz(string id)
         {
-            var quizDto = _quizzesService.GetQuizById(id);
+            var QuizDetailedDto = _quizzesService.QuizExists(id);
 
-            if (quizDto == null)
+            if (!QuizDetailedDto)
                 return NotFound();
 
-            _quizzesService.DeleteQuiz(quizDto);
+            _quizzesService.DeleteQuiz(id);
             return NoContent();
         }
     }
