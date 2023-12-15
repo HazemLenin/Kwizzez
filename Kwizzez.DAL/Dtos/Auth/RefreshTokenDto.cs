@@ -9,7 +9,6 @@ namespace Kwizzez.DAL.Dtos.Auth
 {
     public class RefreshTokenDto
     {
-        [Required]
         public string RefreshToken { get; set; }
     }
 }

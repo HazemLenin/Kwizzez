@@ -39,6 +39,7 @@ namespace Kwizzez.DAL.Services.Quizzes
             var quiz = _mapper.Map<Quiz>(QuizAddDto);
             quiz.ApplicationUserId = teacherId;
             quiz.Score = quiz.Questions.Sum(q => q.Degree);
+            quiz.QuestionsNumber = quiz.Questions.Count();
 
             _unitOfWork.quizzesRepository.Add(quiz);
             _unitOfWork.Save();
@@ -66,6 +67,8 @@ namespace Kwizzez.DAL.Services.Quizzes
                           orderby quiz.CreatedAt descending
                           select new QuizDto()
                           {
+                              Id = quiz.Id,
+                              Description = quiz.Description,
                               Title= quiz.Title,
                               Score= quiz.Score,
                               QuestionsNumber= quiz.QuestionsNumber,
@@ -76,7 +79,7 @@ namespace Kwizzez.DAL.Services.Quizzes
             return PaginatedList<QuizDto>.Create(quizzes, pageNumber, pageSize);
         }
 
-        public QuizDetailedDto? GetQuizById(string id)
+        public QuizDetailedDto? GetDetailedQuizById(string id)
         {
             var quiz = _unitOfWork.quizzesRepository.GetById(id, "ApplicationUser,Questions,Questions.Answers,StudentScores");
             
@@ -90,6 +93,7 @@ namespace Kwizzez.DAL.Services.Quizzes
 
             // Update the quiz only without its questions
             quiz.Score = editQuizDto.Questions.Sum(q => q.Degree);
+            quiz.QuestionsNumber = editQuizDto.Questions.Count();
             quiz.Id = editQuizDto.Id;
             quiz.Title = editQuizDto.Title;
             quiz.Description = editQuizDto.Description;
@@ -172,15 +176,16 @@ namespace Kwizzez.DAL.Services.Quizzes
             }).Any();
         }
 
-        public QuizInfoDto? GetQuizInfo(string id)
+        public QuizDto? GetQuizById(string id)
         {
             var quiz = (from q in _unitOfWork.quizzesRepository.GetAll()
                         join t in _userManager.Users
                         on q.ApplicationUserId equals t.Id
                         where q.Id == id
                         orderby q.CreatedAt descending
-                        select new QuizInfoDto()
+                        select new QuizDto()
                         {
+                            Id = q.Id,
                             Title = q.Title,
                             Score = q.Score,
                             QuestionsNumber = q.QuestionsNumber,
@@ -215,6 +220,18 @@ namespace Kwizzez.DAL.Services.Quizzes
                           };
 
             return PaginatedList<QuizDto>.Create(quizzes, pageNumber, pageSize);
+        }
+
+        public List<QuestionForStudentDto>? GetQuizQuestionsById(string id)
+        {
+            var questions = _unitOfWork.questionsRepository.GetAll(new() {
+                Filter = questions => questions.QuizId == id,
+                IncludeProperties = "Answers"
+            });
+
+            var mappedQuestions = _mapper.Map<List<QuestionForStudentDto>>(questions);
+
+            return mappedQuestions;
         }
     }
 }

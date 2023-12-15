@@ -12,9 +12,8 @@ namespace Kwizzez.DAL.Dtos.Quizzes
 {
     public class AddQuizDto
     {
-        [Required]
         public string Title { get; set; }
-        public string Description { get; set; }
+        public string? Description { get; set; }
         public List<AddQuestionDto> Questions { get; set; }
     }
 }

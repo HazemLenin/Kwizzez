@@ -1,9 +1,11 @@
 export default interface Quiz {
-  id: String;
-  title: String;
+  id: string;
+  title: string;
   score: Number;
   questionsNumber: Number;
-  teacherId: String;
-  teacherName: String;
-  description: String;
+  teacherId: string;
+  teacherName: string;
+  description: string;
+  createdAt: string;
+  updatedAt: string;
 }

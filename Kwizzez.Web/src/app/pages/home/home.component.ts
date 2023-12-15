@@ -32,11 +32,20 @@ export class HomeComponent implements OnInit {
       }
     });
 
-    this.quizzesService.getQuizzes(1).subscribe((response) => {
-      this.loading = false;
-      if (response.isSucceed) {
-        this.quizzes = response.data;
-      }
-    });
+    if (this.authService.hasRole('Student')) {
+      this.quizzesService.getQuizzes(1).subscribe((response) => {
+        this.loading = false;
+        if (response.isSucceed) {
+          this.quizzes = response.data;
+        }
+      });
+    } else if (this.authService.hasRole('Teacher')) {
+      this.quizzesService.getCurrentUserQuizzes().subscribe((response) => {
+        this.loading = false;
+        if (response.isSucceed) {
+          this.quizzes = response.data;
+        }
+      });
+    }
   }
 }

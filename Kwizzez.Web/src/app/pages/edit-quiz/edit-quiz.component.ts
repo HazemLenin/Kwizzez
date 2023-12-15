@@ -12,6 +12,7 @@ import {
   faCircleNotch,
   faPlus,
   faXmark,
+  faTrash,
 } from '@fortawesome/free-solid-svg-icons';
 import { catchError, throwError } from 'rxjs';
 import AnswerForm from 'src/app/models/AddAnswer';
@@ -46,8 +47,10 @@ export class EditQuizComponent implements OnInit {
   });
 
   faCircleNotch = faCircleNotch;
+  faTrash = faTrash;
   loading: boolean = false;
   quizId: String;
+  deleteModalShow = false;
 
   errors: string[] = [];
 
@@ -55,7 +58,7 @@ export class EditQuizComponent implements OnInit {
     this.route.paramMap.subscribe((params) => {
       this.quizId = params.get('id') ?? '';
       this.quizzesService
-        .getQuizById(params.get('id') ?? '')
+        .getQuizDetails(params.get('id') ?? '')
         .pipe(
           catchError((err) => {
             if (err.status === 404) {
@@ -72,10 +75,6 @@ export class EditQuizComponent implements OnInit {
               title: response.data.title,
               description: response.data.description,
             });
-            // this.quizForm.setControl(
-            //   'questions',
-            //   this.setQuestions(response.data.questions)
-            // );
             while (this.questions.length) {
               this.questions.removeAt(0);
             }
@@ -98,7 +97,6 @@ export class EditQuizComponent implements OnInit {
               ) as FormArray;
 
               // Iterate over the answers in the backend data and add them to the answers form array
-              console.log(question);
               question.answers.forEach((answer: any) => {
                 const answerFormGroup = this.formBuilder.group({
                   id: new FormControl(null),
@@ -221,5 +219,19 @@ export class EditQuizComponent implements OnInit {
         this.router.navigate(['/my-quizzes']);
       });
     }
+  }
+
+  openDeleteModal() {
+    this.deleteModalShow = true;
+  }
+  closeDeleteModal() {
+    this.deleteModalShow = false;
+  }
+  deleteQuiz() {
+    this.quizzesService.deleteQuiz(this.quizId).subscribe((response) => {
+      this.deleteModalShow = false;
+      this.loading = false;
+      this.router.navigate(['/my-quizzes']);
+    });
   }
 }

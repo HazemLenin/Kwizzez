@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AuthService } from './auth.service';
-import { Observable } from 'rxjs';
+import { Observable, ObservableLike } from 'rxjs';
 import AddQuiz from '../models/AddQuiz';
 import EditQuiz from '../models/EditQuiz';
 
@@ -28,13 +28,19 @@ export class QuizzesService {
     });
   }
 
-  getQuizInfoById(id: string): Observable<any> {
-    return this.http.get(`${this.BASE_URL}/Quizzes/GetQuizInfo/${id}`, {
+  getQuizDetails(id: string): Observable<any> {
+    return this.http.get(`${this.BASE_URL}/Quizzes/GetQuizDetails/${id}`, {
       headers: this.HEADERS,
     });
   }
 
-  getCurrentUsersQuizzes(): Observable<any> {
+  getQuizQuestions(id: string): Observable<any> {
+    return this.http.get(`${this.BASE_URL}/Quizzes/GetQuizQuestions/${id}`, {
+      headers: this.HEADERS,
+    });
+  }
+
+  getCurrentUserQuizzes(): Observable<any> {
     return this.http.get(`${this.BASE_URL}/Quizzes/MyQuizzes`, {
       headers: this.HEADERS,
     });
@@ -48,6 +54,12 @@ export class QuizzesService {
 
   editQuiz(quiz: EditQuiz): Observable<any> {
     return this.http.put(`${this.BASE_URL}/Quizzes/${quiz.id}`, quiz, {
+      headers: this.HEADERS,
+    });
+  }
+
+  deleteQuiz(id: String): Observable<any> {
+    return this.http.delete(`${this.BASE_URL}/Quizzes/${id}`, {
       headers: this.HEADERS,
     });
   }

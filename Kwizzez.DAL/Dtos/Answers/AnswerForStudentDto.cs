@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,12 +9,10 @@ using Kwizzez.DAL.Dtos.StudentScoreAnswers;
 
 namespace Kwizzez.DAL.Dtos.Answers
 {
-    public class EditAnswerDto
+    public class AnswerForStudentDto : BaseDto
     {
-        public string? Id { get; set; }
+        public string QuestionId { get; set; }
         public string Title { get; set; }
-        public bool IsCorrect { get; set; }
         public int Order { get; set; }
-
     }
 }

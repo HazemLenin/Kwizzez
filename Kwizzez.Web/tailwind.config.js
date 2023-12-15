@@ -9,7 +9,7 @@ module.exports = {
       primary: {
         light: colors.blue["300"],
         DEFAULT: colors.blue["500"],
-        dark: colors.blue["600"],
+        dark: colors.blue["900"],
       },
       success: {
         light: colors.emerald["300"],
