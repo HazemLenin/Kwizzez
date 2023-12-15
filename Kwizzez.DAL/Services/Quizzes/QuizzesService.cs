@@ -233,5 +233,17 @@ namespace Kwizzez.DAL.Services.Quizzes
 
             return mappedQuestions;
         }
+
+        public void StartQuiz(string quizId, string studentId)
+        {
+            StudentScore studentScore = new()
+            {
+                ApplicationUserId = studentId,
+                QuizId = quizId,
+            };
+
+            _unitOfWork.studentScoresRepository.Add(studentScore);
+            _unitOfWork.Save();
+        }
     }
 }

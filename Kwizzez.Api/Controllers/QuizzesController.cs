@@ -8,6 +8,7 @@ using Kwizzez.DAL.Dtos.Questions;
 using Kwizzez.DAL.Dtos.Quizzes;
 using Kwizzez.DAL.Dtos.Responses;
 using Kwizzez.DAL.Services.Quizzes;
+using Kwizzez.DAL.Services.StudentScores;
 using Kwizzez.DAL.Utilities;
 using Kwizzez.Domain.Constants;
 using Microsoft.AspNetCore.Authorization;
@@ -21,6 +22,7 @@ namespace Kwizzez.Api.Controllers
     public class QuizzesController : Controller
     {
         public readonly IQuizzesService _quizzesService;
+        public readonly IStudentScoresService _studentScoresService;
         public readonly IMapper _mapper;
 
         public QuizzesController(IQuizzesService quizzesService, IMapper mapper)
@@ -142,13 +144,31 @@ namespace Kwizzez.Api.Controllers
         [Authorize(Roles = $"{Roles.Admin},{Roles.Teacher}")]
         public IActionResult DeleteQuiz(string id)
         {
-            var QuizDetailedDto = _quizzesService.QuizExists(id);
+            var quizExists = _quizzesService.QuizExists(id);
 
-            if (!QuizDetailedDto)
+            if (!quizExists)
                 return NotFound();
 
             _quizzesService.DeleteQuiz(id);
             return NoContent();
+        }
+
+        [HttpPost("{id}")]
+        [Authorize(Roles = $"{Roles.Student}")]
+        public IActionResult StartQuiz(string id) {
+            var quizExists = _quizzesService.QuizExists(id);
+
+            if (!quizExists)
+                return NotFound();
+
+            var studentId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var studentScoreId = _studentScoresService.GetStudentScoreId(studentId, id);
+
+            if (studentScoreId == null)
+                return NotFound();
+
+            _quizzesService.StartQuiz(id, studentId);
+            return Ok();
         }
     }
 }

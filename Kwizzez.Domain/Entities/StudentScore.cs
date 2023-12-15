@@ -12,6 +12,7 @@ namespace Kwizzez.Domain.Entities
         public string ApplicationUserId { get; set; }
         public string QuizId { get; set; }
         public int Score { get; set; }
+        public bool Finished { get; set; } = false;
         
         // Navigation Props
 

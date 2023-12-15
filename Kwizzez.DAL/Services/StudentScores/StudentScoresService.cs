@@ -61,5 +61,14 @@ namespace Kwizzez.DAL.Services.StudentScores
             var studentScore = _mapper.Map<StudentScore>(studentScoreDto);
             _unitOfWork.studentScoresRepository.Update(studentScore);
         }
+
+        public string? GetStudentScoreId(string studentId, string quizId)
+        {
+            var studentScoreIds = _unitOfWork.studentScoresRepository.GetAll(new() {
+                Filter = s => s.ApplicationUserId == studentId && s.QuizId == quizId
+            }).Select(s => s.Id);
+
+            return studentScoreIds.FirstOrDefault();
+        }
     }
 }

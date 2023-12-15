@@ -27,11 +27,11 @@
   <ul>
     <li *ngFor="let question of questions">
       <h2 class="text-3xl mb-5">{{ question.order }}. {{ question.title }}</h2>
-      <ul class="ms-5">
+      <ul class="flex flex-col gap-2 ms-5">
         <li *ngFor="let answer of question.answers">
           <button
             *ngIf="!answerSelected(question.id, answer.id)"
-            class="w-full text-start rounded-md p-5"
+            class="w-full text-start rounded-md p-5 border border-white dark:border-gray-800 hover:bg-gray-300 hover:dark:bg-gray-600 hover:!border-gray-400 hover:dark:!border-gray-400"
             (click)="selectAnswer(question.id, answer.id)"
           >
             {{ answer.title }}
