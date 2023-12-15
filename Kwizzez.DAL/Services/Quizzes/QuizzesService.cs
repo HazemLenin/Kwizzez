@@ -74,6 +74,8 @@ namespace Kwizzez.DAL.Services.Quizzes
                               QuestionsNumber= quiz.QuestionsNumber,
                               TeacherId= quiz.ApplicationUserId,
                               TeacherName= $"{teacher.FirstName} {teacher.LastName}",
+                              UpdatedAt = quiz.UpdatedAt,
+                              CreatedAt = quiz.CreatedAt
                           };
 
             return PaginatedList<QuizDto>.Create(quizzes, pageNumber, pageSize);
@@ -176,11 +178,13 @@ namespace Kwizzez.DAL.Services.Quizzes
             }).Any();
         }
 
-        public QuizDto? GetQuizById(string id)
+        public QuizDto? GetQuizById(string id, string studentId)
         {
             var quiz = (from q in _unitOfWork.quizzesRepository.GetAll()
+                        
                         join t in _userManager.Users
-                        on q.ApplicationUserId equals t.Id
+                        on q.ApplicationUserId equals t.Id 
+                        
                         where q.Id == id
                         orderby q.CreatedAt descending
                         select new QuizDto()
@@ -195,6 +199,21 @@ namespace Kwizzez.DAL.Services.Quizzes
                             CreatedAt = q.CreatedAt,
                             UpdatedAt = q.UpdatedAt
                         }).FirstOrDefault();
+
+            if (quiz != null)
+            {
+                var studentScore = _unitOfWork.studentScoresRepository.GetAll(new()
+                {
+                    Filter = s => s.QuizId == quiz.Id && s.ApplicationUserId == studentId
+                }).FirstOrDefault();
+
+                if (studentScore != null)
+                {
+                    quiz.Took = true;
+                    quiz.Finished = studentScore.Finished;
+                    quiz.StudentScoreId = studentScore.Id;
+                }
+            }
 
             return quiz;
         }

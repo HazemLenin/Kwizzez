@@ -16,8 +16,21 @@
     <p class="text-gray-400">{{ quiz.teacherName }}</p>
     <p class="text-gray-500">{{ quiz.createdAt | timeAgo }}</p>
     <p>Questions: {{ quiz.questionsNumber }}</p>
-    <button (click)="takeQuiz()" class="btn btn-primary mx-auto w-fit">
+    <button
+      *ngIf="!quiz.took"
+      (click)="takeQuiz()"
+      class="btn btn-primary mx-auto w-fit"
+    >
       Take Quiz
+    </button>
+    <button
+      *ngIf="quiz.took && !quiz.finished"
+      class="btn btn-primary mx-auto w-fit"
+    >
+      Resume Quiz
+    </button>
+    <button *ngIf="quiz.finished" class="btn btn-primary mx-auto w-fit">
+      See Results
     </button>
   </section>
 </div>

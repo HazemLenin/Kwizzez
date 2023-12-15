@@ -8,4 +8,7 @@ export default interface Quiz {
   description: string;
   createdAt: string;
   updatedAt: string;
+  took: Boolean; // Student took the exam before whether he finished before it or not
+  finished: Boolean; // Student took the exam before and finsihed
+  studentScoreId: String;
 }

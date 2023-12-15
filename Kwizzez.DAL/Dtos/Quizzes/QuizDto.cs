@@ -20,5 +20,8 @@ namespace Kwizzez.DAL.Dtos.Quizzes
         public string TeacherId { get; set; }
         public string TeacherName { get; set; }
         public string Description { get; set; }
+        public bool Took { get; set; } = false;
+        public bool Finished { get; set; } = false;
+        public string StudentScoreId { get; set; }
     }
 }

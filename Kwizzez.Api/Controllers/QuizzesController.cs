@@ -71,7 +71,8 @@ namespace Kwizzez.Api.Controllers
         [Authorize(Roles = Roles.Student)]
         public ActionResult<ApiResponse<QuizDto>> GetQuiz(string id)
         {
-            var quiz = _quizzesService.GetQuizById(id);
+            var studentId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var quiz = _quizzesService.GetQuizById(id, studentId);
 
             if (quiz == null)
                 return NotFound();
@@ -100,6 +101,7 @@ namespace Kwizzez.Api.Controllers
 
         // GET: api/Quizzes/GetQuizQuestions/{id}/
         [HttpGet("GetQuizQuestions/{id}")]
+        [Authorize(Roles = $"{Roles.Student}")]
         public ActionResult<ApiResponse<List<QuestionForStudentDto>>> GetQuizQuestions(string id)
         {
             var questions = _quizzesService.GetQuizQuestionsById(id);
