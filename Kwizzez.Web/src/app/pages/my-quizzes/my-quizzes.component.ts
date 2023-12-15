@@ -15,7 +15,7 @@ export class MyQuizzesComponent implements OnInit {
   faPlus = faPlus;
 
   ngOnInit(): void {
-    this.quizzesService.getCurrentUsersQuizzes().subscribe((response) => {
+    this.quizzesService.getCurrentUserQuizzes().subscribe((response) => {
       this.loading = false;
       if (response.isSucceed) {
         this.quizzes = response.data;

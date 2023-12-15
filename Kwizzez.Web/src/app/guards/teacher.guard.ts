@@ -6,7 +6,7 @@ import { tap } from 'rxjs';
 export const teacherGuard: CanActivateFn = (route, state) => {
   const authService = inject(AuthService);
   const router = inject(Router);
-  return authService.HasRole('Teacher').pipe(
+  return authService.hasRole('Teacher').pipe(
     tap((isTeacher) => {
       return !isTeacher
         ? router.navigate(['/forbidden'], {

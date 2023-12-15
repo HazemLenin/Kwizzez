@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
+using Kwizzez.DAL.Dtos.Questions;
 using Kwizzez.DAL.Dtos.Quizzes;
 using Kwizzez.DAL.Dtos.Responses;
 using Kwizzez.DAL.Services.Quizzes;
@@ -65,10 +66,26 @@ namespace Kwizzez.Api.Controllers
 
         // GET: api/Quizzes/{id}
         [HttpGet("{id}")]
-        [Authorize(Roles = $"{Roles.Admin},{Roles.Teacher}")]
-        public ActionResult<ApiResponse<QuizDetailedDto>> GetQuiz(string id)
+        [Authorize(Roles = Roles.Student)]
+        public ActionResult<ApiResponse<QuizDto>> GetQuiz(string id)
         {
             var quiz = _quizzesService.GetQuizById(id);
+
+            if (quiz == null)
+                return NotFound();
+
+            return new ApiResponse<QuizDto>()
+            {
+                Data = quiz
+            };
+        }
+
+        // GET: api/Quizzes/GetQuizDetails/{id}/
+        [HttpGet("GetQuizDetails/{id}")]
+        [Authorize(Roles = $"{Roles.Admin},{Roles.Teacher}")]
+        public ActionResult<ApiResponse<QuizDetailedDto>> GetQuizDetails(string id)
+        {
+            var quiz = _quizzesService.GetDetailedQuizById(id);
 
             if (quiz == null)
                 return NotFound();
@@ -79,19 +96,18 @@ namespace Kwizzez.Api.Controllers
             };
         }
 
-        // GET: api/Quizzes/GetQuizInfo/{id}/
-        [HttpGet("GetQuizInfo/{id}")]
-        [Authorize(Roles = Roles.Student)]
-        public ActionResult<ApiResponse<QuizInfoDto>> GetQuizInfo(string id)
+        // GET: api/Quizzes/GetQuizQuestions/{id}/
+        [HttpGet("GetQuizQuestions/{id}")]
+        public ActionResult<ApiResponse<List<QuestionForStudentDto>>> GetQuizQuestions(string id)
         {
-            var quiz = _quizzesService.GetQuizInfo(id);
+            var questions = _quizzesService.GetQuizQuestionsById(id);
 
-            if (quiz == null)
+            if (questions == null)
                 return NotFound();
 
-            return new ApiResponse<QuizInfoDto>()
+            return new ApiResponse<List<QuestionForStudentDto>>()
             {
-                Data = quiz
+                Data = questions
             };
         }
 

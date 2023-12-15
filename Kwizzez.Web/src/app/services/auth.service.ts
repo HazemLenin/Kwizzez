@@ -83,11 +83,11 @@ export class AuthService {
     });
   }
 
-  HasRole(role: Role): Observable<boolean> {
+  hasRole(role: Role): Observable<boolean> {
     return this.getUserRoles().pipe(
       map(({ isSucceed, data }: { isSucceed: Boolean; data: Role[] }) => {
         if (!isSucceed) return false;
-        if (!data.includes('Teacher')) return false;
+        if (!data.includes(role)) return false;
         return true;
       })
     );

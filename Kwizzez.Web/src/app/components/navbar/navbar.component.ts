@@ -21,7 +21,7 @@ export class NavbarComponent {
     private darkModeService: DarkModeService
   ) {
     this.isAuthenticated$ = authService.isAuthenticated();
-    this.isTeacher$ = authService.HasRole('Teacher');
+    this.isTeacher$ = authService.hasRole('Teacher');
     this.user$ = authService.getUser();
   }
 

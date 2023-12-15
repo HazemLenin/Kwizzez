@@ -19,13 +19,16 @@ import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { ToastrModule } from 'ngx-toastr';
 import { TokenRefreshInterceptor } from './interceptors/token-refresh.interceptor';
 import { UnauthorizedComponent } from './pages/unauthorized/unauthorized.component';
-import { QuizComponent } from './components/home/quiz/quiz.component';
+import { QuizCardComponent } from './components/quiz-card/quiz-card.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { MyQuizzesComponent } from './pages/my-quizzes/my-quizzes.component';
 import { ForbiddenComponent } from './pages/forbidden/forbidden.component';
 import { AddQuizComponent } from './pages/add-quiz/add-quiz.component';
 import { TestComponent } from './pages/test/test.component';
 import { EditQuizComponent } from './pages/edit-quiz/edit-quiz.component';
+import { CommonModule } from '@angular/common';
+import { QuizComponent } from './pages/quiz/quiz.component';
+import { TimeAgoPipe } from './pipes/time-ago.pipe';
 
 @NgModule({
   declarations: [
@@ -37,6 +40,7 @@ import { EditQuizComponent } from './pages/edit-quiz/edit-quiz.component';
     LogoutComponent,
     NotFoundComponent,
     UnauthorizedComponent,
+    QuizCardComponent,
     QuizComponent,
     FooterComponent,
     MyQuizzesComponent,
@@ -44,9 +48,11 @@ import { EditQuizComponent } from './pages/edit-quiz/edit-quiz.component';
     AddQuizComponent,
     TestComponent,
     EditQuizComponent,
+    TimeAgoPipe,
   ],
   imports: [
     BrowserModule,
+    CommonModule,
     AppRoutingModule,
     StoreModule.forRoot({
       user: userReducer,

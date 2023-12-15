@@ -1,9 +1,9 @@
 <div
-  class="rounded-3xl md:h-60 p-5 border dark:border-gray-600 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+  class="rounded-3xl md:h-60 border dark:border-gray-600 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
 >
   <a
-    class="h-full w-full flex flex-col justify-between gap-5"
-    [routerLink]="['/edit-quiz', quiz.id]"
+    class="h-full w-full flex flex-col justify-between gap-5 p-5"
+    [routerLink]="[(isTeacher$ | async) ? '/edit-quiz' : '/quizzes', quiz.id]"
   >
     <h3
       class="text-2xl overflow-visible md:truncate"
@@ -22,10 +22,11 @@
     <p class="text-gray-400 overflow-visible md:truncate">
       {{ quiz.description }}
     </p>
-    <a
-      class="text-gray-400 underline"
-      [routerLink]="['/teachers', quiz.teacherId]"
-      >{{ quiz.teacherName }}</a
-    >
+    <div class="flex justify-between">
+      <small class="text-gray-400 text-sm">{{ quiz.teacherName }}</small>
+      <small class="text-gray-400 text-sm">{{
+        quiz.createdAt | timeAgo
+      }}</small>
+    </div>
   </a>
 </div>

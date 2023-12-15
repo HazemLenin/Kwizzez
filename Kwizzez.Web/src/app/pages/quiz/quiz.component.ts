@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { catchError, throwError } from 'rxjs';
+import Question from 'src/app/models/Question';
 import Quiz from 'src/app/models/Quiz';
 import { QuizzesService } from 'src/app/services/quizzes.service';
 
@@ -10,18 +11,21 @@ import { QuizzesService } from 'src/app/services/quizzes.service';
   styleUrls: ['./quiz.component.css'],
 })
 export class QuizComponent implements OnInit {
-  loading = false;
+  loading = true;
   quiz: Quiz;
+  quizStarted = false;
+  questions: Question[];
 
   constructor(
     private router: Router,
     private route: ActivatedRoute,
     private quizzesService: QuizzesService
   ) {}
+
   ngOnInit(): void {
     this.route.paramMap.subscribe((params) => {
       this.quizzesService
-        .getQuizInfoById(params.get('id') ?? '')
+        .getQuizById(params.get('id') ?? '')
         .pipe(
           catchError((err) => {
             if (err.status === 404) {
@@ -33,12 +37,31 @@ export class QuizComponent implements OnInit {
           })
         )
         .subscribe((response) => {
-          this.loading = true;
+          this.loading = false;
           if (response.isSucceed) {
             this.quiz = response.data;
-            console.log(this.quiz);
           }
         });
+    });
+  }
+
+  takeQuiz() {
+    this.quizzesService.getQuizQuestions(this.quiz.id).subscribe((response) => {
+      if (response.isSucceed) {
+        this.quizStarted = true;
+        this.questions = response.data;
+
+        this.questions = this.questions.sort(
+          (a, b) => (a.order as number) - (b.order as number)
+        );
+
+        this.questions = this.questions.map((question) => {
+          question.answers = question.answers.sort(
+            (a, b) => (a.order as number) - (b.order as number)
+          );
+          return question;
+        });
+      }
     });
   }
 }

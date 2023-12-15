@@ -25,7 +25,7 @@ namespace Kwizzez.DAL.Mappings
                 .ForMember(dest => dest.TeacherId, src => src.MapFrom(src => src.ApplicationUserId))
                 .ReverseMap();
 
-            CreateMap<Quiz, QuizInfoDto>()
+            CreateMap<Quiz, QuizDto>()
                 .ForMember(dest => dest.TeacherId, src => src.MapFrom(src => src.ApplicationUserId))
                 .ReverseMap();
 
@@ -47,6 +47,9 @@ namespace Kwizzez.DAL.Mappings
             CreateMap<Question, EditQuestionDto>()
                 .ReverseMap();
 
+            CreateMap<Question, QuestionForStudentDto>()
+                .ReverseMap();
+
             CreateMap<Answer, AnswerDto>()
                 .ReverseMap();
 
@@ -54,6 +57,9 @@ namespace Kwizzez.DAL.Mappings
                 .ReverseMap();
 
             CreateMap<Answer, EditAnswerDto>()
+                .ReverseMap();
+
+            CreateMap<Answer, AnswerForStudentDto>()
                 .ReverseMap();
 
             CreateMap<StudentScore, StudentScoreDto>()
