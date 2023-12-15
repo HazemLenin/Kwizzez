@@ -15,6 +15,7 @@ export class QuizComponent implements OnInit {
   quiz: Quiz;
   quizStarted = false;
   questions: Question[];
+  selectedAnswers = new Map<String, String>(); // Map<questionId, answerId>
 
   constructor(
     private router: Router,
@@ -63,5 +64,15 @@ export class QuizComponent implements OnInit {
         });
       }
     });
+  }
+
+  selectAnswer(questionId: String, answerId: String) {
+    this.selectedAnswers.set(questionId, answerId);
+  }
+
+  answerSelected(questionId: String, answerId: String) {
+    let selectedAnswer = this.selectedAnswers.get(questionId);
+    if (selectedAnswer) return selectedAnswer == answerId;
+    return false;
   }
 }

@@ -1,11 +1,11 @@
 <div *ngIf="!quizStarted">
   <section *ngIf="loading">
     <div class="skeleton h-10 w-80 rounded-md mb-3 mx-auto"></div>
-    <div class="skeleton h-7 w-80 rounded-md mb-3"></div>
-    <div class="skeleton h-7 w-80 rounded-md mb-3"></div>
-    <div class="skeleton h-7 w-80 rounded-md mb-3"></div>
-    <div class="skeleton h-7 w-80 rounded-md mb-3"></div>
-    <div class="skeleton h-7 w-80 rounded-md mb-3"></div>
+    <div class="skeleton h-7 w-80 rounded-md mb-3 mx-auto"></div>
+    <div class="skeleton h-7 w-80 rounded-md mb-3 mx-auto"></div>
+    <div class="skeleton h-7 w-80 rounded-md mb-3 mx-auto"></div>
+    <div class="skeleton h-7 w-80 rounded-md mb-3 mx-auto"></div>
+    <div class="skeleton h-7 w-80 rounded-md mb-3 mx-auto"></div>
   </section>
 
   <section
@@ -22,13 +22,28 @@
   </section>
 </div>
 
-<div *ngIf="quizStarted">
-  <h1 class="text-4xl text-center">{{ quiz.title }}</h1>
-  <ul class="list-decimal">
+<div *ngIf="quizStarted" class="md:px-60">
+  <h1 class="text-4xl text-center mb-5">{{ quiz.title }}</h1>
+  <ul>
     <li *ngFor="let question of questions">
-      <h2>{{ question.title }}</h2>
-      <ul class="list-disc ms-5">
-        <li *ngFor="let answer of question.answers">{{ answer.title }}</li>
+      <h2 class="text-3xl mb-5">{{ question.order }}. {{ question.title }}</h2>
+      <ul class="ms-5">
+        <li *ngFor="let answer of question.answers">
+          <button
+            *ngIf="!answerSelected(question.id, answer.id)"
+            class="w-full text-start rounded-md p-5"
+            (click)="selectAnswer(question.id, answer.id)"
+          >
+            {{ answer.title }}
+          </button>
+          <button
+            *ngIf="answerSelected(question.id, answer.id)"
+            class="w-full text-start rounded-md p-5 bg-primary-light dark:bg-primary-dark border-primary border"
+            (click)="selectAnswer(question.id, answer.id)"
+          >
+            {{ answer.title }}
+          </button>
+        </li>
       </ul>
     </li>
   </ul>
