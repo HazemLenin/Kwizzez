@@ -1,6 +1,6 @@
 export default interface EditAnswer {
-  id: String | null;
-  title: String;
-  isCorrect: Boolean;
-  order: Number;
+  id: string | null;
+  title: string;
+  isCorrect: boolean;
+  order: number;
 }

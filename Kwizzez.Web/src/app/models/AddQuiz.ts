@@ -1,7 +1,7 @@
 import QuestionForm from './AddQuestion';
 
 export default interface AddQuiz {
-  title: String;
-  description: String | null;
+  title: string;
+  description: string | null;
   questions: QuestionForm[];
 }

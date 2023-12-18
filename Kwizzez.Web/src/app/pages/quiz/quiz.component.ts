@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { faCircleNotch } from '@fortawesome/free-solid-svg-icons';
 import { catchError, throwError } from 'rxjs';
 import Question from 'src/app/models/Question';
 import Quiz from 'src/app/models/Quiz';
@@ -16,6 +17,7 @@ export class QuizComponent implements OnInit {
   quizStarted = false;
   questions: Question[];
   selectedAnswers = new Map<String, String>(); // Map<questionId, answerId>
+  faCircleNotch = faCircleNotch;
 
   constructor(
     private router: Router,

@@ -29,6 +29,7 @@ import { EditQuizComponent } from './pages/edit-quiz/edit-quiz.component';
 import { CommonModule } from '@angular/common';
 import { QuizComponent } from './pages/quiz/quiz.component';
 import { TimeAgoPipe } from './pipes/time-ago.pipe';
+import { NumberToASCIIPipe } from './pipes/number-to-ascii.pipe';
 
 @NgModule({
   declarations: [
@@ -49,6 +50,7 @@ import { TimeAgoPipe } from './pipes/time-ago.pipe';
     TestComponent,
     EditQuizComponent,
     TimeAgoPipe,
+    NumberToASCIIPipe,
   ],
   imports: [
     BrowserModule,
