@@ -65,6 +65,9 @@ namespace Kwizzez.DAL.Mappings
             CreateMap<StudentScore, StudentScoreDto>()
                 .ReverseMap();
 
+            CreateMap<StudentScore, StudentScoreAnswersDto>()
+                .ReverseMap();
+
             CreateMap<StudentScoreAnswer, StudentScoreAnswerDto>()
                 .ReverseMap();
         }

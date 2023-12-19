@@ -4,9 +4,12 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
+using Kwizzez.DAL.Dtos.Answers;
 using Kwizzez.DAL.Dtos.Questions;
 using Kwizzez.DAL.Dtos.Quizzes;
 using Kwizzez.DAL.Dtos.Responses;
+using Kwizzez.DAL.Dtos.StudentScores;
+using Kwizzez.DAL.Services.Answers;
 using Kwizzez.DAL.Services.Quizzes;
 using Kwizzez.DAL.Services.StudentScores;
 using Kwizzez.DAL.Utilities;
@@ -23,11 +26,14 @@ namespace Kwizzez.Api.Controllers
     {
         public readonly IQuizzesService _quizzesService;
         public readonly IStudentScoresService _studentScoresService;
+        public readonly IAnswersService _answersService;
         public readonly IMapper _mapper;
 
-        public QuizzesController(IQuizzesService quizzesService, IMapper mapper)
+        public QuizzesController(IQuizzesService quizzesService, IStudentScoresService studentScoresService, IAnswersService answersService, IMapper mapper)
         {
             _quizzesService = quizzesService;
+            _studentScoresService = studentScoresService;
+            _answersService = answersService;
             _mapper = mapper;
         }
 
@@ -155,7 +161,7 @@ namespace Kwizzez.Api.Controllers
             return NoContent();
         }
 
-        [HttpPost("{id}")]
+        [HttpPost("StartQuiz/{id}")]
         [Authorize(Roles = $"{Roles.Student}")]
         public IActionResult StartQuiz(string id) {
             var quizExists = _quizzesService.QuizExists(id);
@@ -166,10 +172,62 @@ namespace Kwizzez.Api.Controllers
             var studentId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var studentScoreId = _studentScoresService.GetStudentScoreId(studentId, id);
 
-            if (studentScoreId == null)
-                return NotFound();
+            if (studentScoreId != null)
+                return BadRequest();
 
             _quizzesService.StartQuiz(id, studentId);
+            return Ok();
+        }
+
+        [HttpGet("GetAnswers/{id}")]
+        [Authorize(Roles = $"{Roles.Student}")]
+        public ActionResult<ApiResponse<StudentScoreAnswersDto>> GetAnswers(string id) {
+            var quizExists = _quizzesService.QuizExists(id);
+
+            if (!quizExists)
+                return NotFound();
+
+            var studentId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var studentScoreId = _studentScoresService.GetStudentScoreId(studentId, id);
+
+            if (studentScoreId == null)
+                return Forbid();
+
+            return new ApiResponse<StudentScoreAnswersDto>() {
+                Data = _studentScoresService.GetStudentScoreAnswersById(studentScoreId)
+            };
+        }
+
+        [HttpPost("SelectAnswer/{id}")]
+        [Authorize(Roles = $"{Roles.Student}")]
+        public IActionResult SelectAnswer(string id, SelectAnswerDto answerDto) {
+            // Check quiz existance
+            var quizExists = _quizzesService.QuizExists(id);
+
+            if (!quizExists)
+                return NotFound();
+
+            // Check if student started this quiz before
+            var studentId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var studentScoreId = _studentScoresService.GetStudentScoreId(studentId, id);
+
+            if (studentScoreId == null)
+                return BadRequest();
+
+            // Check answer existance
+            var answerExists = _answersService.AnswerExists(answerDto.AnswerId);
+
+            if (!answerExists)
+                return NotFound();
+
+            // Check that answer belongs to this quiz
+            var answerRelatedToQuiz = _quizzesService.AnswerRelatedToQuiz(id, answerDto.AnswerId);
+
+            if (!answerRelatedToQuiz)
+                return BadRequest();
+
+            _studentScoresService.SelectAnswer(answerDto.AnswerId, studentScoreId);
+
             return Ok();
         }
     }

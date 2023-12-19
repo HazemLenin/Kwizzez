@@ -2,6 +2,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using Kwizzez.Api.Middlewares;
 using Kwizzez.DAL.Data;
+using Kwizzez.DAL.Services.Answers;
 using Kwizzez.DAL.Services.Auth;
 using Kwizzez.DAL.Services.Quizzes;
 using Kwizzez.DAL.Services.Seeds;
@@ -79,6 +80,7 @@ builder.Services.AddTransient<IAuthService, AuthService>();
 builder.Services.AddTransient<IUsersService, UsersService>();
 builder.Services.AddTransient<IQuizzesService, QuizzesService>();
 builder.Services.AddTransient<IStudentScoresService, StudentScoresService>();
+builder.Services.AddTransient<IAnswersService, AnswersService>();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services.AddAuthorization();

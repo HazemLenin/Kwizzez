@@ -50,10 +50,28 @@ namespace Kwizzez.DAL.Services.StudentScores
             return PaginatedList<StudentScoreDto>.Create(scores, pageNumber, pageSize);
         }
 
-        public StudentScoreDto GetStudentScoreById(string id, string includeProperties = "")
+        public StudentScoreDto GetStudentScoreById(string id)
         {
-            var studentScore = _unitOfWork.studentScoresRepository.GetById(id, includeProperties);
+            var studentScore = _unitOfWork.studentScoresRepository.GetById(id, "StudentScoreAnswers");
             return _mapper.Map<StudentScoreDto>(studentScore);
+        }
+
+        public StudentScoreAnswersDto GetStudentScoreAnswersById(string id)
+        {
+            var studentScore = _unitOfWork.studentScoresRepository.GetById(id);
+            var dto = _mapper.Map<StudentScoreAnswersDto>(studentScore);
+            dto.AnswersIds = new();
+            var studentScoreAnswers = _unitOfWork.studentScoreAnswersRepository.GetAll(new()
+            {
+                Filter = a => a.StudentScoreId == id
+            })
+                .Select(a => new
+                {
+                    a.AnswerId,
+                    a.Answer.QuestionId
+                });
+            studentScoreAnswers.ToList().ForEach(a => dto.AnswersIds.Add(a.QuestionId, a.AnswerId));
+            return dto;
         }
 
         public void UpdateStudentScore(StudentScoreDto studentScoreDto)
@@ -69,6 +87,45 @@ namespace Kwizzez.DAL.Services.StudentScores
             }).Select(s => s.Id);
 
             return studentScoreIds.FirstOrDefault();
+        }
+
+        public void SelectAnswer(string answerId, string studentScoreId)
+        {
+            var questionId = _unitOfWork.answersRepository.GetAll(new()
+            {
+                Filter = a => a.Id == answerId
+            })
+                .Select(a => a.QuestionId)
+                .First();
+
+            var studentScoreAnswers = _unitOfWork.studentScoreAnswersRepository.GetAll(new()
+            {
+                Filter = a => a.StudentScoreId == studentScoreId,
+            })
+                .Select(a => new
+                {
+                    a.Id,
+                    a.AnswerId,
+                    a.Answer.QuestionId
+                })
+                .ToList();
+                
+            studentScoreAnswers.ForEach(a => Console.WriteLine(a.Id));
+
+            // Get old answer for the same question and delete it
+            var oldSelectedAnswer = studentScoreAnswers.FirstOrDefault(a => a.QuestionId == questionId);
+
+            if (oldSelectedAnswer != null)
+                _unitOfWork.studentScoreAnswersRepository.Delete(oldSelectedAnswer.Id);
+
+            // Add the new answer
+            _unitOfWork.studentScoreAnswersRepository.Add(new()
+            {
+                AnswerId = answerId,
+                StudentScoreId = studentScoreId,
+            });
+
+            _unitOfWork.Save();
         }
     }
 }

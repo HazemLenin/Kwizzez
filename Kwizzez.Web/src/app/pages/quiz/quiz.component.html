@@ -30,6 +30,7 @@
     </button>
     <button
       *ngIf="quiz.took && !quiz.finished"
+      (click)="resumeQuiz()"
       class="btn btn-primary mx-auto w-fit"
     >
       <span *ngIf="!loading">Resume Quiz</span>
@@ -39,7 +40,11 @@
         animation="spin"
       ></fa-icon>
     </button>
-    <button *ngIf="quiz.finished" class="btn btn-primary mx-auto w-fit">
+    <button
+      *ngIf="quiz.finished"
+      (click)="getResults()"
+      class="btn btn-primary mx-auto w-fit"
+    >
       <span *ngIf="!loading">See Results</span>
       <fa-icon
         *ngIf="loading"

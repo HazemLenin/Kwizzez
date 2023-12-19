@@ -58,9 +58,31 @@ export class QuizzesService {
     });
   }
 
-  deleteQuiz(id: String): Observable<any> {
+  deleteQuiz(id: string): Observable<any> {
     return this.http.delete(`${this.BASE_URL}/Quizzes/${id}`, {
       headers: this.HEADERS,
     });
+  }
+
+  startQuiz(id: string): Observable<any> {
+    return this.http.post(`${this.BASE_URL}/Quizzes/StartQuiz/${id}`, null, {
+      headers: this.HEADERS,
+    });
+  }
+
+  getAnswers(id: string): Observable<any> {
+    return this.http.get(`${this.BASE_URL}/Quizzes/GetAnswers/${id}`, {
+      headers: this.HEADERS,
+    });
+  }
+
+  selectAnswer(quizId: string, answerId: string): Observable<any> {
+    return this.http.post(
+      `${this.BASE_URL}/Quizzes/SelectAnswer/${quizId}`,
+      { answerId },
+      {
+        headers: this.HEADERS,
+      }
+    );
   }
 }

@@ -16,7 +16,7 @@ export class QuizComponent implements OnInit {
   quiz: Quiz;
   quizStarted = false;
   questions: Question[];
-  selectedAnswers = new Map<String, String>(); // Map<questionId, answerId>
+  selectedAnswers = new Map<string, string>(); // Map<questionId, answerId>
   faCircleNotch = faCircleNotch;
 
   constructor(
@@ -49,7 +49,31 @@ export class QuizComponent implements OnInit {
   }
 
   takeQuiz() {
+    this.quizzesService.startQuiz(this.quiz.id).subscribe(() => {
+      this.loadQuestions();
+    });
+  }
+
+  resumeQuiz() {
+    this.quizzesService.getAnswers(this.quiz.id).subscribe((response) => {
+      this.selectedAnswers = new Map<string, string>(
+        Object.entries(response.data.answersIds)
+      );
+      if (response.isSucceed) this.loadQuestions();
+    });
+    this.loadQuestions();
+  }
+
+  getResults() {
+    this.quizzesService.getAnswers(this.quiz.id).subscribe((response) => {
+      if (response.isSucceed) this.loadQuestions();
+    });
+  }
+
+  private loadQuestions() {
+    this.loading = true;
     this.quizzesService.getQuizQuestions(this.quiz.id).subscribe((response) => {
+      this.loading = false;
       if (response.isSucceed) {
         this.quizStarted = true;
         this.questions = response.data;
@@ -68,11 +92,15 @@ export class QuizComponent implements OnInit {
     });
   }
 
-  selectAnswer(questionId: String, answerId: String) {
-    this.selectedAnswers.set(questionId, answerId);
+  selectAnswer(questionId: string, answerId: string) {
+    if (!this.answerSelected(questionId, answerId))
+      this.quizzesService.selectAnswer(this.quiz.id, answerId).subscribe(() => {
+        console.log('setting up');
+        this.selectedAnswers.set(questionId, answerId);
+      });
   }
 
-  answerSelected(questionId: String, answerId: String) {
+  answerSelected(questionId: string, answerId: string) {
     let selectedAnswer = this.selectedAnswers.get(questionId);
     if (selectedAnswer) return selectedAnswer == answerId;
     return false;

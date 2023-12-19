@@ -24,13 +24,11 @@ namespace Kwizzez.DAL.Services.Quizzes
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
-        public QuizzesService(IUnitOfWork unitOfWork, IMapper mapper, ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        public QuizzesService(IUnitOfWork unitOfWork, IMapper mapper, UserManager<ApplicationUser> userManager)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
-            _context = context;
             _userManager = userManager;
         }
 
@@ -178,14 +176,14 @@ namespace Kwizzez.DAL.Services.Quizzes
             }).Any();
         }
 
-        public QuizDto? GetQuizById(string id, string studentId)
+        public QuizDto? GetQuizById(string quizId, string studentId)
         {
             var quiz = (from q in _unitOfWork.quizzesRepository.GetAll()
                         
                         join t in _userManager.Users
                         on q.ApplicationUserId equals t.Id 
                         
-                        where q.Id == id
+                        where q.Id == quizId
                         orderby q.CreatedAt descending
                         select new QuizDto()
                         {
@@ -263,6 +261,25 @@ namespace Kwizzez.DAL.Services.Quizzes
 
             _unitOfWork.studentScoresRepository.Add(studentScore);
             _unitOfWork.Save();
+        }
+
+        public bool AnswerRelatedToQuiz(string quizId, string answerId)
+        {
+            var questionId = _unitOfWork.answersRepository.GetAll(new()
+            {
+                Filter = a => a.Id == answerId
+            })
+                .Select(a => a.QuestionId)
+                .First();
+
+            var questionQuizId = _unitOfWork.questionsRepository.GetAll(new()
+            {
+                Filter = q => q.Id == questionId
+            })
+                .Select(q => q.QuizId)
+                .First();
+
+            return questionQuizId == quizId;
         }
     }
 }
