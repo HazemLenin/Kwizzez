@@ -21,5 +21,7 @@ namespace Kwizzez.DAL.Services.StudentScores
         void DeleteStudentScores(IEnumerable<string> ids);
         string? GetStudentScoreId(string studentId, string quizId);
         void SelectAnswer(string answerId, string studentScoreId);
+        bool IsFinished(string id);
+        void FinishScore(string id);
     }
 }

@@ -110,7 +110,8 @@ namespace Kwizzez.Api.Controllers
         [Authorize(Roles = $"{Roles.Student}")]
         public ActionResult<ApiResponse<List<QuestionForStudentDto>>> GetQuizQuestions(string id)
         {
-            var questions = _quizzesService.GetQuizQuestionsById(id);
+            var studentId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var questions = _quizzesService.GetQuizQuestionsById(id, studentId);
 
             if (questions == null)
                 return NotFound();
@@ -214,6 +215,11 @@ namespace Kwizzez.Api.Controllers
             if (studentScoreId == null)
                 return BadRequest();
 
+            var studentScoreFinshed = _studentScoresService.IsFinished(studentScoreId);
+
+            if (studentScoreFinshed)
+                return BadRequest();
+
             // Check answer existance
             var answerExists = _answersService.AnswerExists(answerDto.AnswerId);
 
@@ -227,6 +233,33 @@ namespace Kwizzez.Api.Controllers
                 return BadRequest();
 
             _studentScoresService.SelectAnswer(answerDto.AnswerId, studentScoreId);
+
+            return Ok();
+        }
+
+        [HttpPost("SubmitQuiz/{id}")]
+        [Authorize(Roles = $"{Roles.Student}")]
+        public IActionResult SubmitQuiz(string id) {
+            // Check quiz existance
+            var quizExists = _quizzesService.QuizExists(id);
+
+            if (!quizExists)
+                return NotFound();
+
+            // Check if student started this quiz before
+            var studentId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var studentScoreId = _studentScoresService.GetStudentScoreId(studentId, id);
+
+            if (studentScoreId == null)
+                return BadRequest();
+
+            var isFinished = _studentScoresService.IsFinished(studentScoreId);
+
+            if (isFinished)
+                return BadRequest();
+
+            // Mark score as finished
+            _studentScoresService.FinishScore(studentScoreId);
 
             return Ok();
         }

@@ -1,4 +1,4 @@
-<div *ngIf="!quizStarted">
+<div *ngIf="!quizStarted && !showingResults">
   <section *ngIf="loading">
     <div class="skeleton h-10 w-80 rounded-md mb-3 mx-auto"></div>
     <div class="skeleton h-7 w-80 rounded-md mb-3 mx-auto"></div>
@@ -80,8 +80,35 @@
     </li>
   </ul>
 
-  <button class="btn btn-primary w-full">
+  <button class="btn btn-primary w-full" (click)="submit()">
     <span *ngIf="!loading">Submit</span>
     <fa-icon *ngIf="loading" [icon]="faCircleNotch" animation="spin"></fa-icon>
   </button>
+</div>
+
+<div *ngIf="showingResults" class="md:px-60">
+  <h1 class="text-4xl text-center">{{ quiz.title }}</h1>
+  <ul>
+    <li
+      *ngFor="let question of questions"
+      class="border-b border-gray-600 my-5"
+    >
+      <h2 class="text-3xl">{{ question.order }}. {{ question.title }}</h2>
+      <ul class="flex flex-col gap-5 my-5">
+        <li *ngFor="let answer of question.answers">
+          <div
+            class="w-full text-start rounded-md p-5 transition-colors border {{
+              answer.isCorrect
+                ? 'bg-success-light dark:bg-success-dark border-success'
+                : answerSelected(question.id, answer.id)
+                ? 'bg-danger-light dark:bg-danger-dark border-danger'
+                : 'border-white dark:border-gray-800'
+            }}"
+          >
+            {{ answer.order + 64 | numberToASCII }}. {{ answer.title }}
+          </div>
+        </li>
+      </ul>
+    </li>
+  </ul>
 </div>

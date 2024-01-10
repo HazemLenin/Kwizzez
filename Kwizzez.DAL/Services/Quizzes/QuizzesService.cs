@@ -239,7 +239,7 @@ namespace Kwizzez.DAL.Services.Quizzes
             return PaginatedList<QuizDto>.Create(quizzes, pageNumber, pageSize);
         }
 
-        public List<QuestionForStudentDto>? GetQuizQuestionsById(string id)
+        public List<QuestionForStudentDto>? GetQuizQuestionsById(string id, string studentId)
         {
             var questions = _unitOfWork.questionsRepository.GetAll(new() {
                 Filter = questions => questions.QuizId == id,
@@ -247,6 +247,14 @@ namespace Kwizzez.DAL.Services.Quizzes
             });
 
             var mappedQuestions = _mapper.Map<List<QuestionForStudentDto>>(questions);
+
+            var studentScores = _unitOfWork.studentScoresRepository.GetAll(new()
+            {
+                Filter = s => s.ApplicationUserId == studentId && s.QuizId == id & s.Finished
+            });
+
+            if (!studentScores.Any())
+                mappedQuestions.ForEach(q => q.Answers.ForEach(a => a.IsCorrect = null));
 
             return mappedQuestions;
         }

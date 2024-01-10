@@ -85,4 +85,14 @@ export class QuizzesService {
       }
     );
   }
+
+  submitQuiz(quizId: string): Observable<any> {
+    return this.http.post(
+      `${this.BASE_URL}/Quizzes/SubmitQuiz/${quizId}`,
+      null,
+      {
+        headers: this.HEADERS,
+      }
+    );
+  }
 }

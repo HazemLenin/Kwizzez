@@ -17,7 +17,7 @@ namespace Kwizzez.DAL.Services.Quizzes
         PaginatedList<QuizDto> GetPaginatedUserQuizzes(string userId, int pageIndex, int pageSize);
         QuizDto? GetQuizById(string quizId, string studentId);
         QuizDetailedDto? GetDetailedQuizById(string code);
-        List<QuestionForStudentDto>? GetQuizQuestionsById(string id);
+        List<QuestionForStudentDto>? GetQuizQuestionsById(string id, string studentId);
         string AddQuiz(AddQuizDto QuizDetailedDto, string teacherId);
         void UpdateQuiz(EditQuizDto QuizDetailedDto);
         void DeleteQuiz(string id);

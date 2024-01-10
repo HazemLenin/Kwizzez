@@ -109,8 +109,6 @@ namespace Kwizzez.DAL.Services.StudentScores
                     a.Answer.QuestionId
                 })
                 .ToList();
-                
-            studentScoreAnswers.ForEach(a => Console.WriteLine(a.Id));
 
             // Get old answer for the same question and delete it
             var oldSelectedAnswer = studentScoreAnswers.FirstOrDefault(a => a.QuestionId == questionId);
@@ -124,6 +122,25 @@ namespace Kwizzez.DAL.Services.StudentScores
                 AnswerId = answerId,
                 StudentScoreId = studentScoreId,
             });
+
+            _unitOfWork.Save();
+        }
+
+        public bool IsFinished(string id)
+        {
+            return _unitOfWork.studentScoresRepository.GetAll(new()
+            {
+                Filter = s => s.Id == id
+            }).Select(s => s.Finished).First();
+        }
+
+        public void FinishScore(string id)
+        {
+            var studentScore = _unitOfWork.studentScoresRepository.GetById(id);
+
+            studentScore.Finished = true;
+
+            _unitOfWork.studentScoresRepository.Update(studentScore);
 
             _unitOfWork.Save();
         }

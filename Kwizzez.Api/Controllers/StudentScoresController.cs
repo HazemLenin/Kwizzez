@@ -60,38 +60,6 @@ namespace Kwizzez.Api.Controllers
             };
         }
 
-        // // PUT: api/StudentScores/{id}
-        // [HttpPut("{id}")]
-        // [Authorize(Roles = Roles.Teacher)]
-        // public IActionResult PutStudentScore([FromRoute] string quizId, [FromRoute] string id, StudentScoreFormDto studentScoreFormDto)
-        // {
-        //     if (!QuizExists(quizId))
-        //         return NotFound();
-        //     var studentScoreDto = _mapper.Map<StudentScoreDto>(studentScoreFormDto);
-        //     studentScoreDto.TeacherId = User.Identity.Name;
-        //     studentScoreDto.Score = studentScoreDto.Questions.Sum(q => q.Degree);
-
-        //     _studentScoresService.UpdateStudentScore(studentScoreDto);
-
-        //     return NoContent();
-        // }
-
-        // // POST: api/StudentScores
-        // [HttpPost]
-        // [Authorize(Roles = Roles.Teacher)]
-        // public ActionResult<ApiResponse<StudentScoreDto>> PostStudentScore([FromRoute] string quizId, StudentScoreFormDto studentScoreFormDto)
-        // {
-        //     if (!QuizExists(quizId))
-        //         return NotFound();
-        //     var studentScoreDto = _mapper.Map<StudentScoreDto>(studentScoreFormDto);
-        //     studentScoreDto.TeacherId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        //     studentScoreDto.Score = studentScoreDto.Questions.Sum(q => q.Degree);
-        //     _studentScoresService.AddStudentScore(studentScoreDto);
-
-        //     return CreatedAtAction(nameof(GetStudentScore), new { id = studentScoreDto.Id }, studentScoreDto);
-        // }
-
-
         // DELETE: api/StudentScores/{id}
         [HttpDelete("{id}")]
         [Authorize(Roles = $"{Roles.Admin},{Roles.Teacher}")]

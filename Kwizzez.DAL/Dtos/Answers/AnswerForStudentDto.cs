@@ -14,5 +14,6 @@ namespace Kwizzez.DAL.Dtos.Answers
         public string QuestionId { get; set; }
         public string Title { get; set; }
         public int Order { get; set; }
+        public bool? IsCorrect { get; set; }
     }
 }

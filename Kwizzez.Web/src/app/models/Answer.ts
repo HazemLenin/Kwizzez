@@ -3,4 +3,5 @@ export default interface Answer {
   questionId: string;
   title: string;
   order: number;
+  isCorrect: boolean;
 }
