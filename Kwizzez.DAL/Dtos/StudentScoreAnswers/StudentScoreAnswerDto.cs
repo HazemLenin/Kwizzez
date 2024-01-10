@@ -14,9 +14,6 @@ namespace Kwizzez.DAL.Dtos.StudentScoreAnswers
         public string StudentScoreId { get; set; }
         public string AnswerId { get; set; }
 
-        // Navigation Props
-
-        public StudentScoreDto? StudentScore { get; set; }
         public AnswerDto? Answer { get; set; }
     }
 }

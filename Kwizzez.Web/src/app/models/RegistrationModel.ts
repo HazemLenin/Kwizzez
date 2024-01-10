@@ -1,9 +1,9 @@
 export default interface RegistrationModel {
-  email: String;
-  password: String;
-  firstName: String;
-  lastName: String;
-  userName: String;
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+  userName: string;
   dateOfBirth: Date;
-  isTeacher: Boolean;
+  isTeacher: boolean;
 }

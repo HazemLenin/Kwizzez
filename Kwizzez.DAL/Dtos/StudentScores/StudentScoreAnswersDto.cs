@@ -10,11 +10,8 @@ using Kwizzez.DAL.Dtos.Users;
 
 namespace Kwizzez.DAL.Dtos.StudentScores
 {
-    public class StudentScoreDto : BaseDto
+    public class StudentScoreAnswersDto : BaseDto
     {
-        public string ApplicationUserId { get; set; }
-        public string QuizId { get; set; }
-        public int Score { get; set; }
-        public List<StudentScoreAnswerDto>? StudentScoreAnswers { get; set; }
+        public Dictionary<string, string> AnswersIds { get; set; }
     }
 }

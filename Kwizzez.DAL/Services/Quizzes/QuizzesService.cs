@@ -24,13 +24,11 @@ namespace Kwizzez.DAL.Services.Quizzes
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
-        public QuizzesService(IUnitOfWork unitOfWork, IMapper mapper, ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        public QuizzesService(IUnitOfWork unitOfWork, IMapper mapper, UserManager<ApplicationUser> userManager)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
-            _context = context;
             _userManager = userManager;
         }
 
@@ -74,6 +72,8 @@ namespace Kwizzez.DAL.Services.Quizzes
                               QuestionsNumber= quiz.QuestionsNumber,
                               TeacherId= quiz.ApplicationUserId,
                               TeacherName= $"{teacher.FirstName} {teacher.LastName}",
+                              UpdatedAt = quiz.UpdatedAt,
+                              CreatedAt = quiz.CreatedAt
                           };
 
             return PaginatedList<QuizDto>.Create(quizzes, pageNumber, pageSize);
@@ -176,12 +176,14 @@ namespace Kwizzez.DAL.Services.Quizzes
             }).Any();
         }
 
-        public QuizDto? GetQuizById(string id)
+        public QuizDto? GetQuizById(string quizId, string studentId)
         {
             var quiz = (from q in _unitOfWork.quizzesRepository.GetAll()
+                        
                         join t in _userManager.Users
-                        on q.ApplicationUserId equals t.Id
-                        where q.Id == id
+                        on q.ApplicationUserId equals t.Id 
+                        
+                        where q.Id == quizId
                         orderby q.CreatedAt descending
                         select new QuizDto()
                         {
@@ -195,6 +197,21 @@ namespace Kwizzez.DAL.Services.Quizzes
                             CreatedAt = q.CreatedAt,
                             UpdatedAt = q.UpdatedAt
                         }).FirstOrDefault();
+
+            if (quiz != null)
+            {
+                var studentScore = _unitOfWork.studentScoresRepository.GetAll(new()
+                {
+                    Filter = s => s.QuizId == quiz.Id && s.ApplicationUserId == studentId
+                }).FirstOrDefault();
+
+                if (studentScore != null)
+                {
+                    quiz.Took = true;
+                    quiz.Finished = studentScore.Finished;
+                    quiz.StudentScoreId = studentScore.Id;
+                }
+            }
 
             return quiz;
         }
@@ -222,7 +239,7 @@ namespace Kwizzez.DAL.Services.Quizzes
             return PaginatedList<QuizDto>.Create(quizzes, pageNumber, pageSize);
         }
 
-        public List<QuestionForStudentDto>? GetQuizQuestionsById(string id)
+        public List<QuestionForStudentDto>? GetQuizQuestionsById(string id, string studentId)
         {
             var questions = _unitOfWork.questionsRepository.GetAll(new() {
                 Filter = questions => questions.QuizId == id,
@@ -231,7 +248,46 @@ namespace Kwizzez.DAL.Services.Quizzes
 
             var mappedQuestions = _mapper.Map<List<QuestionForStudentDto>>(questions);
 
+            var studentScores = _unitOfWork.studentScoresRepository.GetAll(new()
+            {
+                Filter = s => s.ApplicationUserId == studentId && s.QuizId == id & s.Finished
+            });
+
+            if (!studentScores.Any())
+                mappedQuestions.ForEach(q => q.Answers.ForEach(a => a.IsCorrect = null));
+
             return mappedQuestions;
+        }
+
+        public void StartQuiz(string quizId, string studentId)
+        {
+            StudentScore studentScore = new()
+            {
+                ApplicationUserId = studentId,
+                QuizId = quizId,
+            };
+
+            _unitOfWork.studentScoresRepository.Add(studentScore);
+            _unitOfWork.Save();
+        }
+
+        public bool AnswerRelatedToQuiz(string quizId, string answerId)
+        {
+            var questionId = _unitOfWork.answersRepository.GetAll(new()
+            {
+                Filter = a => a.Id == answerId
+            })
+                .Select(a => a.QuestionId)
+                .First();
+
+            var questionQuizId = _unitOfWork.questionsRepository.GetAll(new()
+            {
+                Filter = q => q.Id == questionId
+            })
+                .Select(q => q.QuizId)
+                .First();
+
+            return questionQuizId == quizId;
         }
     }
 }

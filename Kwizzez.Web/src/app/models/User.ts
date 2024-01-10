@@ -4,5 +4,5 @@ export interface User {
   lastName: string;
   email: string;
   dateOfBirth: Date;
-  roles: Array<string>;
+  roles: string[];
 }

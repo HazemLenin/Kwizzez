@@ -1,6 +1,7 @@
 export default interface Answer {
-  id: String;
-  questionId: String;
-  title: String;
-  order: Number;
+  id: string;
+  questionId: string;
+  title: string;
+  order: number;
+  isCorrect: boolean;
 }

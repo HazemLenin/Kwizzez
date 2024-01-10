@@ -1,8 +1,8 @@
 import QuestionForm from './AddQuestion';
 
 export default interface EditQuiz {
-  id: String;
-  title: String;
-  description: String | null;
+  id: string;
+  title: string;
+  description: string | null;
   questions: QuestionForm[];
 }

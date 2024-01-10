@@ -1,5 +1,5 @@
 export default interface AddAnswer {
-  title: String;
-  isCorrect: Boolean;
-  order: Number;
+  title: string;
+  isCorrect: boolean;
+  order: number;
 }

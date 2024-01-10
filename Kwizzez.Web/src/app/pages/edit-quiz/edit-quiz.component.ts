@@ -49,7 +49,7 @@ export class EditQuizComponent implements OnInit {
   faCircleNotch = faCircleNotch;
   faTrash = faTrash;
   loading: boolean = false;
-  quizId: String;
+  quizId: string;
   deleteModalShow = false;
 
   errors: string[] = [];

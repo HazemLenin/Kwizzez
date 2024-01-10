@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,11 +9,8 @@ using Kwizzez.DAL.Dtos.StudentScoreAnswers;
 
 namespace Kwizzez.DAL.Dtos.Answers
 {
-    public class AnswerForStudentDto : BaseDto
+    public class SelectAnswerDto
     {
-        public string QuestionId { get; set; }
-        public string Title { get; set; }
-        public int Order { get; set; }
-        public bool? IsCorrect { get; set; }
+        public string AnswerId { get; set; }
     }
 }

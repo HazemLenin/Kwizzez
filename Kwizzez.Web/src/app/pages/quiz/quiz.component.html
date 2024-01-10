@@ -1,4 +1,4 @@
-<div *ngIf="!quizStarted">
+<div *ngIf="!quizStarted && !showingResults">
   <section *ngIf="loading">
     <div class="skeleton h-10 w-80 rounded-md mb-3 mx-auto"></div>
     <div class="skeleton h-7 w-80 rounded-md mb-3 mx-auto"></div>
@@ -16,33 +16,97 @@
     <p class="text-gray-400">{{ quiz.teacherName }}</p>
     <p class="text-gray-500">{{ quiz.createdAt | timeAgo }}</p>
     <p>Questions: {{ quiz.questionsNumber }}</p>
-    <button (click)="takeQuiz()" class="btn btn-primary mx-auto w-fit">
-      Take Quiz
+    <button
+      *ngIf="!quiz.took"
+      (click)="takeQuiz()"
+      class="btn btn-primary mx-auto w-fit"
+    >
+      <span *ngIf="!loading">Take Quiz</span>
+      <fa-icon
+        *ngIf="loading"
+        [icon]="faCircleNotch"
+        animation="spin"
+      ></fa-icon>
+    </button>
+    <button
+      *ngIf="quiz.took && !quiz.finished"
+      (click)="resumeQuiz()"
+      class="btn btn-primary mx-auto w-fit"
+    >
+      <span *ngIf="!loading">Resume Quiz</span>
+      <fa-icon
+        *ngIf="loading"
+        [icon]="faCircleNotch"
+        animation="spin"
+      ></fa-icon>
+    </button>
+    <button
+      *ngIf="quiz.finished"
+      (click)="getResults()"
+      class="btn btn-primary mx-auto w-fit"
+    >
+      <span *ngIf="!loading">See Results</span>
+      <fa-icon
+        *ngIf="loading"
+        [icon]="faCircleNotch"
+        animation="spin"
+      ></fa-icon>
     </button>
   </section>
 </div>
 
 <div *ngIf="quizStarted" class="md:px-60">
-  <h1 class="text-4xl text-center mb-5">{{ quiz.title }}</h1>
+  <h1 class="text-4xl text-center">{{ quiz.title }}</h1>
   <ul>
-    <li *ngFor="let question of questions">
-      <h2 class="text-3xl mb-5">{{ question.order }}. {{ question.title }}</h2>
-      <ul class="ms-5">
+    <li
+      *ngFor="let question of questions"
+      class="border-b border-gray-600 my-5"
+    >
+      <h2 class="text-3xl">{{ question.order }}. {{ question.title }}</h2>
+      <ul class="flex flex-col gap-5 my-5">
         <li *ngFor="let answer of question.answers">
           <button
-            *ngIf="!answerSelected(question.id, answer.id)"
-            class="w-full text-start rounded-md p-5"
+            class="w-full text-start rounded-md p-5 transition-colors border {{
+              answerSelected(question.id, answer.id)
+                ? 'bg-primary-light dark:bg-primary-dark border-primary'
+                : 'border-white dark:border-gray-800 hover:bg-gray-300 hover:dark:bg-gray-600 hover:!border-gray-400 hover:dark:!border-gray-400'
+            }}"
             (click)="selectAnswer(question.id, answer.id)"
           >
-            {{ answer.title }}
+            {{ answer.order + 64 | numberToASCII }}. {{ answer.title }}
           </button>
-          <button
-            *ngIf="answerSelected(question.id, answer.id)"
-            class="w-full text-start rounded-md p-5 bg-primary-light dark:bg-primary-dark border-primary border"
-            (click)="selectAnswer(question.id, answer.id)"
+        </li>
+      </ul>
+    </li>
+  </ul>
+
+  <button class="btn btn-primary w-full" (click)="submit()">
+    <span *ngIf="!loading">Submit</span>
+    <fa-icon *ngIf="loading" [icon]="faCircleNotch" animation="spin"></fa-icon>
+  </button>
+</div>
+
+<div *ngIf="showingResults" class="md:px-60">
+  <h1 class="text-4xl text-center">{{ quiz.title }}</h1>
+  <ul>
+    <li
+      *ngFor="let question of questions"
+      class="border-b border-gray-600 my-5"
+    >
+      <h2 class="text-3xl">{{ question.order }}. {{ question.title }}</h2>
+      <ul class="flex flex-col gap-5 my-5">
+        <li *ngFor="let answer of question.answers">
+          <div
+            class="w-full text-start rounded-md p-5 transition-colors border {{
+              answer.isCorrect
+                ? 'bg-success-light dark:bg-success-dark border-success'
+                : answerSelected(question.id, answer.id)
+                ? 'bg-danger-light dark:bg-danger-dark border-danger'
+                : 'border-white dark:border-gray-800'
+            }}"
           >
-            {{ answer.title }}
-          </button>
+            {{ answer.order + 64 | numberToASCII }}. {{ answer.title }}
+          </div>
         </li>
       </ul>
     </li>

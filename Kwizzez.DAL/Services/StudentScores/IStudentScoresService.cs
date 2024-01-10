@@ -13,10 +13,15 @@ namespace Kwizzez.DAL.Services.StudentScores
     public interface IStudentScoresService
     {
         PaginatedList<StudentScoreDto> GetPaginatedStudentScore(int pageNumber, int pageSize);
-        StudentScoreDto GetStudentScoreById(string id, string includeProperties = "");
+        StudentScoreDto GetStudentScoreById(string id);
+        StudentScoreAnswersDto GetStudentScoreAnswersById(string id);
         void AddStudentScore(StudentScoreDto studentScoreDto);
         void UpdateStudentScore(StudentScoreDto studentScoreDto);
         void DeleteStudentScore(string id);
         void DeleteStudentScores(IEnumerable<string> ids);
+        string? GetStudentScoreId(string studentId, string quizId);
+        void SelectAnswer(string answerId, string studentScoreId);
+        bool IsFinished(string id);
+        void FinishScore(string id);
     }
 }

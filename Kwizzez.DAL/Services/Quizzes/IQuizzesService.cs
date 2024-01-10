@@ -15,13 +15,15 @@ namespace Kwizzez.DAL.Services.Quizzes
     {
         PaginatedList<QuizDto> GetPaginatedQuizzes(int pageIndex, int pageSize);
         PaginatedList<QuizDto> GetPaginatedUserQuizzes(string userId, int pageIndex, int pageSize);
-        QuizDto? GetQuizById(string id);
+        QuizDto? GetQuizById(string quizId, string studentId);
         QuizDetailedDto? GetDetailedQuizById(string code);
-        List<QuestionForStudentDto>? GetQuizQuestionsById(string id);
+        List<QuestionForStudentDto>? GetQuizQuestionsById(string id, string studentId);
         string AddQuiz(AddQuizDto QuizDetailedDto, string teacherId);
         void UpdateQuiz(EditQuizDto QuizDetailedDto);
         void DeleteQuiz(string id);
         void DeleteQuizzes(IEnumerable<string> ids);
         bool QuizExists(string id);
+        void StartQuiz(string quizId, string studentId);
+        bool AnswerRelatedToQuiz(string quizId, string answerId);
     }
 }

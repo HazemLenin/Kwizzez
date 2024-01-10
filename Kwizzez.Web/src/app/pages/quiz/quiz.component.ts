@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { faCircleNotch } from '@fortawesome/free-solid-svg-icons';
 import { catchError, throwError } from 'rxjs';
 import Question from 'src/app/models/Question';
 import Quiz from 'src/app/models/Quiz';
@@ -14,8 +15,10 @@ export class QuizComponent implements OnInit {
   loading = true;
   quiz: Quiz;
   quizStarted = false;
+  showingResults = false;
   questions: Question[];
-  selectedAnswers = new Map<String, String>(); // Map<questionId, answerId>
+  selectedAnswers = new Map<string, string>(); // Map<questionId, answerId>
+  faCircleNotch = faCircleNotch;
 
   constructor(
     private router: Router,
@@ -47,9 +50,41 @@ export class QuizComponent implements OnInit {
   }
 
   takeQuiz() {
+    this.loading = true;
+    this.quizzesService.startQuiz(this.quiz.id).subscribe(() => {
+      this.loadQuestions(false);
+      this.loading = false;
+    });
+  }
+
+  resumeQuiz() {
+    this.loading = true;
+    this.quizzesService.getAnswers(this.quiz.id).subscribe((response) => {
+      this.selectedAnswers = new Map<string, string>(
+        Object.entries(response.data.answersIds)
+      );
+      if (response.isSucceed) this.loadQuestions(false);
+      this.loading = false;
+    });
+  }
+
+  getResults() {
+    this.loading = true;
+    this.quizzesService.getAnswers(this.quiz.id).subscribe((response) => {
+      this.selectedAnswers = new Map<string, string>(
+        Object.entries(response.data.answersIds)
+      );
+      if (response.isSucceed) this.loadQuestions(true);
+      this.loading = false;
+    });
+  }
+
+  private loadQuestions(forResults: boolean) {
     this.quizzesService.getQuizQuestions(this.quiz.id).subscribe((response) => {
       if (response.isSucceed) {
-        this.quizStarted = true;
+        if (forResults) this.showingResults = true;
+        else this.quizStarted = true;
+
         this.questions = response.data;
 
         this.questions = this.questions.sort(
@@ -66,13 +101,22 @@ export class QuizComponent implements OnInit {
     });
   }
 
-  selectAnswer(questionId: String, answerId: String) {
-    this.selectedAnswers.set(questionId, answerId);
+  selectAnswer(questionId: string, answerId: string) {
+    if (!this.answerSelected(questionId, answerId))
+      this.quizzesService.selectAnswer(this.quiz.id, answerId).subscribe(() => {
+        this.selectedAnswers.set(questionId, answerId);
+      });
   }
 
-  answerSelected(questionId: String, answerId: String) {
+  answerSelected(questionId: string, answerId: string) {
     let selectedAnswer = this.selectedAnswers.get(questionId);
     if (selectedAnswer) return selectedAnswer == answerId;
     return false;
+  }
+
+  submit() {
+    this.quizzesService.submitQuiz(this.quiz.id).subscribe(() => {
+      location.reload();
+    });
   }
 }
