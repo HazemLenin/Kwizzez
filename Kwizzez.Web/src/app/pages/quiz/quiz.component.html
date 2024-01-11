@@ -12,10 +12,14 @@
     *ngIf="!loading"
     class="flex flex-col justify-end items-center gap-1"
   >
-    <h1 class="text-4xl">{{ quiz.title }}</h1>
+    <h1 class="text-4xl">
+      {{ quiz.title }}
+      <small class="text-sm text-gray-400">{{ quiz.score }} degrees</small>
+    </h1>
+    <p class="text-gray-400">{{ quiz.score }} degrees</p>
     <p class="text-gray-400">{{ quiz.teacherName }}</p>
-    <p class="text-gray-500">{{ quiz.createdAt | timeAgo }}</p>
-    <p>Questions: {{ quiz.questionsNumber }}</p>
+    <p class="text-gray-400">{{ quiz.createdAt | timeAgo }}</p>
+    <p class="text-gray-400">Questions: {{ quiz.questionsNumber }}</p>
     <button
       *ngIf="!quiz.took"
       (click)="takeQuiz()"
@@ -56,13 +60,21 @@
 </div>
 
 <div *ngIf="quizStarted" class="md:px-60">
-  <h1 class="text-4xl text-center">{{ quiz.title }}</h1>
+  <h1 class="text-4xl text-center">
+    {{ quiz.title }}
+    <small class="text-sm text-gray-400">{{ quiz.score }} degrees</small>
+  </h1>
   <ul>
     <li
       *ngFor="let question of questions"
       class="border-b border-gray-600 my-5"
     >
-      <h2 class="text-3xl">{{ question.order }}. {{ question.title }}</h2>
+      <h2 class="text-3xl">
+        {{ question.order }}. {{ question.title }}
+        <small class="text-sm text-gray-400"
+          >{{ question.degree }} degrees</small
+        >
+      </h2>
       <ul class="flex flex-col gap-5 my-5">
         <li *ngFor="let answer of question.answers">
           <button
@@ -87,13 +99,20 @@
 </div>
 
 <div *ngIf="showingResults" class="md:px-60">
-  <h1 class="text-4xl text-center">{{ quiz.title }}</h1>
+  <h1 class="text-4xl text-center">
+    {{ quiz.title }} ({{ score }}/{{ quiz.score }})
+  </h1>
   <ul>
     <li
       *ngFor="let question of questions"
       class="border-b border-gray-600 my-5"
     >
-      <h2 class="text-3xl">{{ question.order }}. {{ question.title }}</h2>
+      <h2 class="text-3xl">
+        {{ question.order }}. {{ question.title }}
+        <small class="text-sm text-gray-400"
+          >{{ question.degree }} degrees</small
+        >
+      </h2>
       <ul class="flex flex-col gap-5 my-5">
         <li *ngFor="let answer of question.answers">
           <div

@@ -36,7 +36,9 @@
   <h2
     class="text-3xl mb-5"
     *ngIf="
-      (isAuthenticated$ | async) && (user$ | async)?.roles?.includes('Student')
+      ((isAuthenticated$ | async) &&
+        (user$ | async)?.roles?.includes('Student')) ||
+      !(isAuthenticated$ | async)
     "
   >
     Find out new Quizzes!
@@ -44,9 +46,7 @@
   <h2
     class="text-3xl mb-5"
     *ngIf="
-      ((isAuthenticated$ | async) &&
-        (user$ | async)?.roles?.includes('Teacher')) ||
-      !(isAuthenticated$ | async)
+      (isAuthenticated$ | async) && (user$ | async)?.roles?.includes('Teacher')
     "
   >
     Manage Your Quizzes

@@ -16,6 +16,7 @@ export class QuizComponent implements OnInit {
   quiz: Quiz;
   quizStarted = false;
   showingResults = false;
+  score = 0;
   questions: Question[];
   selectedAnswers = new Map<string, string>(); // Map<questionId, answerId>
   faCircleNotch = faCircleNotch;
@@ -74,6 +75,7 @@ export class QuizComponent implements OnInit {
       this.selectedAnswers = new Map<string, string>(
         Object.entries(response.data.answersIds)
       );
+      this.score = response.data.score;
       if (response.isSucceed) this.loadQuestions(true);
       this.loading = false;
     });
