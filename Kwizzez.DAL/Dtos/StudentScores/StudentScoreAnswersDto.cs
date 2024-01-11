@@ -13,5 +13,6 @@ namespace Kwizzez.DAL.Dtos.StudentScores
     public class StudentScoreAnswersDto : BaseDto
     {
         public Dictionary<string, string> AnswersIds { get; set; }
+        public int Score { get; set; }
     }
 }

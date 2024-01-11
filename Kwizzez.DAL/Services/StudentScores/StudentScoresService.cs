@@ -61,6 +61,7 @@ namespace Kwizzez.DAL.Services.StudentScores
             var studentScore = _unitOfWork.studentScoresRepository.GetById(id);
             var dto = _mapper.Map<StudentScoreAnswersDto>(studentScore);
             dto.AnswersIds = new();
+            dto.Score = studentScore.Score;
             var studentScoreAnswers = _unitOfWork.studentScoreAnswersRepository.GetAll(new()
             {
                 Filter = a => a.StudentScoreId == id
@@ -137,6 +138,52 @@ namespace Kwizzez.DAL.Services.StudentScores
         public void FinishScore(string id)
         {
             var studentScore = _unitOfWork.studentScoresRepository.GetById(id);
+
+            studentScore.Score = 0;
+
+            // Get score answers
+            var studentScoreAnswers = _unitOfWork.studentScoreAnswersRepository.GetAll(new()
+            {
+                Filter = a => a.StudentScoreId == studentScore.Id
+            })
+                .Select(a => new
+                {
+                    a.Id,
+                    a.AnswerId
+                });
+
+            // for each answer
+            foreach (var scoreAnswer in studentScoreAnswers)
+            {
+                // get the real answer is correct field
+                var answer = _unitOfWork.answersRepository.GetAll(new()
+                {
+                    Filter = a => a.Id == scoreAnswer.AnswerId
+                })
+                    .Select(a => new
+                    {
+                        a.IsCorrect,
+                        a.QuestionId
+                    })
+                    .First();
+                // if correct
+                if (answer.IsCorrect)
+                {
+                    // get question score and add it to student score
+                    var questionDegree = _unitOfWork.questionsRepository.GetAll(new()
+                    {
+                        Filter = q => q.Id == answer.QuestionId
+                    })
+                        .Select(q => new
+                        {
+                            q.Degree
+                        })
+                        .First();
+
+                    studentScore.Score += questionDegree.Degree;
+                }
+            }
+
 
             studentScore.Finished = true;
 
