@@ -13,6 +13,9 @@ import {
   faPlus,
   faXmark,
   faTrash,
+  faLock,
+  faGlobe,
+  faLink,
 } from '@fortawesome/free-solid-svg-icons';
 import { catchError, throwError } from 'rxjs';
 import AnswerForm from 'src/app/models/AddAnswer';
@@ -22,6 +25,7 @@ import EditQuiz from 'src/app/models/EditQuiz';
 import { QuizzesService } from 'src/app/services/quizzes.service';
 import EditQuestion from 'src/app/models/EditQuestion';
 import EditAnswer from 'src/app/models/EditAnswer';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-edit-quiz',
@@ -32,12 +36,18 @@ export class EditQuizComponent implements OnInit {
   loadingQuiz = true;
   faXmark = faXmark;
   faPlus = faPlus;
+  faLock = faLock;
+  faGlobe = faGlobe;
+  isPublic = false;
+  code = '';
+  link = '';
 
   constructor(
     private router: Router,
     private route: ActivatedRoute,
     private quizzesService: QuizzesService,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private toastr: ToastrService
   ) {}
 
   quizForm = this.formBuilder.group({
@@ -48,6 +58,7 @@ export class EditQuizComponent implements OnInit {
 
   faCircleNotch = faCircleNotch;
   faTrash = faTrash;
+  faLink = faLink;
   loading: boolean = false;
   quizId: string;
   deleteModalShow = false;
@@ -71,6 +82,9 @@ export class EditQuizComponent implements OnInit {
         )
         .subscribe((response) => {
           if (response.isSucceed) {
+            this.link = `${location.protocol}//${location.host}/quizzes/${response.data.id}`;
+            this.isPublic = response.data.isPublic;
+            this.code = response.data.code;
             this.quizForm.patchValue({
               title: response.data.title,
               description: response.data.description,
@@ -183,6 +197,10 @@ export class EditQuizComponent implements OnInit {
     });
   }
 
+  copyLink() {
+    navigator.clipboard.writeText(this.link);
+  }
+
   editQuiz() {
     this.errors = [];
 
@@ -216,6 +234,7 @@ export class EditQuizComponent implements OnInit {
       };
       this.quizzesService.editQuiz(data).subscribe((response) => {
         this.loading = false;
+        this.toastr.success('Quiz edited successfully!');
         this.router.navigate(['/my-quizzes']);
       });
     }
@@ -231,6 +250,7 @@ export class EditQuizComponent implements OnInit {
     this.quizzesService.deleteQuiz(this.quizId).subscribe((response) => {
       this.deleteModalShow = false;
       this.loading = false;
+      this.toastr.success('Quiz deleted successfully!');
       this.router.navigate(['/my-quizzes']);
     });
   }

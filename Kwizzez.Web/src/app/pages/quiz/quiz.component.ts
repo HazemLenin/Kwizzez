@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { faCircleNotch } from '@fortawesome/free-solid-svg-icons';
+import { ToastrService } from 'ngx-toastr';
 import { catchError, throwError } from 'rxjs';
 import Question from 'src/app/models/Question';
 import Quiz from 'src/app/models/Quiz';
@@ -24,7 +25,8 @@ export class QuizComponent implements OnInit {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private quizzesService: QuizzesService
+    private quizzesService: QuizzesService,
+    private toastr: ToastrService
   ) {}
 
   ngOnInit(): void {
@@ -52,10 +54,21 @@ export class QuizComponent implements OnInit {
 
   takeQuiz() {
     this.loading = true;
-    this.quizzesService.startQuiz(this.quiz.id).subscribe(() => {
-      this.loadQuestions(false);
-      this.loading = false;
-    });
+    let code = this.quiz.isPublic ? '0' : prompt('enter code');
+    this.quizzesService
+      .startQuiz(this.quiz.id, parseInt(code || '0') || 0)
+      .pipe(
+        catchError((err) => {
+          if (err.status == 403) this.toastr.error('Invalid code');
+          else this.toastr.error('Something went wrong');
+          this.loading = false;
+          return throwError(() => err);
+        })
+      )
+      .subscribe(() => {
+        this.loadQuestions(false);
+        this.loading = false;
+      });
   }
 
   resumeQuiz() {

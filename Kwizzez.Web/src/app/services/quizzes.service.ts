@@ -64,10 +64,14 @@ export class QuizzesService {
     });
   }
 
-  startQuiz(id: string): Observable<any> {
-    return this.http.post(`${this.BASE_URL}/Quizzes/StartQuiz/${id}`, null, {
-      headers: this.HEADERS,
-    });
+  startQuiz(id: string, code: number): Observable<any> {
+    return this.http.post(
+      `${this.BASE_URL}/Quizzes/StartQuiz/${id}`,
+      { code },
+      {
+        headers: this.HEADERS,
+      }
+    );
   }
 
   getAnswers(id: string): Observable<any> {

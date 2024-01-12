@@ -19,10 +19,11 @@ namespace Kwizzez.DAL.Repositories
             _context = context;
         }
 
-        public void Add(T entity)
+        public string Add(T entity)
         {
             entity.CreatedAt = DateTime.UtcNow;
             _context.Set<T>().Add(entity);
+            return entity.Id;
         }
 
         public void AddRange(IEnumerable<T> entities)

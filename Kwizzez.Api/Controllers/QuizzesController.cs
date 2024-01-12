@@ -111,6 +111,11 @@ namespace Kwizzez.Api.Controllers
         public ActionResult<ApiResponse<List<QuestionForStudentDto>>> GetQuizQuestions(string id)
         {
             var studentId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var studentScoreId = _studentScoresService.GetStudentScoreId(studentId, id);
+
+            if (studentScoreId == null)
+                return Forbid();
+
             var questions = _quizzesService.GetQuizQuestionsById(id, studentId);
 
             if (questions == null)
@@ -138,12 +143,12 @@ namespace Kwizzez.Api.Controllers
         // POST: api/Quizzes
         [HttpPost]
         [Authorize(Roles = Roles.Teacher)]
-        public ActionResult<ApiResponse<QuizDto>> PostQuiz(AddQuizDto quizAddDto)
+        public ActionResult<ApiResponse<string>> PostQuiz(AddQuizDto quizAddDto)
         {
-            var quizId = _quizzesService.AddQuiz(quizAddDto, User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var id = _quizzesService.AddQuiz(quizAddDto, User.FindFirstValue(ClaimTypes.NameIdentifier));
 
-            return CreatedAtAction(nameof(GetQuiz), new { id = quizId }, new ApiResponse<QuizDto>() {
-                Data = _mapper.Map<QuizDto>(quizAddDto)
+            return CreatedAtAction(nameof(GetQuiz), new { id }, new ApiResponse<string>() {
+                Data = id
             });
         }
 
@@ -164,7 +169,7 @@ namespace Kwizzez.Api.Controllers
 
         [HttpPost("StartQuiz/{id}")]
         [Authorize(Roles = $"{Roles.Student}")]
-        public IActionResult StartQuiz(string id) {
+        public IActionResult StartQuiz(string id, StartQuizDto startQuizDto) {
             var quizExists = _quizzesService.QuizExists(id);
 
             if (!quizExists)
@@ -173,8 +178,14 @@ namespace Kwizzez.Api.Controllers
             var studentId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var studentScoreId = _studentScoresService.GetStudentScoreId(studentId, id);
 
+
             if (studentScoreId != null)
                 return BadRequest();
+
+            var canAccess = _quizzesService.VerifyQuizAccess(id, startQuizDto.Code);
+
+            if (!canAccess)
+                return Forbid();
 
             _quizzesService.StartQuiz(id, studentId);
             return Ok();

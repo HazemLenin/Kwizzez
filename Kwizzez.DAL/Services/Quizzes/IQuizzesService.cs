@@ -25,5 +25,6 @@ namespace Kwizzez.DAL.Services.Quizzes
         bool QuizExists(string id);
         void StartQuiz(string quizId, string studentId);
         bool AnswerRelatedToQuiz(string quizId, string answerId);
+        bool VerifyQuizAccess(string quizId, int code);
     }
 }
