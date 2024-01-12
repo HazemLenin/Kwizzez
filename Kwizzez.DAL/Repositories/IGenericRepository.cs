@@ -13,7 +13,7 @@ namespace Kwizzez.DAL.Repositories
         IQueryable<T> GetAll();
         IQueryable<T> GetAll(QueryFilter<T>? queryFilter);
         T? GetById(string id, string includeProperties = "");
-        void Add(T entity);
+        string Add(T entity);
         void AddRange(IEnumerable<T> entities);
         void Update(T entity);
         void UpdateRange(IEnumerable<T> entities);

@@ -19,6 +19,8 @@ namespace Kwizzez.DAL.Dtos.Quizzes
         public string TeacherId { get; set; }
         public int QuestionsNumber { get; set; }
         public string Description { get; set; }
+        public int Code { get; set; }
+        public bool IsPublic { get; set; }
 
         // Navigation Props
 

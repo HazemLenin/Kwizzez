@@ -6,12 +6,16 @@
     [routerLink]="[(isTeacher$ | async) ? '/edit-quiz' : '/quizzes', quiz.id]"
   >
     <div>
-      <h3
-        class="text-2xl overflow-visible md:truncate mb-3"
-        data-tooltip-target="tooltip-default"
-      >
-        {{ quiz.title }}
-      </h3>
+      <div class="flex gap-3">
+        <h3
+          class="text-2xl overflow-visible md:truncate mb-3"
+          data-tooltip-target="tooltip-default"
+        >
+          {{ quiz.title }}
+        </h3>
+        <fa-icon [icon]="faGlobe" *ngIf="quiz.isPublic" size="xl"></fa-icon>
+        <fa-icon [icon]="faLock" *ngIf="!quiz.isPublic" size="xl"></fa-icon>
+      </div>
       <div
         id="tooltip-default"
         role="tooltip"

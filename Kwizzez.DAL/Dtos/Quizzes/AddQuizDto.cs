@@ -14,6 +14,7 @@ namespace Kwizzez.DAL.Dtos.Quizzes
     {
         public string Title { get; set; }
         public string? Description { get; set; }
+        public bool IsPublic { get; set; }
         public List<AddQuestionDto> Questions { get; set; }
     }
 }

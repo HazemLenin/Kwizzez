@@ -17,6 +17,7 @@ import AddQuiz from 'src/app/models/AddQuiz';
 import AnswerForm from 'src/app/models/AddAnswer';
 import QuestionForm from 'src/app/models/AddQuestion';
 import { QuizzesService } from 'src/app/services/quizzes.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-add-quiz',
@@ -27,7 +28,8 @@ export class AddQuizComponent {
   constructor(
     private formBuilder: FormBuilder,
     private quizzesService: QuizzesService,
-    private router: Router
+    private router: Router,
+    private toastr: ToastrService
   ) {}
 
   redirectUrl: String = '';
@@ -41,6 +43,7 @@ export class AddQuizComponent {
   quizForm = this.formBuilder.group({
     title: ['', Validators.required],
     description: [''],
+    isPublic: [true, Validators.required],
     questions: this.formBuilder.array([this.getNewQuestion()]),
   });
 
@@ -52,6 +55,10 @@ export class AddQuizComponent {
 
   get description() {
     return this.quizForm.get('description');
+  }
+
+  get isPublic() {
+    return this.quizForm.get('isPublic');
   }
 
   get questionGroups() {
@@ -116,6 +123,7 @@ export class AddQuizComponent {
       let data: AddQuiz = {
         title: this.title?.value || '',
         description: this.description?.value || null,
+        isPublic: this.isPublic?.value ?? true,
         questions: this.questionGroups?.map((group, index): QuestionForm => {
           return {
             title: group.controls['title'].value,
@@ -137,7 +145,8 @@ export class AddQuizComponent {
       this.quizzesService.addQuiz(data).subscribe((response) => {
         this.loading = false;
         if (response.isSucceed) {
-          this.router.navigate(['/my-quizzes']);
+          this.toastr.success('Quiz added successfully!');
+          this.router.navigate(['/edit-quiz', response.data]);
         } else {
           this.errors = Object.values(response.errors);
         }

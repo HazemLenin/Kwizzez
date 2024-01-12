@@ -37,11 +37,11 @@ namespace Kwizzez.DAL.Services.Quizzes
             var quiz = _mapper.Map<Quiz>(QuizAddDto);
             quiz.ApplicationUserId = teacherId;
             quiz.Score = quiz.Questions.Sum(q => q.Degree);
-            quiz.QuestionsNumber = quiz.Questions.Count();
-
-            _unitOfWork.quizzesRepository.Add(quiz);
+            quiz.QuestionsNumber = quiz.Questions.Count;
+            quiz.Code = quiz.IsPublic ? 0 : new Random().Next(1000000, 9999999);
+            var quizId = _unitOfWork.quizzesRepository.Add(quiz);
             _unitOfWork.Save();
-            return quiz.Id;
+            return quizId;
         }
 
         public void DeleteQuiz(string id)
@@ -61,7 +61,7 @@ namespace Kwizzez.DAL.Services.Quizzes
             var quizzes = from quiz in _unitOfWork.quizzesRepository.GetAll()
                           join teacher in _userManager.Users
                           on quiz.ApplicationUserId equals teacher.Id
-                          where teacher.IsActive
+                          where teacher.IsActive && quiz.IsPublic
                           orderby quiz.CreatedAt descending
                           select new QuizDto()
                           {
@@ -73,7 +73,8 @@ namespace Kwizzez.DAL.Services.Quizzes
                               TeacherId= quiz.ApplicationUserId,
                               TeacherName= $"{teacher.FirstName} {teacher.LastName}",
                               UpdatedAt = quiz.UpdatedAt,
-                              CreatedAt = quiz.CreatedAt
+                              CreatedAt = quiz.CreatedAt,
+                              IsPublic = quiz.IsPublic
                           };
 
             return PaginatedList<QuizDto>.Create(quizzes, pageNumber, pageSize);
@@ -82,7 +83,6 @@ namespace Kwizzez.DAL.Services.Quizzes
         public QuizDetailedDto? GetDetailedQuizById(string id)
         {
             var quiz = _unitOfWork.quizzesRepository.GetById(id, "ApplicationUser,Questions,Questions.Answers,StudentScores");
-            
             return _mapper.Map<QuizDetailedDto>(quiz);
         }
 
@@ -195,7 +195,8 @@ namespace Kwizzez.DAL.Services.Quizzes
                             TeacherName = $"{t.FirstName} {t.LastName}",
                             Description = q.Description,
                             CreatedAt = q.CreatedAt,
-                            UpdatedAt = q.UpdatedAt
+                            UpdatedAt = q.UpdatedAt,
+                            IsPublic = q.IsPublic
                         }).FirstOrDefault();
 
             if (quiz != null)
@@ -233,7 +234,8 @@ namespace Kwizzez.DAL.Services.Quizzes
                               TeacherId= quiz.ApplicationUserId,
                               TeacherName= $"{teacher.FirstName} {teacher.LastName}",
                               CreatedAt = quiz.CreatedAt,
-                              UpdatedAt = quiz.UpdatedAt
+                              UpdatedAt = quiz.UpdatedAt,
+                              IsPublic = quiz.IsPublic
                           };
 
             return PaginatedList<QuizDto>.Create(quizzes, pageNumber, pageSize);
@@ -288,6 +290,14 @@ namespace Kwizzez.DAL.Services.Quizzes
                 .First();
 
             return questionQuizId == quizId;
+        }
+
+        public bool VerifyQuizAccess(string quizId, int code)
+        {
+            var quiz = _unitOfWork.quizzesRepository.GetById(quizId);
+            if (quiz.IsPublic)
+                return true;
+            return quiz.Code == code;
         }
     }
 }

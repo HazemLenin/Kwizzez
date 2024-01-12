@@ -11,4 +11,5 @@ export default interface Quiz {
   took: boolean; // Student took the exam before whether he finished before it or not
   finished: boolean; // Student took the exam before and finsihed
   studentScoreId: string;
+  isPublic: boolean;
 }
